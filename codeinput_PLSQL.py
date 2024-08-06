@@ -1,0 +1,60 @@
+code = """
+DECLARE
+  v_employee_id    employees.employee_id%TYPE;
+  v_employee_name  employees.first_name%TYPE;
+  v_new_salary     employees.salary%TYPE;
+  v_avg_salary     employees.salary%TYPE;
+  v_bonus          NUMBER(6,2);
+  v_raise          NUMBER(6,2);
+  v_bonus_percentage CONSTANT NUMBER := 0.10;
+  v_raise_percentage CONSTANT NUMBER := 0.05;
+  v_dept_id        departments.department_id%TYPE := 10;
+  
+  CURSOR emp_cursor IS
+    SELECT employee_id, first_name, salary
+    FROM employees
+    WHERE department_id = v_dept_id;
+
+BEGIN
+  OPEN emp_cursor;
+  LOOP
+    FETCH emp_cursor INTO v_employee_id, v_employee_name, v_new_salary;
+    EXIT WHEN emp_cursor%NOTFOUND;
+    
+    -- Calculate bonus
+    v_bonus := v_new_salary * v_bonus_percentage;
+
+    -- Calculate raise
+    v_raise := v_new_salary * v_raise_percentage;
+
+    -- Update salary with raise
+    v_new_salary := v_new_salary + v_raise;
+
+    -- Insert the bonus into a bonus table
+    INSERT INTO employee_bonus (employee_id, bonus_amount, bonus_date)
+    VALUES (v_employee_id, v_bonus, SYSDATE);
+    
+    -- Update the employee's salary
+    UPDATE employees
+    SET salary = v_new_salary
+    WHERE employee_id = v_employee_id;
+    
+    DBMS_OUTPUT.PUT_LINE('Employee ID: ' || v_employee_id || ', Name: ' || v_employee_name || ', New Salary: ' || v_new_salary || ', Bonus: ' || v_bonus);
+  END LOOP;
+  CLOSE emp_cursor;
+
+  -- Calculate the average salary in the department
+  SELECT AVG(salary) INTO v_avg_salary
+  FROM employees
+  WHERE department_id = v_dept_id;
+
+  DBMS_OUTPUT.PUT_LINE('Average Salary in Department ' || v_dept_id || ': ' || v_avg_salary);
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No employees found in department ' || v_dept_id);
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/
+
+"""
