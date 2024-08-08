@@ -3,17 +3,12 @@ import prompts
 import codeinput_PLSQL
 from dotenv import load_dotenv
 import requests
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 # Load environment variables
 load_dotenv()
-
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# Suppress only the single InsecureRequestWarning from urllib3 needed
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
-#model params
+# Model params
 model = "gpt-4o-2024-08-06"
 temperature = 0.5
 max_tokens = 2000
@@ -25,7 +20,7 @@ language = "PLSQL"
 # Insert code here
 code = codeinput_PLSQL.code
 
-#Prompts
+# Prompts
 if language == "PLSQL":
     system_message = prompts.system_message_PLSQL
     prompt = prompts.generate_prompt_PLSQL(code)
@@ -67,7 +62,7 @@ def oracle_to_snowflake():
 initial_response = oracle_to_snowflake()
 # print(initial_response)
 
-# access n'th response
+# Access n'th response
 response_lists = initial_response.split('+++++')
 print(response_lists[0])
 print(response_lists[1])
@@ -75,7 +70,7 @@ print(response_lists[2])
 print(response_lists[3])
 print(response_lists[4])
 
-# print(initial_response)
+# Code block here to test response 1-5
 
 # Add the initial response to the history
 message_history.append({"role": "assistant", "content": initial_response})
@@ -86,3 +81,10 @@ def follow_up(question):
     follow_up_response = oracle_to_snowflake()
     print(follow_up_response)
     message_history.append({"role": "assistant", "content": follow_up_response})
+
+# Iteratively improve output 
+follow_up_error = input("Did this translated code work? If so, return 'yes'. If not, provide error message to produce better results")
+
+while follow_up_error != 'yes':
+    follow_up(follow_up_error)
+    follow_up_error = input("Did this translated code work? If so, return 'yes'. If not, provide error message to produce better results")
