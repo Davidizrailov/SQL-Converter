@@ -14,8 +14,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 #model params
-model = "gpt-4o"
-temperature = 0.7
+model = "gpt-4o-2024-08-06"
+temperature = 0.5
 max_tokens = 2000
 
 message_history = []
@@ -67,9 +67,13 @@ def oracle_to_snowflake():
 initial_response = oracle_to_snowflake()
 # print(initial_response)
 
-#access n'th response
+# access n'th response
 response_lists = initial_response.split('+++++')
+print(response_lists[0])
+print(response_lists[1])
 print(response_lists[2])
+print(response_lists[3])
+print(response_lists[4])
 
 # print(initial_response)
 
