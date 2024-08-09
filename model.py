@@ -14,6 +14,7 @@ temperature = 0.5
 max_tokens = 2000
 
 message_history = []
+final_response = None
 
 language = "PLSQL"
 
@@ -36,6 +37,8 @@ elif language == "SQR":
 message_history.append({"role": "system", "content": system_message})
 message_history.append({"role": "user", "content": prompt})
 
+original_message = message_history
+
 # API request
 def oracle_to_snowflake():
     url = "https://api.openai.com/v1/chat/completions"
@@ -46,8 +49,7 @@ def oracle_to_snowflake():
     data = {
         "model": model,
         "messages": [
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": prompt}
+            message_history
         ],
         "temperature": temperature,
         "max_tokens": max_tokens
@@ -72,11 +74,11 @@ print(response_lists[4])
 
 
 # Function to ask follow-up questions
-def follow_up(question):
-    message_history.append({"role": "user", "content": question})
+def follow_up(error, previous_output):
+    message_history.append({"role": "user", "content": error})
     follow_up_response = oracle_to_snowflake()
-    print(follow_up_response)
     message_history.append({"role": "assistant", "content": follow_up_response})
+    return follow_up_response
 
 # Function which tests code 
 def snowflake_test(input_code):
@@ -85,7 +87,7 @@ def snowflake_test(input_code):
     if error_log == None:
         return True
     else: 
-        return False
+        return error_log
 
 # Code block here to test response 1-5
 for i in range(5):
@@ -95,15 +97,25 @@ for i in range(5):
 
 max_iters = 5
 # If 1-5 dont work
-# if final_response == None:
-#     for i in range(5):
-#         for j in range(max_iters):
-            
-message_history.append({"role": "assistant", "content": initial_response})
+if final_response is None:
+    for i in range(5):
+        message_history = original_message
+        previous_output = response_lists[i]
+        for j in range(max_iters):
+            test_result = snowflake_test(response_lists[i])
+            if test_result is True:
+                final_response = response_lists[i]
+                break
+            else:
+                # Use the error message as the follow-up prompt
+                response_lists[i] = follow_up(test_result, response_lists[i])
 
-# Iteratively improve output 
-follow_up_error = input("Did this translated code work? If so, return 'yes'. If not, provide error message to produce better results")
+        if final_response is not None:
+            break
 
-while follow_up_error != 'yes':
-    follow_up(follow_up_error)
-    follow_up_error = input("Did this translated code work? If so, return 'yes'. If not, provide error message to produce better results")
+if final_response is None:
+    print("None of the responses worked. Returning white flag.")
+else:
+    print(final_response)
+
+        
