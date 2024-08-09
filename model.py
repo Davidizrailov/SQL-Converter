@@ -70,10 +70,6 @@ print(response_lists[2])
 print(response_lists[3])
 print(response_lists[4])
 
-# Code block here to test response 1-5
-
-# Add the initial response to the history
-message_history.append({"role": "assistant", "content": initial_response})
 
 # Function to ask follow-up questions
 def follow_up(question):
@@ -81,6 +77,29 @@ def follow_up(question):
     follow_up_response = oracle_to_snowflake()
     print(follow_up_response)
     message_history.append({"role": "assistant", "content": follow_up_response})
+
+# Function which tests code 
+def snowflake_test(input_code):
+    # Check to see if error free
+    error_log = None
+    if error_log == None:
+        return True
+    else: 
+        return False
+
+# Code block here to test response 1-5
+for i in range(5):
+    if snowflake_test(response_lists[i]) == True:
+        final_response = response_lists[i]
+        break
+
+max_iters = 5
+# If 1-5 dont work
+# if final_response == None:
+#     for i in range(5):
+#         for j in range(max_iters):
+            
+message_history.append({"role": "assistant", "content": initial_response})
 
 # Iteratively improve output 
 follow_up_error = input("Did this translated code work? If so, return 'yes'. If not, provide error message to produce better results")
