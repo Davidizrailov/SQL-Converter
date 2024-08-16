@@ -1,0 +1,94 @@
+CREATE OR REPLACE PROCEDURE process_customer_orders IS
+    -- Record type to hold order details
+    TYPE order_rec_type IS RECORD (
+        order_id          orders.order_id%TYPE,
+        customer_id       orders.customer_id%TYPE,
+        order_total       orders.order_total%TYPE,
+        order_date        orders.order_date%TYPE,
+        discount_applied  NUMBER(5,2)
+    );
+
+    -- Cursor to select orders that need processing
+    CURSOR order_cursor IS
+        SELECT order_id, customer_id, order_total, order_date
+        FROM orders
+        WHERE order_status = 'PENDING';
+
+    order_rec order_rec_type;
+
+    -- Variable to calculate discount
+    discount_rate NUMBER(5,2);
+
+    -- Exception for insufficient inventory
+    insufficient_inventory EXCEPTION;
+
+    -- Temporary variable for checking inventory
+    available_quantity NUMBER;
+
+BEGIN
+    -- Open the cursor
+    OPEN order_cursor;
+    
+    -- Process each order
+    LOOP
+        FETCH order_cursor INTO order_rec;
+        EXIT WHEN order_cursor%NOTFOUND;
+
+        -- Calculate discount based on order total
+        IF order_rec.order_total > 1000 THEN
+            discount_rate := 10;  -- 10% discount
+        ELSIF order_rec.order_total > 500 THEN
+            discount_rate := 5;   -- 5% discount
+        ELSE
+            discount_rate := 0;   -- No discount
+        END IF;
+
+        -- Apply discount
+        order_rec.discount_applied := order_rec.order_total * (discount_rate / 100);
+
+        -- Update order total after discount
+        order_rec.order_total := order_rec.order_total - order_rec.discount_applied;
+
+        -- Check inventory and update quantities
+        FOR item IN (SELECT product_id, quantity FROM order_items WHERE order_id = order_rec.order_id) LOOP
+            SELECT stock_quantity INTO available_quantity
+            FROM products
+            WHERE product_id = item.product_id;
+
+            IF available_quantity < item.quantity THEN
+                RAISE insufficient_inventory;
+            END IF;
+
+            -- Update the stock quantity
+            UPDATE products
+            SET stock_quantity = stock_quantity - item.quantity
+            WHERE product_id = item.product_id;
+        END LOOP;
+
+        -- Update the order record
+        UPDATE orders
+        SET order_total = order_rec.order_total,
+            discount_applied = order_rec.discount_applied,
+            order_status = 'COMPLETED'
+        WHERE order_id = order_rec.order_id;
+
+        -- Commit after processing each order
+        COMMIT;
+
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE order_cursor;
+
+    DBMS_OUTPUT.PUT_LINE('All orders processed successfully.');
+
+EXCEPTION
+    WHEN insufficient_inventory THEN
+        DBMS_OUTPUT.PUT_LINE('Error: Insufficient inventory for order ID: ' || order_rec.order_id);
+        ROLLBACK;
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+        ROLLBACK;
+
+END process_customer_orders;
