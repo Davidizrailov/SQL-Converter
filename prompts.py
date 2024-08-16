@@ -554,8 +554,8 @@ I have provided examples and documentation about scripting python in Snowflake c
 def generate_prompt_PLSQL(code):
     prompt = f"""
 
-        Below is the code I want you to convert from Oracle PL/SQL to Snowflake SQL. Provide me 5 variations of ONLY the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Put '+++++' as a delimiter between the 5 versions so that I can seperate them.
+        Below is the code I want you to convert from Oracle PL/SQL to Snowflake SQL. Provide me ONLY the converted code, ensuring it is compatible with Snowflake syntax. 
+        There should be no text other than the code. 
        
         Here is the code:
         {code}
@@ -578,7 +578,7 @@ def generate_prompt_SQR(code):
     prompt = f"""
 
         Below is the code I want you to convert from Oracle SQR to Snowflake SQL. Provide me ONLY the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. As SQR is meant to be a report generator, use the reportlab python library to make a pdf report in a procedure and call it. Make sure the report is stored in downloads.
+        There should be no text other than the code. Make sure the code actually displays the report.
        
         Here is the code:
         {code}
