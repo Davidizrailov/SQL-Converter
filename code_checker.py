@@ -1,6 +1,5 @@
 import re
 import subprocess
-from typing import overload
 
 def run_command(command):
   result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -17,10 +16,6 @@ class LinterError:
     self.type = type
     
   def is_fatal(self):
-    # if logging:
-    #   with open("logs/linter.log", "a") as f:
-    #     print(f"[linter output logs: {self.rc, self.stderr, self.stdout}\n", file=f)
-    
     if self.type == "sql":
       return "prs" in self.stderr.lower() or "prs" in self.stdout.lower()
     elif self.type == "python":
