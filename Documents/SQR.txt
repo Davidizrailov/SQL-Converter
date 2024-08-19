@@ -1,0 +1,46 @@
+-- CREATE OR REPLACE PROCEDURE update_loyalty_points IS
+--     -- Cursor to select recent purchases
+--     CURSOR purchase_cursor IS
+--         SELECT customer_id, SUM(order_total) AS total_spent
+--         FROM orders
+--         WHERE order_date > SYSDATE - 30  -- Last 30 days
+--         GROUP BY customer_id;
+
+--     -- Record to hold the fetched data
+--     purchase_rec purchase_cursor%ROWTYPE;
+
+--     -- Variable to hold the calculated loyalty points
+--     loyalty_points NUMBER;
+
+-- BEGIN
+--     -- Open the cursor
+--     OPEN purchase_cursor;
+    
+--     -- Loop through the fetched records
+--     LOOP
+--         FETCH purchase_cursor INTO purchase_rec;
+--         EXIT WHEN purchase_cursor%NOTFOUND;
+
+--         -- Calculate loyalty points: 1 point for every $10 spent
+--         loyalty_points := FLOOR(purchase_rec.total_spent / 10);
+
+--         -- Update the customer's loyalty points in the customers table
+--         UPDATE customers
+--         SET loyalty_points = loyalty_points + loyalty_points
+--         WHERE customer_id = purchase_rec.customer_id;
+
+--         -- Commit after each update
+--         COMMIT;
+--     END LOOP;
+
+--     -- Close the cursor
+--     CLOSE purchase_cursor;
+
+--     DBMS_OUTPUT.PUT_LINE('Loyalty points updated successfully.');
+
+-- EXCEPTION
+--     WHEN OTHERS THEN
+--         DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+--         ROLLBACK;
+
+-- END update_loyalty_points;
