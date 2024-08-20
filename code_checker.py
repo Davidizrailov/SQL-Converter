@@ -1,3 +1,4 @@
+# python scripts installed by pip must be executable from program's environment
 import re
 import subprocess
 
