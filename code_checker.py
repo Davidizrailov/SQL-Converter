@@ -148,5 +148,6 @@ END;
 ``` 
 """
   errors = linter.check_response(sample_response)
-  print(linter.prompt_after_code(errors))
+  # print(linter.prompt_after_code(errors))
+  print(errors)
   

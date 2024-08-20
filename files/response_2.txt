@@ -1,0 +1,62 @@
+After retry:
+CREATE OR REPLACE PROCEDURE process_employee_salaries()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.11'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+def run(session):
+    from snowflake.snowpark.functions import col
+    from datetime import datetime
+    
+    v_bonus_percentage = 0.10
+    v_raise_percentage = 0.05
+    v_dept_id = 10
+    
+    emp_cursor = session.table("employees").filter(col("department_id") == v_dept_id).select("employee_id", "first_name", "salary").to_local_iterator()
+    
+    messages = []
+    
+    for row in emp_cursor:
+        v_employee_id = row["EMPLOYEE_ID"]
+        v_employee_name = row["FIRST_NAME"]
+        v_new_salary = row["SALARY"]
+        
+        # Calculate bonus
+        v_bonus = v_new_salary * v_bonus_percentage
+        
+        # Calculate raise
+        v_raise = v_new_salary * v_raise_percentage
+        
+        # Update salary with raise
+        v_new_salary += v_raise
+        
+        # Insert the bonus into a bonus table
+        session.sql(f"""
+            INSERT INTO employee_bonus (employee_id, bonus_amount, bonus_date)
+            VALUES ({v_employee_id}, {v_bonus}, '{datetime.now()}')
+        """)
+        
+        # Update the employee's salary
+        session.sql(f"""
+            UPDATE employees
+            SET salary = {v_new_salary}
+            WHERE employee_id = {v_employee_id}
+        """)
+        
+        messages.append(f"Employee ID: {v_employee_id}, Name: {v_employee_name}, New Salary: {v_new_salary}, Bonus: {v_bonus}")
+    
+    # Calculate the average salary in the department
+    v_avg_salary = session.table("employees").filter(col("department_id") == v_dept_id).select("salary").agg({"salary": "avg"}).collect()[0][0]
+    
+    messages.append(f"Average Salary in Department {v_dept_id}: {v_avg_salary}")
+    
+    return "\n".join(messages)
+$$;
+
+
+To call the procedure:
+sql
+CALL process_employee_salaries();

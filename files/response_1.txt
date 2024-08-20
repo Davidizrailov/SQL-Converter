@@ -1,0 +1,74 @@
+Response :
+CREATE OR REPLACE PROCEDURE process_employee_salaries()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.11'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'process_employees'
+AS
+$$
+from snowflake.snowpark import Session
+from snowflake.snowpark.functions import col, lit
+import datetime
+
+def process_employees(session: Session) -> str:
+    v_employee_id = None
+    v_employee_name = None
+    v_new_salary = None
+    v_avg_salary = None
+    v_bonus = None
+    v_raise = None
+    v_bonus_percentage = 0.10
+    v_raise_percentage = 0.05
+    v_dept_id = 10
+    
+    emp_cursor = session.sql(f"""
+        SELECT employee_id, first_name, salary
+        FROM employees
+        WHERE department_id = {v_dept_id}
+    """).collect()
+    
+    if not emp_cursor:
+        return f'No employees found in department {v_dept_id}'
+    
+    for row in emp_cursor:
+        v_employee_id = row['EMPLOYEE_ID']
+        v_employee_name = row['FIRST_NAME']
+        v_new_salary = row['SALARY']
+        
+        # Calculate bonus
+        v_bonus = v_new_salary * v_bonus_percentage
+        
+        # Calculate raise
+        v_raise = v_new_salary * v_raise_percentage
+        
+        # Update salary with raise
+        v_new_salary = v_new_salary + v_raise
+        
+        # Insert the bonus into a bonus table
+        session.sql(f"""
+            INSERT INTO employee_bonus (employee_id, bonus_amount, bonus_date)
+            VALUES (%s, %s, CURRENT_TIMESTAMP)
+        """, (v_employee_id, v_bonus)).collect()
+        
+        # Update the employee's salary
+        session.sql(f"""
+            UPDATE employees
+            SET salary = %s
+            WHERE employee_id = %s
+        """, (v_new_salary, v_employee_id)).collect()
+        
+        print(f'Employee ID: {v_employee_id}, Name: {v_employee_name}, New Salary: {v_new_salary}, Bonus: {v_bonus}')
+    
+    # Calculate the average salary in the department
+    v_avg_salary = session.sql(f"""
+        SELECT AVG(salary) AS avg_salary
+        FROM employees
+        WHERE department_id = {v_dept_id}
+    """).collect()[0]['AVG_SALARY']
+    
+    print(f'Average Salary in Department {v_dept_id}: {v_avg_salary}')
+    
+    return "Process completed successfully"
+
+$$;
