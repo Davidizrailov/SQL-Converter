@@ -14,10 +14,8 @@ language = "PLSQL"
 count=0
 
 # Txt file read
-
 with open('code.txt', 'r') as file:
     code = file.read()
-
 
 
 # Prompts
@@ -31,15 +29,31 @@ elif language == "SQR":
     system_message = prompts.system_message_SQR
     prompt = prompts.generate_prompt_SQR(code)   
 
+# Vector Store Init
+vector_store = client.beta.vector_stores.create(name="Documents")
+
+# Add files to Vector Store
+file_paths = ["Documents\ET.txt", "Documents\Snowflake_Procedures.txt, Documents\SQR.txt"]
+file_streams = [open(path, "rb") for path in file_paths]
+
+file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
+  vector_store_id=vector_store.id, files=file_streams
+)
+
 # Assistant
 assistant = client.beta.assistants.create(
   name="SQLConverter",
   instructions=system_message,
+  tools=[{"type": "file_search"}],
   model="gpt-4o",
   temperature=0.5
 )
+assistant = client.beta.assistants.update(
+  assistant_id=assistant.id,
+  tool_resources={"file_search": {"vector_store_ids": [vector_store.id]}},
+)
 
-# Thread
+# Thread Init
 thread = client.beta.threads.create()
 
 # Premade prompt as first message
