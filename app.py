@@ -3,7 +3,7 @@
 import streamlit as st
 import time
 from translator import Translator
-from model_classes import ErrorHandler
+from model_classes import ConfigLoader
 
 
 #############################################################################################            
@@ -44,7 +44,10 @@ if 'translator' not in st.session_state:
 # Configuration
 #############################################################################################            
 
-input_language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve"])
+language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve"])
+if language=="Easytrieve": language="ET"
+config = ConfigLoader(language=language)
+
 model = st.selectbox("Model", ["GPT4", "GPT4o"])
 
 #############################################################################################            
@@ -65,8 +68,8 @@ if uploaded_file is not None:
 # Translation
 #############################################################################################            
     demo = False
-    st.session_state.translator = Translator(code=file_content, 
-                            language=input_language)
+    st.session_state.translator = Translator(code   = file_content, 
+                                             config = config)
     
     st.session_state.translate_button_pressed = st.button("Translate", use_container_width=True)
     if st.session_state.translate_button_pressed:

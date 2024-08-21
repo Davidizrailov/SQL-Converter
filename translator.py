@@ -2,9 +2,9 @@ from model_classes import *
 from code_checker import Linter
 
 class Translator:
-    def __init__(self, code, language):
+    def __init__(self, code, config):
         self.code = code
-        self.language = language
+        self.config = config
         self.assistant_manager = None
         self.thread = None
         # self.gpt = gpt 
@@ -15,22 +15,25 @@ class Translator:
                 translated_code = file.read()
             return translated_code
         else:
-            config = ConfigLoader()
-            client = OpenAIClient(config.api_key)
+            client = OpenAIClient(self.config.api_key)
 
             # code_reader = CodeReader("code.txt")
             # code = code_reader.read_code()
 
-            prompt_generator = PromptGenerator(config.language, self.code)
+            prompt_generator = PromptGenerator(self.config.language, self.code)
             system_message, prompt = prompt_generator.generate_prompt()
 
-            vector_store_manager = VectorStoreManager(client.client)
+            # vector_store_manager = VectorStoreManager(client.client)
             # vector_store_manager.upload_files(["Documents\ET.txt", "Documents\Snowflake_Procedures.txt", "Documents\SQR.txt"])
-            vector_store_manager.upload_files(["Documents\Snowflake_Procedures.txt"])
+            # vector_store_manager.upload_files(["Documents\Snowflake_Procedures.txt"])
 
+            vector_store_ids = VectorStoreIDs(language=self.config.language).get()
+            print(vector_store_ids)
+            
             self.assistant_manager = AssistantManager(client.client, 
-                                                system_message, 
-                                                vector_store = vector_store_manager.vector_store)
+                                                      system_message, 
+                                                      vector_store_ids = vector_store_ids)
+            
             self.thread = self.assistant_manager.create_thread()
 
             self.assistant_manager.send_message(self.thread.id, prompt)

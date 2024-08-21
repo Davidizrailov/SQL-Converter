@@ -31,7 +31,7 @@ Priority: Ensure the converted SQL code is robust and error-free for enterprise-
 
 Instructions:
 Follow the specified steps for conversion.
-Use python 3.11. Don't use javascript or SQL use python for the language. Make sure to properly deal with the keyword "OUT" as it is an unsupported data type. I have provided examples and documentation about scripting python in Snowflake can be found here: {Snowflake_documentation}
+Use python 3.8. Don't use javascript or SQL use python for the language. Make sure to properly deal with the keyword "OUT" as it is an unsupported data type. I have provided examples and documentation about scripting python in Snowflake can be found here: {Snowflake_documentation}
 
 """
 
@@ -55,7 +55,6 @@ Priority: Ensure the converted SQL code is robust and error-free for enterprise-
 
 Instructions:
 Follow the specified steps for conversion.
-I have provided examples and documentation about scripting python in Snowflake can be found here: {Snowflake_documentation} as well as Eastrieve documentation here {ET}. Use python 3.11. Don't use javascript use python for the language. Make sure to properly deal with the keyword "OUT" as it is an unsupported data type. 
 
 """
 
@@ -79,7 +78,6 @@ Priority: Ensure the converted SQL code is robust and error-free for enterprise-
 
 Instructions:
 Follow the specified steps for conversion.
-I have provided examples and documentation about scripting python in Snowflake can be found here: {Snowflake_documentation} as well as SQR Documentation here: {SQR}. Use python 3.11. Don't use javascript use python for the language. Make sure to properly deal with the keyword "OUT" as it is an unsupported data type. 
 
 """
 

@@ -1,0 +1,28 @@
+* Define the input file;
+FILE INPUT01 FB(80 0)
+  INPUT-FIELD1   1  10  A
+  INPUT-FIELD2   11 5   N
+  INPUT-FIELD3   16 3   N
+  INPUT-FIELD4   19 60  A
+
+* Define the report layout;
+REPORT RPT01
+  LINE 01 COL 01 '*** Sales Report ***'
+  LINE 02 COL 01 'Salesperson' COL 20 'Sales Amount' COL 40 'Commission'
+  LINE 03 COL 01 '----------' COL 20 '------------' COL 40 '----------'
+  LINE 04 COL 01 INPUT-FIELD1 COL 20 INPUT-FIELD2 COL 40 COMMISSION
+
+* Define working-storage variables;
+DEFINE COMMISSION W 8 N
+
+* Start the processing section;
+JOB INPUT01 RPT01
+
+  IF INPUT-FIELD2 GT 1000
+    MOVE INPUT-FIELD2 * 0.1 TO COMMISSION
+  ELSE
+    MOVE INPUT-FIELD2 * 0.05 TO COMMISSION
+  END-IF
+
+* End of the program;
+END-JOB
