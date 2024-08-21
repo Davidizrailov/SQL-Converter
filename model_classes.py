@@ -45,7 +45,6 @@ class VectorStoreManager:
             vector_store_id=self.vector_store.id, files=file_streams
         )
 
-# need vector store as last arg
 class AssistantManager:
     def __init__(self, client, system_message, vector_store):
         self.client = client

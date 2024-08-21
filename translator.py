@@ -38,7 +38,7 @@ class Translator:
             if run.status == "completed":
                 response_message = self.assistant_manager.get_response_message(self.thread.id)
             else:
-                response_message = ''
+                response_message = 'error'
         return response_message
     
     def test_syntax(self, input_code, demo=True):
@@ -62,42 +62,46 @@ class Translator:
     
     
     def save(self):
-        with open("assistant_id","w") as f:
+        with open("files/assistant_id","w") as f:
             f.write(self.assistant_manager.assistant.id)
         f.close()
-        with open("thread_id","w") as f:
+        with open("files/thread_id","w") as f:
             f.write(self.thread.id)
         f.close()
 
     def load(self):
-        with open("assistant_id", 'r') as f:
+        with open("files/assistant_id", 'r') as f:
             assistant_id = f.read()
-        with open("thread_id", 'r') as f:
+        with open("files/thread_id", 'r') as f:
             thread_id = f.read()
             # thread_id = pickle.load(f)            
         return assistant_id, thread_id
     
-    def get_follow_up(self, error_message):
-        assistant_id, thread_id = self.load()
-        client = OpenAI(api_key=os.getenv('OPENAI_API_KEY_EPS'))
-        client.beta.threads.messages.create(
+    def get_follow_up(self, error_message, demo = False):
+        if demo:
+            with open("files/response_2.txt") as file:
+                follow_up = file.read()
+        else:
+            assistant_id, thread_id = self.load()
+            client = OpenAI(api_key=os.getenv('OPENAI_API_KEY_EPS'))
+            client.beta.threads.messages.create(
+                        thread_id = thread_id,
+                        role      = "user",
+                        content   = error_message
+                    )
+            run = client.beta.threads.runs.create(
+                        thread_id    = thread_id,
+                        assistant_id = assistant_id
+                    )
+            while run.status != "completed":
+                print(run.status)
+                time.sleep(1)
+                run = client.beta.threads.runs.retrieve(
                     thread_id = thread_id,
-                    role      = "user",
-                    content   = error_message
+                    run_id    = run.id
                 )
-        run = client.beta.threads.runs.create(
-                    thread_id    = thread_id,
-                    assistant_id = assistant_id
-                )
-        while run.status != "completed":
-            print(run.status)
-            time.sleep(1)
-            run = client.beta.threads.runs.retrieve(
-                thread_id = thread_id,
-                run_id    = run.id
-            )
-            print(run.status)
-        response_message = client.beta.threads.messages.list(thread_id=thread_id)
-        follow_up = response_message.data[0].content[0].text.value
+                print(run.status)
+            response_message = client.beta.threads.messages.list(thread_id=thread_id)
+            follow_up = response_message.data[0].content[0].text.value
 
         return follow_up
