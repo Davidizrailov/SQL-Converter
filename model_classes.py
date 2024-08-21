@@ -2,11 +2,12 @@ import os
 import prompts
 from openai import OpenAI
 import time
+from dotenv import load_dotenv
 
 class ConfigLoader:
-    def __init__(self, language="PLSQL"):
-        # load_dotenv()
-        self.api_key = os.getenv("OPENAI_API_KEY_EPS")
+    def __init__(self, language="SQR"):
+        load_dotenv()
+        self.api_key = os.getenv("OPENAI_API_KEY")
         self.language = language
 
 class OpenAIClient:
@@ -35,39 +36,32 @@ class PromptGenerator:
             return prompts.system_message_SQR, prompts.generate_prompt_SQR(self.code)
 
 class VectorStoreManager:
-    def __init__(self, client):
-        self.client = client
-        self.vector_store = self.client.beta.vector_stores.create(name="Documents")
+    def __init__(self, vector_store_id="vs_O1dgf0DYPPwlft8zgIK1CHKV"):
+        self.vector_store_id = vector_store_id
 
-    def upload_files(self, file_paths):
-        file_streams = [open(path, "rb") for path in file_paths]
-        file_batch = self.client.beta.vector_stores.file_batches.upload_and_poll(
-            vector_store_id=self.vector_store.id, files=file_streams
-        )
-
-# need vector store as last arg
 class AssistantManager:
-    def __init__(self, client, system_message, vector_store):
+    def __init__(self, client, system_message, vector_store_id):
         self.client = client
         self.assistant = self.client.beta.assistants.create(
             name="SQLConverter",
             instructions=system_message,
             tools=[{"type": "file_search"}],
-            model="gpt-4o",
-            temperature=0.5
-        )
-        self.assistant = self.client.beta.assistants.update(
-            assistant_id=self.assistant.id,
-            tool_resources={"file_search": {"vector_store_ids": [vector_store.id]}},
+            model="gpt-4o-2024-08-06",
+            temperature=0.5,
+            tool_resources={
+                "file_search": {
+                "vector_store_ids": [vector_store_id]
+                }
+            }
         )
 
     def create_thread(self):
         return self.client.beta.threads.create()
 
-    def send_message(self, thread_id, content):
+    def send_message(self, thread_id, content, role="user"):
         return self.client.beta.threads.messages.create(
             thread_id=thread_id,
-            role="user",
+            role=role,
             content=content
         )
 
@@ -113,25 +107,21 @@ class ErrorHandler:
 
 # Main 
 def main():
-    config = ConfigLoader()
+    config = ConfigLoader() 
+
     client = OpenAIClient(config.api_key)
 
-    code_reader = CodeReader("files/code_PLSQL.txt")
+    code_reader = CodeReader("files/code_SQR.txt")
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
     system_message, prompt = prompt_generator.generate_prompt()
 
-    vector_store_manager = VectorStoreManager(client.client)
-    # vector_store_manager.upload_files(["Documents\ET.txt", "Documents\Snowflake_Procedures.txt", "Documents\SQR.txt"])
-    vector_store_manager.upload_files(["Documents\Snowflake_Procedures.txt"])
+    vector_store_manager = VectorStoreManager()
+    vector_store_id = vector_store_manager.vector_store_id
 
-    assistant_manager = AssistantManager(client.client, 
-                                         system_message, 
-                                         vector_store = vector_store_manager.vector_store)
+    assistant_manager = AssistantManager(client.client, system_message, vector_store_id)
     thread = assistant_manager.create_thread()
-    # print(thread.id)
-    # print(assistant_manager.assistant.id)
     assistant_manager.send_message(thread.id, prompt)
     assistant_manager.run_thread(thread.id)
 
