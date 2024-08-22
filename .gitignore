@@ -1,3 +1,6 @@
 .env
 __pycache__/
 *.py[cod]
+files/assistant_id
+files/thread_id
+files/thread_id
