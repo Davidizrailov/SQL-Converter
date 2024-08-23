@@ -1,27 +1,24 @@
-import cx_Oracle
 
-# Define the connection parameters
 import cx_Oracle
+import os
 
+# Define the path to your Oracle Instant Client
 oracle_client_path = r"C:\Users\NW538RY\OneDrive - EY\Desktop\instantclient\instantclient_23_4"
 
 # Initialize the Oracle Client with the specified path
 cx_Oracle.init_oracle_client(lib_dir=oracle_client_path)
 
-# print(cx_Oracle.clientversion())
+# Set the TNS_ADMIN environment variable to point to the wallet directory
+os.environ['TNS_ADMIN'] = r"C:\Users\NW538RY\OneDrive - EY\Desktop\Wallet_TESTDATABASE"
 
 # Define the connection parameters
 dsn = cx_Oracle.makedsn('adb.region.oraclecloud.com', 1521, service_name='mydb_high')
 
-# Path to the wallet
-wallet_location = r"C:\Users\NW538RY\OneDrive - EY\Desktop\Wallet_TESTDATABASE"
-
 # Establish the connection
 connection = cx_Oracle.connect(
-    user='ADMIN', 
-    password='!EnKETnA2NXjD9y',
-    dsn=dsn,
-    config_dir=wallet_location
+    user='ADMIN',
+    password='YourAdminPassword',
+    dsn=dsn
 )
 
 # Create a cursor
