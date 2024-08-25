@@ -3,6 +3,7 @@ import prompts
 from openai import OpenAI
 import time
 from dotenv import load_dotenv
+import os
 
 class ConfigLoader:
     def __init__(self, language="SQR"):
@@ -111,7 +112,7 @@ def main():
 
     client = OpenAIClient(config.api_key)
 
-    code_reader = CodeReader("files/code_SQR.txt")
+    code_reader = CodeReader(os.path.join("files", "code_SQR.txt"))
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
