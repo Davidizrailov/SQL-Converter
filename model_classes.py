@@ -3,7 +3,8 @@ import dotenv
 import prompts
 from openai import OpenAI
 import time
-        
+import os
+
 #########################################################################################################
 
 dotenv.load_dotenv()
@@ -147,15 +148,15 @@ def main():
     config = ConfigLoader()
     client = OpenAIClient(config.api_key)
 
-    code_reader = CodeReader("files/code_PLSQL.txt")
+    code_reader = CodeReader(os.path.join("files", "code_PLSQL.txt"))
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
     system_message, prompt = prompt_generator.generate_prompt()
 
     # vector_store_manager = VectorStoreManager(client.client)
-    # vector_store_manager.upload_files(["Documents\ET.txt", "Documents\Snowflake_Procedures.txt", "Documents\SQR.txt"])
-    # vector_store_manager.upload_files(["Documents\Snowflake_Procedures.txt"])
+    # vector_store_manager.upload_files([os.path.join("Documents", "ET.txt"), os.path.join("Documents", "Snowflake_Procedures.txt"), os.path.join("Documents", "SQR.txt")])
+    # vector_store_manager.upload_files([os.path.join("Documents", "Snowflake_Procedures.txt")])
 
     vector_store_ids = VectorStoreIDs(language=config.language).get()
 

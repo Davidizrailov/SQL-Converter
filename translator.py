@@ -1,5 +1,6 @@
 from model_classes import *
 from code_checker import Linter
+import os
 
 class Translator:
     def __init__(self, code, config):
@@ -11,7 +12,7 @@ class Translator:
 
     def translate(self, demo=True):
         if demo:
-            with open("files/response_1.txt") as file:
+            with open(os.path.join("files", "response_1.txt")) as file:
                 translated_code = file.read()
             return translated_code
         else:
@@ -24,8 +25,8 @@ class Translator:
             system_message, prompt = prompt_generator.generate_prompt()
 
             # vector_store_manager = VectorStoreManager(client.client)
-            # vector_store_manager.upload_files(["Documents\ET.txt", "Documents\Snowflake_Procedures.txt", "Documents\SQR.txt"])
-            # vector_store_manager.upload_files(["Documents\Snowflake_Procedures.txt"])
+            # vector_store_manager.upload_files([os.path.join("Documents", "ET.txt"), os.path.join("Documents", "Snowflake_Procedures.txt"), os.path.join("Documents", "SQR.txt")])
+            # vector_store_manager.upload_files([os.path.join("Documents", "Snowflake_Procedures.txt")])
 
             vector_store_ids = VectorStoreIDs(language=self.config.language).get()
             print(vector_store_ids)
@@ -55,7 +56,7 @@ class Translator:
     
     def retry(self, error_message, demo=True):
         if demo:
-            with open("old/response_2.txt") as file:
+            with open(os.path.join("old", "response_2.txt")) as file:
                 translated_code_retry = file.read()
         else:
             # assistant_manager, thread = self.load()
@@ -65,24 +66,24 @@ class Translator:
     
     
     def save(self):
-        with open("files/assistant_id","w") as f:
+        with open(os.path.join("files", "assistant_id"), "w") as f:
             f.write(self.assistant_manager.assistant.id)
         f.close()
-        with open("files/thread_id","w") as f:
+        with open(os.path.join("files", "thread_id"),"w") as f:
             f.write(self.thread.id)
         f.close()
 
     def load(self):
-        with open("files/assistant_id", 'r') as f:
+        with open(os.path.join("files", "assistant_id"), 'r') as f:
             assistant_id = f.read()
-        with open("files/thread_id", 'r') as f:
+        with open(os.path.join("files", "thread_id"), 'r') as f:
             thread_id = f.read()
             # thread_id = pickle.load(f)            
         return assistant_id, thread_id
     
     def get_follow_up(self, error_message, demo = False):
         if demo:
-            with open("files/response_2.txt") as file:
+            with open(os.path.join("files", "response_2.txt")) as file:
                 follow_up = file.read()
         else:
             assistant_id, thread_id = self.load()
