@@ -1,11 +1,13 @@
 #PLACEHOLDER
-with open("Documents\Snowflake_Procedures.txt", "r", encoding="utf-8") as file:
+import os
+
+with open(os.path.join("Documents", "Snowflake_Procedures.txt"), "r", encoding="utf-8") as file:
     Snowflake_documentation = file.read()
 
-with open("Documents\ET.txt", "r", encoding="utf-8") as file:
+with open(os.path.join("Documents", "ET.txt"), "r", encoding="utf-8") as file:
     ET = file.read()
 
-with open("Documents\SQR.txt", "r", encoding="utf-8") as file:
+with open(os.path.join("Documents", "SQR.txt"), "r", encoding="utf-8") as file:
     SQR = file.read()
 
 SQR = SQR.strip()
