@@ -4,13 +4,15 @@ import streamlit as st
 import time
 from translator import Translator
 from model_classes import ConfigLoader
+import os
 
 
 #############################################################################################            
 # Layout
 #############################################################################################            
 
-st.image("files\ey.jpg",width=300)  
+image_url = os.path.join("files","ey.jpg")
+st.image(image_url,width=300)  
 st.title("EY Code Translator")
 
 st.write('''Welcome to the EY Code Translator, a GenAI-powered tool designed to streamline code translation and debugging. This tool supports translation between SQR, Easytrieve, and PLSQL, using advanced AI models GPT-4 and GPT-4o for accurate and efficient conversions.

@@ -2,6 +2,11 @@
 import cx_Oracle
 import os
 
+# (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ca-toronto-1.oraclecloud.com))(connect_data=(service_name=g4ca7f11b8779ff_testdatabase_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+# (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ca-toronto-1.oraclecloud.com))(connect_data=(service_name=g4ca7f11b8779ff_testdatabase_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+# (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ca-toronto-1.oraclecloud.com))(connect_data=(service_name=g4ca7f11b8779ff_testdatabase_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
 # Define the path to your Oracle Instant Client
 oracle_client_path = r"C:\Users\NW538RY\OneDrive - EY\Desktop\instantclient\instantclient_23_4"
 
@@ -12,12 +17,12 @@ cx_Oracle.init_oracle_client(lib_dir=oracle_client_path)
 os.environ['TNS_ADMIN'] = r"C:\Users\NW538RY\OneDrive - EY\Desktop\Wallet_TESTDATABASE"
 
 # Define the connection parameters
-dsn = cx_Oracle.makedsn('adb.region.oraclecloud.com', 1521, service_name='mydb_high')
+dsn = cx_Oracle.makedsn('adb.ca-toronto-1.oraclecloud.com', 1521, service_name='g4ca7f11b8779ff_testdatabase_high')
 
 # Establish the connection
 connection = cx_Oracle.connect(
     user='ADMIN',
-    password='YourAdminPassword',
+    password='!EnKETnA2NXjD9y',
     dsn=dsn
 )
 

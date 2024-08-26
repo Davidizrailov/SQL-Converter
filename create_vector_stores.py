@@ -32,18 +32,18 @@ client = OpenAI(api_key=api_key)
 # print(et_vs_id)
 
 
-# file = client.files.create(
-#   file = open("Documents/ET.txt", "rb"),
-#   purpose='assistants'
-# )
-# print("*********************","File created. ID:",file.id)
+file = client.files.create(
+  file = open("Documents/SQR.txt", "rb"),
+  purpose='assistants'
+)
+print("*********************","File created. ID:",file.id)
 
 SNOWFLAKE_FILE_ID  = "file-WedBVmjgCUwsYNLbpJom7zot"
-EASYTRIEVE_FILE_ID = "file-eZGIXz9DRhE7W4rgE17Md3nP"
+# EASYTRIEVE_FILE_ID = "file-eZGIXz9DRhE7W4rgE17Md3nP"
 
 vector_store = client.beta.vector_stores.create(
-  name="Easytrieve Documentation",
-  file_ids=[SNOWFLAKE_FILE_ID, EASYTRIEVE_FILE_ID]
+  name="SQR Documentation",
+  file_ids=[SNOWFLAKE_FILE_ID, file.id]
 )
 print("*********************","Vector store created. ID:", vector_store.id)
 
