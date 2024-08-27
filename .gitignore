@@ -4,3 +4,4 @@ __pycache__
 *.py[cod]
 *.temp
 .venv
+environment.yml

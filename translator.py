@@ -1,5 +1,6 @@
 from model_classes import *
 from code_checker import Linter
+import os
 
 class Translator:
     def __init__(self, code, language):
@@ -11,7 +12,7 @@ class Translator:
 
     def translate(self, demo=True):
         if demo:
-            with open("files/response_1.txt") as file:
+            with open(os.path.join("files", "response_1.txt")) as file:
                 translated_code = file.read()
             return translated_code
         else:
@@ -25,8 +26,8 @@ class Translator:
             system_message, prompt = prompt_generator.generate_prompt()
 
             vector_store_manager = VectorStoreManager(client.client)
-            # vector_store_manager.upload_files(["Documents\ET.txt", "Documents\Snowflake_Procedures.txt", "Documents\SQR.txt"])
-            vector_store_manager.upload_files(["Documents\Snowflake_Procedures.txt"])
+            # vector_store_manager.upload_files([os.path.join("Documents", "ET.txt"), os.path.join("Documents", "Snowflake_Procedures.txt"), os.path.join("Documents", "SQR.txt")])
+            vector_store_manager.upload_files([os.path.join("Documents", "Snowflake_Procedures.txt")])
 
             self.assistant_manager = AssistantManager(client.client, 
                                                 system_message, 
@@ -52,7 +53,7 @@ class Translator:
     
     def retry(self, error_message, demo=True):
         if demo:
-            with open("old/response_2.txt") as file:
+            with open(os.path.join("old", "response_2.txt")) as file:
                 translated_code_retry = file.read()
         else:
             # assistant_manager, thread = self.load()
