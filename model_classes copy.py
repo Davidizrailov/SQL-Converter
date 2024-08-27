@@ -127,6 +127,7 @@ def main():
     print("analysis complete!")
     
     response_message = assistant_manager.get_response_message(thread.id)
+    # print(response_message)
     prompt2 = prompts.generate_prompt2_PLSQL(response_message)
     assistant_manager.send_message(thread.id, prompt2)
     assistant_manager.run_thread(thread.id)
