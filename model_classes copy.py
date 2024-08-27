@@ -128,7 +128,15 @@ def main():
     
     response_message = assistant_manager.get_response_message(thread.id)
     # print(response_message)
-    prompt2 = prompts.generate_prompt2_PLSQL(response_message)
+
+    if config.language == "PLSQL":
+        prompt2 = prompts.generate_prompt2_PLSQL(response_message)
+    elif config.language == "SQR":
+        prompt2 = prompts.generate_prompt2_SQR(response_message)
+    elif config.language == "ET":
+        prompt2 = prompts.generate_prompt2_ET(response_message)
+
+
     assistant_manager.send_message(thread.id, prompt2)
     assistant_manager.run_thread(thread.id)
     print("compilation complete!")
