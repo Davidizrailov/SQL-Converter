@@ -5,7 +5,7 @@ import time
 from dotenv import load_dotenv
 
 class ConfigLoader:
-    def __init__(self, language="PLSQL"):
+    def __init__(self, language="ET"):
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.language = language
@@ -111,7 +111,7 @@ def main():
 
     client = OpenAIClient(config.api_key)
 
-    code_reader = CodeReader("files/code_PLSQL.txt")
+    code_reader = CodeReader("files/code_ET.txt")
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
@@ -127,7 +127,9 @@ def main():
     print("analysis complete!")
     
     response_message = assistant_manager.get_response_message(thread.id)
-    # print(response_message)
+    
+    #show analysis
+    #print(response_message)
 
     if config.language == "PLSQL":
         prompt2 = prompts.generate_prompt2_PLSQL(response_message)
