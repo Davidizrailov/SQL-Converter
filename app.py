@@ -45,16 +45,26 @@ if 'translator' not in st.session_state:
 #############################################################################################            
 
 language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve"])
-if language=="Easytrieve": language="ET"
+
+if language=="Easytrieve": 
+    language="ET"
+
 config = ConfigLoader(language=language)
 
-model = st.selectbox("Model", ["GPT4", "GPT4o"])
+help_text = '''* **Direct Approach:** Directly translates the source code. Ideal for simpler code structures, this option minimizes token usage.
+* **Two-step Approach:** First, generates a detailed description of the source code, then creates the target code based on this description. Best suited for complex code, though it requires more tokens.'''
+
+approach = st.selectbox("Approach", 
+                        ["Direct Approach", "Two-step Approach"], 
+                        help = help_text)
+
+# model = st.selectbox("Model", ["GPT4", "GPT4o"])
 
 #############################################################################################            
 # Input Code
 #############################################################################################            
 
-uploaded_file = st.file_uploader("Document to translate", type=["txt", "docx", "pdf"])
+uploaded_file = st.file_uploader("Document to translate", type=["txt", "sql", "sqr"])
 
 if uploaded_file is not None:
     file_content = uploaded_file.read().decode("utf-8")
@@ -67,6 +77,7 @@ if uploaded_file is not None:
 #############################################################################################            
 # Translation
 #############################################################################################            
+    
     demo = False
     st.session_state.translator = Translator(code   = file_content, 
                                              config = config)
@@ -93,18 +104,18 @@ if uploaded_file is not None:
 #############################################################################################            
 # Syntax check
 #############################################################################################            
-    demo = True
-    if st.button("Test Syntax", use_container_width=True):
-        syn_error = st.session_state.translator.test_syntax(translated_code, demo=demo)
-        placeholder_syn = st.empty()
-        placeholder_syn.text("Analyzing syntax...")
-        time.sleep(1)
-        if syn_error:
-            with placeholder_syn.container():
-                st.error("The following syntax errors were found:")
-                st.write(syn_error)
-        else:
-            placeholder_syn.info("No syntax errors were found")
+    # demo = True
+    # if st.button("Test Syntax", use_container_width=True):
+    #     syn_error = st.session_state.translator.test_syntax(translated_code, demo=demo)
+    #     placeholder_syn = st.empty()
+    #     placeholder_syn.text("Analyzing syntax...")
+    #     time.sleep(1)
+    #     if syn_error:
+    #         with placeholder_syn.container():
+    #             st.error("The following syntax errors were found:")
+    #             st.write(syn_error)
+    #     else:
+    #         placeholder_syn.info("No syntax errors were found")
 
 #############################################################################################            
 # Debugging 
