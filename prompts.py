@@ -94,8 +94,7 @@ def generate_prompt2_PLSQL(code_description):
 def generate_prompt_ET(code):
     prompt = f"""
 
-        Below is the code I want you to convert from Oracle EasyTrieve to Snowflake SQL. Provide me 5 variations of ONLY the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Put '+++++' as a delimiter between the 5 versions so that I can seperate them.
+        Below is some Easytrieve code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
