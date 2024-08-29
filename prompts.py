@@ -85,7 +85,8 @@ def generate_prompt2_PLSQL(code_description):
     prompt=f"""
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Use python 3.8 rather than javascript. Make sure to add a handler. Call the procedure as well. Utilize the snowflake documentation file is needed.
+        There should be no text other than the code. Use python 3.8 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+        Utilize the snowflake documentation file is needed.
         code description: {code_description} 
     """
     return prompt
