@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 class ConfigLoader:
     def __init__(self, language="SQR"):
         load_dotenv()
-        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_key = os.getenv("OPENAI_API_KEY_EPS")
         self.language = language
 
 class OpenAIClient:
@@ -37,9 +37,14 @@ class PromptGenerator:
 
 
 class VectorStoreManager:
-    def __init__(self, vector_store_id="vs_O1dgf0DYPPwlft8zgIK1CHKV"):
-        self.vector_store_id = vector_store_id
-
+    def __init__(self, language):
+        if language == "PLSQL":
+            self.vector_store_id = os.getenv("PLSQL_VS_ID")            
+        elif language == "SQR":
+            self.vector_store_id = os.getenv("SQR_VS_ID")            
+        elif language == "ET":
+            self.vector_store_id = os.getenv("EASYTRIEVE_VS_ID")
+            
 class AssistantManager:
     def __init__(self, client, vector_store_id):
         self.client = client
@@ -107,7 +112,7 @@ class ErrorHandler:
 
 # Main 
 def main():
-    config = ConfigLoader() 
+    config = ConfigLoader(language="SQR") 
 
     client = OpenAIClient(config.api_key)
 
@@ -117,7 +122,7 @@ def main():
     prompt_generator = PromptGenerator(config.language, code)
     system_message, prompt = prompt_generator.generate_prompt()
 
-    vector_store_manager = VectorStoreManager()
+    vector_store_manager = VectorStoreManager(language=config.language)
     vector_store_id = vector_store_manager.vector_store_id
 
     assistant_manager = AssistantManager(client.client, vector_store_id)
@@ -130,13 +135,8 @@ def main():
     
     #show analysis
     print(response_message)
-
-    if config.language == "PLSQL":
-        prompt2 = prompts.generate_prompt2_PLSQL(response_message)
-    elif config.language == "SQR":
-        prompt2 = prompts.generate_prompt2_SQR(response_message)
-    elif config.language == "ET":
-        prompt2 = prompts.generate_prompt2_ET(response_message)
+    
+    prompt2 = prompts.generate_prompt2(response_message, config.language)
 
 
     assistant_manager.send_message(thread.id, prompt2)
