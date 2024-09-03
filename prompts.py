@@ -1,39 +1,16 @@
-#PLACEHOLDER
-import os
-
-with open(os.path.join("Documents", "Snowflake_Procedures.txt"), "r", encoding="utf-8") as file:
-    Snowflake_documentation = file.read()
-
-with open(os.path.join("Documents", "ET.txt"), "r", encoding="utf-8") as file:
-    ET = file.read()
-
-with open(os.path.join("Documents", "SQR.txt"), "r", encoding="utf-8") as file:
-    SQR = file.read()
-
-SQR = SQR.strip()
-
 
 system_message_PLSQL = f"""
-You are an expert in all forms of SQL, with a focus on converting SQL code between different dialects. Your primary task today is to convert the provided SQL code from Oracle to Snowflake while maintaining its functionality and logic.
+You are an expert in converting code between different languages. Your primary task is to convert the provided SQL code from Oracle PL/SQL to Snowflake.
 
 Details:
 
-Source Dialect: Oracle PL SQL (commonly used in legacy databases for procedures)
+Source Dialect: Oracle PL/SQL (commonly used in legacy databases for procedures)
 Target Dialect: Snowflake (commonly used in modern data warehouses)
 Task: Convert the SQL code while preserving the original query's structure and logic. Adapt functions and keywords to suit the Snowflake dialect. Handle differences in data types or functions accurately.
-Output Length: Provide a complete conversion of the given SQL code without unnecessary elaboration.
+Output: Explanation of the translation steps and the input code and at the end the full completed translated code.
 
-Steps:
-
-Identify and adapt any Oracle-specific syntax and functions to their Snowflake equivalents.
-Ensure that the converted code maintains the same logic and functionality.
-Verify that all data types and functions are compatible with Snowflake.
-
-Priority: Ensure the converted SQL code is robust and error-free for enterprise-level usage.
-
-Instructions:
-Follow the specified steps for conversion.
-Use python 3.8. Don't use javascript or SQL use python for the language. Make sure to properly deal with the keyword "OUT" as it is an unsupported data type. I have provided examples and documentation about scripting python in Snowflake can be found here: {Snowflake_documentation}
+Only use python 3.8 and SQL in translated code. Make sure to properly deal with the keyword "OUT" as it is an unsupported data type. 
+I have provided examples and documentation about scripting python in Snowflake can be found in the vector store.
 
 """
 
@@ -57,29 +34,38 @@ Priority: Ensure the converted SQL code is robust and error-free for enterprise-
 
 Instructions:
 Follow the specified steps for conversion.
+I have provided documentation in the vector store. DO NOT USE JAVASCRIPT USE PYTHON 3.11.
 
 """
 
 system_message_SQR = f"""
-You are an expert in all forms of SQL, with a focus on converting SQL code between different dialects. Your primary task today is to convert the provided SQR code from Oracle to Snowflake while maintaining its functionality and logic.
+System Role: You are an expert in all forms of SQL, specializing in converting SQL code between different dialects. Your task is to first read and fully understand the provided SQR code written in Oracle, without immediately generating any output. Once you comprehend the code, proceed to convert it into Snowflake SQL while preserving its functionality and logic.
 
 Details:
 
-Source Dialect: Oracle SQR (commonly used in legacy databases for report preperation)
-Target Dialect: Snowflake (commonly used in modern data warehouses)
-Task: Convert the SQL code while preserving the original query's structure and logic. Adapt functions and keywords to suit the Snowflake dialect. Handle differences in data types or functions accurately.
-Output Length: Provide a complete conversion of the given SQL code without unnecessary elaboration.
+Source Dialect: Oracle SQR (used in legacy databases for report preparation)
+Target Dialect: Snowflake (used in modern data warehouses)
+Task: Convert the SQL code while ensuring the structure and logic of the original query are maintained. Adapt functions, keywords, and data types to be compatible with Snowflake.
+Process:
 
-Steps:
+Comprehension Phase:
 
-Identify and adapt any Oracle-specific syntax and functions to their Snowflake equivalents.
-Ensure that the converted code maintains the same logic and functionality.
-Verify that all data types and functions are compatible with Snowflake.
+Thoroughly read and understand the provided Oracle SQR code.
+Do not generate any output during this phase; focus solely on internal comprehension.
 
-Priority: Ensure the converted SQL code is robust and error-free for enterprise-level usage.
+Conversion Phase:
+
+The next message will have the code. Once you understood it, begin converting
+Adapt Oracle-specific syntax, functions, and data types to Snowflake equivalents.
+Ensure the converted code preserves the original logic and functionality.
+Validate that all data types and functions are suitable for Snowflake.
+Priority: Produce a robust, error-free SQL conversion that is suitable for enterprise-level use.
 
 Instructions:
-Follow the specified steps for conversion.
+
+Follow the two-phase process of comprehension and conversion.
+Utilize the provided documentation in the vector store as needed.
+Use Python for processing; avoid JavaScript.
 
 """
 
@@ -88,11 +74,20 @@ Follow the specified steps for conversion.
 def generate_prompt_PLSQL(code):
     prompt = f"""
 
-        Below is the code I want you to convert from Oracle PL/SQL to Snowflake SQL. Provide me ONLY the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. 
+        Below is some Oracle PL/SQL Code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
+    """
+    return prompt
+
+def generate_prompt2_PLSQL(code_description):
+    prompt=f"""
+        Using the code description, write me a snowflake procedure which matches this description. 
+        Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
+        There should be no text other than the code. Use python 3.8 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+        Utilize the snowflake documentation file is needed.
+        code description: {code_description} 
     """
     return prompt
 
@@ -100,21 +95,51 @@ def generate_prompt_PLSQL(code):
 def generate_prompt_ET(code):
     prompt = f"""
 
-        Below is the code I want you to convert from Oracle EasyTrieve to Snowflake SQL. Provide me 5 variations of ONLY the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Put '+++++' as a delimiter between the 5 versions so that I can seperate them.
+        Below is some Easytrieve code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
+    """
+    return prompt
+
+def generate_prompt2_ET(code_description):
+    prompt=f"""
+        Using the code description, write me a snowflake procedure which matches this description. 
+        Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
+        There should be no text other than the code. If you are using a stored procedure, Use python 3.8 rather than javascript. Make sure to add a handler. 
+        Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+        Utilize the SQR Documentation file is needed.
+        code description: {code_description} 
     """
     return prompt
 
 def generate_prompt_SQR(code):
     prompt = f"""
 
-        Below is the code I want you to convert from Oracle SQR to Snowflake SQL. Provide me ONLY the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Make sure the code actually displays the report.
+        Below is some Structured Query Report (SQR) Code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
     """
     return prompt
+
+def generate_prompt2_SQR(code_description):
+    prompt=f"""
+        Using the code description, write me a snowflake procedure which matches this description. 
+        Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
+        There should be no text other than the code. If you are using a stored procedure, Use python 3.8 rather than javascript. Make sure to add a handler. 
+        Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+        Utilize the SQR Documentation file is needed.
+        code description: {code_description} 
+    """
+    return prompt
+    
+    
+def generate_prompt2(response_message, language):
+    if language == "PLSQL":
+        prompt2 = generate_prompt2_PLSQL(response_message)
+    elif language == "SQR":
+        prompt2 = generate_prompt2_SQR(response_message)
+    elif language == "ET":
+        prompt2 = generate_prompt2_ET(response_message)
+    return prompt2 
