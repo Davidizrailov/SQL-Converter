@@ -39,7 +39,7 @@ class PromptGenerator:
 class VectorStoreManager:
     def __init__(self, language):
         if language == "PLSQL":
-            self.vector_store_id = os.getenv("PLSQL_VS_ID")            
+            self.vector_store_id = os.getenv("SNOWFLAKE_VS_ID")            
         elif language == "SQR":
             self.vector_store_id = os.getenv("SQR_VS_ID")            
         elif language == "ET":
