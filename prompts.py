@@ -132,7 +132,7 @@ def generate_prompt2_SQR(code_description):
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
         There should be no text other than the code. If you are using a stored procedure, Use python 3.8 rather than javascript. Make sure to add a handler. 
-        Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+        Call the procedure as well outside of the procedure creation. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
         Utilize the SQR Documentation file is needed.
         code description: {code_description} 
     """
@@ -147,3 +147,32 @@ def generate_prompt2(response_message, language):
     elif language == "ET":
         prompt2 = generate_prompt2_ET(response_message)
     return prompt2 
+
+
+def content_assessment(code):
+    prompt = f"""
+    below is a PL/SQL package specification. You have to extract the following information from reading the source in a semicolon seperated value format. put procedures/function in rows and their corresponding information in columns Required Information: How many functions/procedure are present The name of EVERY PROCEDURE/FUNCTION along with their PARAMETERS and OUTPUT VALUES/TYPES
+    ALL THE TABLES accessed from the procedures/functions OUTPUT TEXT printed to standard output ERRORS THROWN.
+
+    Here is the code:
+    {code}
+    """
+
+    return prompt
+
+def content_assessment2(code):
+    prompt = f"""
+    below is a PL/SQL code. You have to extract the following information from reading the source in a semicolon seperated value format. 
+    Required Information: 
+    1) Name of the procedure
+    2) The parameters used
+    3) Output Values/Types	
+    4) Tables Accessed	
+    5) Output Text	
+    6) Errors Thrown
+
+    Here is the code:
+    {code}
+    """
+
+    return prompt

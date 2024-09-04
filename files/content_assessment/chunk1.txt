@@ -1,0 +1,241 @@
+-- Earl Tilluck
+-- This is a package that contains 25 subprograms and supporting constructs for the JTA database.
+
+
+/*
+    01 
+    Exception Package
+    
+    This package keeps our exceptions in on place for reference
+    and gives us procedures to call, so we can raise an exception 
+    and also log the exception into an error table.
+*/
+CREATE OR REPLACE PACKAGE jta_error
+IS
+    invalid_input EXCEPTION;
+    PRAGMA exception_init (invalid_input, -20201);
+    missing_data EXCEPTION;
+    PRAGMA exception_init (missing_data, -20202);
+    
+    -- procedures for quick exception handling
+    PROCEDURE throw (
+        p_code IN NUMBER,
+        p_message   IN VARCHAR2
+    );
+    PROCEDURE log_error (
+        p_code IN NUMBER,
+        p_message   IN VARCHAR2
+    );
+    PROCEDURE show_in_console (
+        p_code IN NUMBER := NULL,
+        p_message IN VARCHAR2
+    );
+END jta_error;
+/
+
+-- package body for jta_error
+CREATE OR REPLACE PACKAGE BODY jta_error
+IS
+
+    /*
+        Throw an exception, this makes coding a little simpler
+    */
+    PROCEDURE throw (
+        p_code IN NUMBER,
+        p_message   IN VARCHAR2
+    )
+    IS
+    BEGIN
+        raise_application_error(p_code, p_message);
+    END;
+    
+    /*
+        Log the exception to an error table.
+        
+        Most procedures will do this when exceptions occur.
+        For development we will show the error in console as well.
+    */
+    PROCEDURE log_error (
+      p_code IN NUMBER,
+      p_message   IN VARCHAR2
+    )
+    IS
+        -- autonomous transaction needed, otherwise rollback will remove log entry
+        PRAGMA autonomous_transaction; 
+    BEGIN
+        -- show info in console, disable this line in production
+        dbms_output.put_line('error logged: ' || p_message);
+        -- log error into error table
+        INSERT INTO jta_errors (error_id, date_time, user_name, code, message)
+        VALUES (error_seq.NEXTVAL, sysdate, USER, p_code, p_message);
+        COMMIT;
+    END;
+    
+    /*
+        Show an error in the console.
+        
+        Sometimes you don't want to log an error because it is not a
+        note worthy failure, e.g. it is not a problem if no data was 
+        found for a query.
+        
+        This procedure is available for testing purposes
+    */
+    PROCEDURE show_in_console (
+        p_code IN NUMBER := NULL,
+        p_message IN VARCHAR2
+    )
+    IS
+    BEGIN
+        dbms_output.put_line('A trivial error occured: ' || p_message);        
+    END;
+    
+END jta_error;
+/
+
+
+-- JTA Package Specification
+-- This package contains the main constructs for the jta database
+CREATE OR REPLACE PACKAGE jta 
+IS
+    -- some constants
+    nat_insurance_rate CONSTANT NUMBER := 0.132;
+    hlt_surcharge_rate CONSTANT NUMBER := 0.005;
+    
+    -- public procedures and functions
+    PROCEDURE process_payroll (
+        p_date IN DATE
+    );
+    
+    PROCEDURE update_inventory (
+        p_product_id IN cost_sales_tracker.product_id%TYPE,
+        p_quantity IN NUMBER,
+        p_new_cost IN cost_sales_tracker.cost_per_unit%TYPE
+    );
+    
+    PROCEDURE restock_urgent (
+        p_staff_id IN staff.staff_id%TYPE
+    );
+    
+    FUNCTION get_last_cashier_payout (
+        p_staff_id staff.staff_id%TYPE
+    ) RETURN cashier_drawer_assignments.cash_amount_end%TYPE;
+    
+    FUNCTION get_money_inflow (
+        p_location_id locations.location_id%TYPE,
+        p_start_date DATE,
+        p_end_date DATE,
+        p_type VARCHAR2 := 'cash'
+    ) RETURN cashier_drawer_assignments.cash_amount_start%TYPE;
+    
+    PROCEDURE update_taxes;
+    
+    TYPE price_change_record IS RECORD (
+        product_id products.product_id%TYPE, 
+        product_name products.product_name%TYPE,
+        date_changed price_history.start_date%TYPE,
+        old_price price_history.price_rate%TYPE,
+        new_price price_history.price_rate%TYPE, 
+        direction VARCHAR2(5)
+    );
+    
+    TYPE price_changes_table IS TABLE OF price_change_record 
+    INDEX BY BINARY_INTEGER;
+    
+    FUNCTION get_price_changes (
+        p_product_id products.product_id%type,
+        p_start_date DATE,
+        p_end_date DATE
+    ) RETURN price_changes_table;
+    
+    PROCEDURE get_profits_for (
+        p_start_date IN DATE,
+        p_end_date IN DATE,
+        p_goods_sold OUT NOCOPY NUMBER,
+        p_gross_gain OUT NOCOPY NUMBER,
+        p_costs OUT NOCOPY NUMBER,
+        p_net_gain OUT NOCOPY NUMBER
+    );
+    
+    PROCEDURE get_recommended_price_for (
+        p_product_id IN products.product_id%TYPE,
+        p_avg_cost OUT NOCOPY products.price_rate%TYPE,
+        p_old_price OUT NOCOPY products.price_rate%TYPE,
+        p_new_price OUT NOCOPY products.price_rate%TYPE
+    );
+    
+    PROCEDURE evaluate_po_order_line (
+        p_line_id IN purchase_order_lines.po_line_id%TYPE,
+        p_not_enough_to_restock OUT NOCOPY BOOLEAN,
+        p_not_at_min_level OUT NOCOPY BOOLEAN
+    );
+    
+    PROCEDURE lookup_barcode (
+        p_barcode IN VARCHAR2,
+        p_product_id OUT NOCOPY products.product_id%TYPE,
+        p_product_name OUT NOCOPY products.product_name%TYPE,
+        p_price_rate OUT NOCOPY products.price_rate%TYPE,
+        p_tax_code OUT NOCOPY tax_rates.tax_code%TYPE,
+        p_tax_rate OUT NOCOPY tax_rates.tax_rate%TYPE
+    );
+    
+    PROCEDURE update_from_bill (
+        p_bill_id IN customer_bills.bill_id%TYPE
+    );
+    
+    PROCEDURE update_sales;
+    
+    FUNCTION receive_payment (
+        p_bill_id customer_bills.bill_id%TYPE,
+        p_type customer_bills.payment_type%TYPE,
+        p_amount customer_bills.payment_amount%TYPE
+    ) RETURN NUMBER;
+    
+    PROCEDURE add_item_to_bill (
+        p_bill_id IN customer_bills.bill_id%TYPE,
+        p_barcode IN products.barcode%TYPE
+    );
+    
+    FUNCTION get_tax_payment_due (
+        p_tax_code tax_rates.tax_code%TYPE,
+        p_year DATE
+    ) RETURN NUMBER;
+    
+    FUNCTION get_quantity_sold (
+        p_product_id products.product_id%TYPE,
+        p_location_id locations.location_id%TYPE,
+        p_date_start DATE,
+        p_date_end DATE
+    ) RETURN NUMBER;
+    
+    PROCEDURE stock_check (
+        p_product_id IN products.product_id%TYPE,
+        p_location_id IN locations.location_id%TYPE,
+        p_value_counted INTEGER,
+        p_in_stock OUT NOCOPY INTEGER
+    );
+    
+    PROCEDURE sunday_check (
+        p_staff_id IN staff.staff_id%TYPE,
+        p_month IN DATE,
+        p_sundays OUT NOCOPY INTEGER,
+        p_available OUT NOCOPY BOOLEAN
+    );
+    
+    PROCEDURE payout (
+        p_staff_id IN staff.staff_id%TYPE,
+        p_begin_date IN DATE,
+        p_end_date IN DATE,
+        p_gross_pay OUT NOCOPY payroll.gross_pay%TYPE,
+        p_net_pay OUT NOCOPY payroll.net_pay%TYPE,
+        p_hlt OUT NOCOPY payroll.hlt_surcharge_deduction%TYPE,
+        p_nat OUT NOCOPY payroll.nat_insurance_deduction%TYPE,
+        p_deductions OUT NOCOPY payroll.net_pay%TYPE
+    );
+    
+    FUNCTION get_name (
+        p_staff_id staff.staff_id%TYPE
+    ) RETURN VARCHAR2;
+    
+    -- end specification
+END jta;
+/

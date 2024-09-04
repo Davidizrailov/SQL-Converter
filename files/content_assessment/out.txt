@@ -1,0 +1,32 @@
+Based on the provided PL/SQL code, here is the extracted information in a semicolon-separated value (SSV) format:
+
+```
+Name of the procedure; The parameters used; Output Values/Types; Tables Accessed; Output Text; Errors Thrown
+payout; p_staff_id IN staff.staff_id%TYPE, p_begin_date IN DATE, p_end_date IN DATE, p_gross_pay OUT NOCOPY payroll.gross_pay%TYPE, p_net_pay OUT NOCOPY payroll.net_pay%TYPE, p_hlt OUT NOCOPY payroll.hlt_surcharge_deduction%TYPE, p_nat OUT NOCOPY payroll.nat_insurance_deduction%TYPE, p_deductions OUT NOCOPY payroll.net_pay%TYPE; p_gross_pay payroll.gross_pay%TYPE, p_net_pay payroll.net_pay%TYPE, p_hlt payroll.hlt_surcharge_deduction%TYPE, p_nat payroll.nat_insurance_deduction%TYPE, p_deductions payroll.net_pay%TYPE; payroll; None; no_data_found, OTHERS
+```
+
+Here is a breakdown of each piece of information:
+
+1. **Name of the procedure**: `payout`
+2. **The parameters used**:
+   - `p_staff_id IN staff.staff_id%TYPE`
+   - `p_begin_date IN DATE`
+   - `p_end_date IN DATE`
+   - `p_gross_pay OUT NOCOPY payroll.gross_pay%TYPE`
+   - `p_net_pay OUT NOCOPY payroll.net_pay%TYPE`
+   - `p_hlt OUT NOCOPY payroll.hlt_surcharge_deduction%TYPE`
+   - `p_nat OUT NOCOPY payroll.nat_insurance_deduction%TYPE`
+   - `p_deductions OUT NOCOPY payroll.net_pay%TYPE`
+3. **Output Values/Types**:
+   - `p_gross_pay payroll.gross_pay%TYPE`
+   - `p_net_pay payroll.net_pay%TYPE`
+   - `p_hlt payroll.hlt_surcharge_deduction%TYPE`
+   - `p_nat payroll.nat_insurance_deduction%TYPE`
+   - `p_deductions payroll.net_pay%TYPE`
+4. **Tables Accessed**: `payroll`
+5. **Output Text**: `None` (There is no specific output text in this procedure)
+6. **Errors Thrown**:
+   - `no_data_found`
+   - `OTHERS`
+
+This format consolidates all the required information into a single semicolon-separated value entry.

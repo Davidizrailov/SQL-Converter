@@ -1,68 +1,59 @@
-Sure, let's break down the Oracle PL/SQL code step by step:
+The provided Structured Query Report (SQR) code is a script used in PeopleSoft to perform various date calculations and manipulations. Here is a step-by-step explanation of what the code is doing:
 
-### Declaration Section
-1. **Variable Declarations:**
-   - `v_employee_id`: Stores the employee ID from the `employees` table.
-   - `v_employee_name`: Stores the first name of the employee from the `employees` table.
-   - `v_new_salary`: Stores the salary of the employee from the `employees` table.
-   - `v_avg_salary`: Stores the average salary of employees in a specific department.
-   - `v_bonus`: Stores the calculated bonus for the employee.
-   - `v_raise`: Stores the calculated raise for the employee.
-   - `v_bonus_percentage`: A constant representing the bonus percentage (10%).
-   - `v_raise_percentage`: A constant representing the raise percentage (5%).
-   - `v_dept_id`: Stores the department ID, initialized to 10.
+1. **Header Section**:
+   - The header provides metadata about the report, including its name (`DATECALC.SQR`), description (PeopleSoft DATE Calculation & Manipulation), and the component it runs under (`PRCSMULTI`).
 
-2. **Cursor Declaration:**
-   - `emp_cursor`: A cursor that selects the `employee_id`, `first_name`, and `salary` from the `employees` table where the `department_id` is equal to `v_dept_id`.
+2. **Include Statements**:
+   - The script includes several external SQC files that contain predefined procedures and functions for setting the environment (`setenv.sqc`), getting the current date and time (`curdttim.sqc`), date and time formatting (`datetime.sqc`), number formatting (`number.sqc`), updating the process API (`stdapi.sqc`), date manipulation functions (`datemath.sqc`), and date validations (`validdt.sqc`).
 
-### Execution Section
-3. **Open Cursor:**
-   - Opens the `emp_cursor` to start fetching data.
+3. **Begin-Program Block**:
+   - The main program starts with the `Begin-Program` block.
+   - It calls three procedures in sequence: `Init_Report`, `Main_Report`, and `Stdapi-Term`.
 
-4. **Loop Through Cursor:**
-   - Enters a loop to fetch data from the cursor into the variables `v_employee_id`, `v_employee_name`, and `v_new_salary`.
-   - The loop continues until there are no more rows to fetch (`emp_cursor%NOTFOUND`).
+4. **Init_Report Procedure**:
+   - This procedure initializes the report by calling three other procedures: `Stdapi-Init`, `Init-DateTime`, and `Init-Number`.
+   - It also calls `Get-Current-DateTime` to retrieve the current date and time.
 
-5. **Inside the Loop:**
-   - **Calculate Bonus:**
-     - `v_bonus := v_new_salary * v_bonus_percentage;`
-     - Calculates the bonus as 10% of the current salary.
-   
-   - **Calculate Raise:**
-     - `v_raise := v_new_salary * v_raise_percentage;`
-     - Calculates the raise as 5% of the current salary.
-   
-   - **Update Salary with Raise:**
-     - `v_new_salary := v_new_salary + v_raise;`
-     - Adds the calculated raise to the current salary.
-   
-   - **Insert Bonus into Bonus Table:**
-     - Inserts the calculated bonus into the `employee_bonus` table with the current date (`SYSDATE`).
-   
-   - **Update Employee's Salary:**
-     - Updates the `employees` table with the new salary for the current employee.
-   
-   - **Output Information:**
-     - Prints the employee ID, name, new salary, and bonus to the console using `DBMS_OUTPUT.PUT_LINE`.
+5. **Main_Report Procedure**:
+   - This is the core procedure where various date calculations and manipulations are performed.
+   - It sets a reference date (`$BackDay`) and another date for year calculations (`$BackDayYear`).
+   - It converts the current date (`$AsOfToday`) to a specific format using `Convert-To-DTU-Date`.
 
-6. **Close Cursor:**
-   - Closes the `emp_cursor` after processing all rows.
+6. **Date Difference Calculations**:
+   - The script calculates the difference in days, months, years, and weeks between `$BackDay` and the current date (`$Today`).
+   - It uses procedures `dtu-diff-days`, `Dtu-Diff-Months`, `Dtu-Diff-years`, and `dtu-diff-weeks` to perform these calculations and stores the results in variables (`$GetDateDiff`, `$GetMonthDiff`, `$GetYearDiff`, `$GetWeekDiff`).
 
-7. **Calculate Average Salary:**
-   - Calculates the average salary of employees in the specified department (`v_dept_id`) and stores it in `v_avg_salary`.
+7. **Date Parsing and String Building**:
+   - It parses the current date into year, month, and day components using `dtu-parse-date`.
+   - It then converts these components to strings and builds two formatted date strings (`$BuildingStringDateV1` and `$BuildingStringDateV2`).
 
-8. **Output Average Salary:**
-   - Prints the average salary of the department to the console using `DBMS_OUTPUT.PUT_LINE`.
+8. **Year Begin and End Calculations**:
+   - It calculates the beginning and end dates of the year 2013 using `DTU-Format-Date` and converts them to a specific format using `Convert-From-DTU-Date`.
 
-### Exception Handling
-9. **Exception Block:**
-   - **NO_DATA_FOUND:**
-     - Handles the case where no employees are found in the specified department and prints a message.
-   
-   - **OTHERS:**
-     - Handles any other exceptions and prints an error message with the error details (`SQLERRM`).
+9. **Date Addition**:
+   - It adds 7 weeks to the current date using `DTU-Add-Weeks` and stores the result in `$WorkDate`.
+   - It also gets the start and end dates of the current month using `Get_Month_Start_Date` and `Get_Month_End_Date`.
 
-### Summary
-- The code processes each employee in department 10, calculates their bonus and raise, updates their salary, and logs the information.
-- It then calculates and logs the average salary for the department.
-- Exception handling ensures that appropriate messages are displayed if no data is found or if any other errors occur.
+10. **Day of the Week Calculation**:
+    - It determines the day of the week for the current date using `DTU-DayOfWeek#`.
+
+11. **Date Addition and Subtraction**:
+    - It subtracts 3 months from the current date using `DTU-Add-Months`.
+    - It subtracts 2 years from the current date using `DTU-Add-Years`.
+
+12. **Age Calculation**:
+    - It calculates the age in years from a given date of birth (`$Dob`) to the current date using `Dtu-Diff-Years`.
+
+13. **Get_Month_End_Date Procedure**:
+    - This procedure calculates the end date of a given month, taking into account leap years.
+
+14. **Get_Month_Start_Date Procedure**:
+    - This procedure calculates the start date of a given month.
+
+15. **dtu-diff-weeks Procedure**:
+    - This custom procedure calculates the difference in weeks between two dates.
+
+16. **Standard Include Files**:
+    - The script includes several standard SQC files for various functionalities like getting the current date and time, date and time formatting, number formatting, updating the process API, date manipulation functions, and date validations.
+
+Overall, the script is designed to perform a variety of date-related calculations and manipulations, including differences between dates, parsing dates, formatting dates, and adding or subtracting time intervals.
