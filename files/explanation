@@ -1,0 +1,68 @@
+Sure, let's break down the Oracle PL/SQL code step by step:
+
+### Declaration Section
+1. **Variable Declarations:**
+   - `v_employee_id`: Stores the employee ID from the `employees` table.
+   - `v_employee_name`: Stores the first name of the employee from the `employees` table.
+   - `v_new_salary`: Stores the salary of the employee from the `employees` table.
+   - `v_avg_salary`: Stores the average salary of employees in a specific department.
+   - `v_bonus`: Stores the calculated bonus for the employee.
+   - `v_raise`: Stores the calculated raise for the employee.
+   - `v_bonus_percentage`: A constant representing the bonus percentage (10%).
+   - `v_raise_percentage`: A constant representing the raise percentage (5%).
+   - `v_dept_id`: Stores the department ID, initialized to 10.
+
+2. **Cursor Declaration:**
+   - `emp_cursor`: A cursor that selects the `employee_id`, `first_name`, and `salary` from the `employees` table where the `department_id` is equal to `v_dept_id`.
+
+### Execution Section
+3. **Open Cursor:**
+   - Opens the `emp_cursor` to start fetching data.
+
+4. **Loop Through Cursor:**
+   - Enters a loop to fetch data from the cursor into the variables `v_employee_id`, `v_employee_name`, and `v_new_salary`.
+   - The loop continues until there are no more rows to fetch (`emp_cursor%NOTFOUND`).
+
+5. **Inside the Loop:**
+   - **Calculate Bonus:**
+     - `v_bonus := v_new_salary * v_bonus_percentage;`
+     - Calculates the bonus as 10% of the current salary.
+   
+   - **Calculate Raise:**
+     - `v_raise := v_new_salary * v_raise_percentage;`
+     - Calculates the raise as 5% of the current salary.
+   
+   - **Update Salary with Raise:**
+     - `v_new_salary := v_new_salary + v_raise;`
+     - Adds the calculated raise to the current salary.
+   
+   - **Insert Bonus into Bonus Table:**
+     - Inserts the calculated bonus into the `employee_bonus` table with the current date (`SYSDATE`).
+   
+   - **Update Employee's Salary:**
+     - Updates the `employees` table with the new salary for the current employee.
+   
+   - **Output Information:**
+     - Prints the employee ID, name, new salary, and bonus to the console using `DBMS_OUTPUT.PUT_LINE`.
+
+6. **Close Cursor:**
+   - Closes the `emp_cursor` after processing all rows.
+
+7. **Calculate Average Salary:**
+   - Calculates the average salary of employees in the specified department (`v_dept_id`) and stores it in `v_avg_salary`.
+
+8. **Output Average Salary:**
+   - Prints the average salary of the department to the console using `DBMS_OUTPUT.PUT_LINE`.
+
+### Exception Handling
+9. **Exception Block:**
+   - **NO_DATA_FOUND:**
+     - Handles the case where no employees are found in the specified department and prints a message.
+   
+   - **OTHERS:**
+     - Handles any other exceptions and prints an error message with the error details (`SQLERRM`).
+
+### Summary
+- The code processes each employee in department 10, calculates their bonus and raise, updates their salary, and logs the information.
+- It then calculates and logs the average salary for the department.
+- Exception handling ensures that appropriate messages are displayed if no data is found or if any other errors occur.

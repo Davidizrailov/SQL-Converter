@@ -1,4 +1,4 @@
-from model_classes import *
+from model_classes_2 import *
 from code_checker import Linter
 import os
 
@@ -24,16 +24,12 @@ class Translator:
             prompt_generator = PromptGenerator(self.config.language, self.code)
             system_message, prompt = prompt_generator.generate_prompt()
 
-            # vector_store_manager = VectorStoreManager(client.client)
-            # vector_store_manager.upload_files([os.path.join("Documents", "ET.txt"), os.path.join("Documents", "Snowflake_Procedures.txt"), os.path.join("Documents", "SQR.txt")])
-            # vector_store_manager.upload_files([os.path.join("Documents", "Snowflake_Procedures.txt")])
 
-            vector_store_ids = VectorStoreIDs(language=self.config.language).get()
-            print(vector_store_ids)
+            vector_store_manager = VectorStoreManager(language = self.config.language)
+            vector_store_id = vector_store_manager.vector_store_id
             
-            self.assistant_manager = AssistantManager(client.client, 
-                                                      system_message, 
-                                                      vector_store_ids = vector_store_ids)
+            self.assistant_manager = AssistantManager(client.client, vector_store_id)
+
             
             self.thread = self.assistant_manager.create_thread()
 
@@ -41,8 +37,18 @@ class Translator:
             run = self.assistant_manager.run_thread(self.thread.id)
             if run.status == "completed":
                 response_message = self.assistant_manager.get_response_message(self.thread.id)
+                self.explanation(mode= "save", explanation = response_message)
             else:
                 response_message = 'error'
+
+            prompt2 = prompts.generate_prompt2(response_message, self.config.language)
+
+
+            self.assistant_manager.send_message(self.thread.id, prompt2)
+            self.assistant_manager.run_thread(self.thread.id)
+
+            response_message = self.assistant_manager.get_response_message(self.thread.id)
+
         return response_message
     
     def test_syntax(self, input_code, demo=True):
@@ -64,7 +70,18 @@ class Translator:
             translated_code_retry = error_handler.get_follow_up_response(error_message)
         return translated_code_retry
     
-    
+    def explanation(self, mode, explanation=None):
+        if mode=="save":
+            with open(os.path.join("files", "explanation"), "w") as f:
+                f.write(explanation)
+        if mode=="load":
+            try:
+                with open(os.path.join("files", "explanation"), 'r') as f:
+                    explanation = f.read()
+                return explanation
+            except:
+                return ""
+
     def save(self):
         with open(os.path.join("files", "assistant_id"), "w") as f:
             f.write(self.assistant_manager.assistant.id)

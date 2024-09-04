@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 class ConfigLoader:
     def __init__(self, language="PLSQL"):
+
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY_EPS")
         self.language = language
@@ -115,7 +116,6 @@ def main():
     config = ConfigLoader(language="SQR") 
 
     client = OpenAIClient(config.api_key)
-
     code_reader = CodeReader("files/code_PLSQL.txt")
     code = code_reader.read_code()
 
