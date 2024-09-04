@@ -3,7 +3,7 @@
 import streamlit as st
 import time
 from translator import Translator
-from model_classes import ErrorHandler
+from model_classes import ConfigLoader
 import os
 
 #############################################################################################            
@@ -44,7 +44,10 @@ if 'translator' not in st.session_state:
 # Configuration
 #############################################################################################            
 
-input_language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve"])
+language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve"])
+if language=="Easytrieve": language="ET"
+config = ConfigLoader(language=language)
+
 model = st.selectbox("Model", ["GPT4", "GPT4o"])
 
 #############################################################################################            
@@ -64,19 +67,20 @@ if uploaded_file is not None:
 #############################################################################################            
 # Translation
 #############################################################################################            
-
-    st.session_state.translator = Translator(code=file_content, 
-                            language=input_language)
+    demo = False
+    st.session_state.translator = Translator(code   = file_content, 
+                                             config = config)
     
     st.session_state.translate_button_pressed = st.button("Translate", use_container_width=True)
     if st.session_state.translate_button_pressed:
-        st.session_state.translated_code = st.session_state.translator.translate(demo=False)
-        st.session_state.translator.save()
+        st.session_state.translated_code = st.session_state.translator.translate(demo=demo)
+        if not demo:
+            st.session_state.translator.save()
         
 
     st.header("Translated Code")
     st.session_state.placeholder_tr = st.empty()
-    if st.session_state.translated_code=='':
+    if st.session_state.translated_code == 'error':
         st.session_state.placeholder_tr.error("Code was not translated. We encountered an issue with the model API.")
     else:
         translated_code = st.session_state.placeholder_tr.text_area(
@@ -89,9 +93,9 @@ if uploaded_file is not None:
 #############################################################################################            
 # Syntax check
 #############################################################################################            
-
+    demo = True
     if st.button("Test Syntax", use_container_width=True):
-        syn_error = st.session_state.translator.test_syntax(translated_code, demo=True)
+        syn_error = st.session_state.translator.test_syntax(translated_code, demo=demo)
         placeholder_syn = st.empty()
         placeholder_syn.text("Analyzing syntax...")
         time.sleep(1)
@@ -111,15 +115,10 @@ if uploaded_file is not None:
     
     if st.button("Retry", use_container_width=True):
         placeholder_ret = st.empty()
-        if demo:
-            with open(os.path.join("files", "response_2.txt")) as file:
-                translated_code_retry = file.read()
-        else:
-            st.session_state.translated_code = st.session_state.translator.get_follow_up(error_message)
-        # st.session_state.translated_code = st.session_state.translator.retry(error_message, demo=False)
-        st.session_state.placeholder_tr.text_area(label="Translated Code ",
-                                                  value=st.session_state.translated_code, 
-                                                  height=500)
+        translated_code = st.session_state.translator.get_follow_up(error_message, demo=demo)
+        st.session_state.placeholder_tr.text_area(label  = "Translated Code ",
+                                                  value  = translated_code, 
+                                                  height = 500)
         with placeholder_ret.container():
             st.info("New translation created!")
             st.markdown("[Click here](#translated-code) to see it.")

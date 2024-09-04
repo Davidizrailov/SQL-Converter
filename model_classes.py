@@ -1,9 +1,15 @@
 import os
+import dotenv
 import prompts
 from openai import OpenAI
 import time
-from dotenv import load_dotenv
 import os
+
+#########################################################################################################
+
+dotenv.load_dotenv()
+        
+#########################################################################################################
 
 class ConfigLoader:
     def __init__(self, language="SQR"):
@@ -22,6 +28,8 @@ class CodeReader:
     def read_code(self):
         with open(self.file_path, "r") as file:
             return file.read()
+        
+#########################################################################################################
 
 class PromptGenerator:
     def __init__(self, language, code):
@@ -35,25 +43,51 @@ class PromptGenerator:
             return prompts.system_message_ET, prompts.generate_prompt_ET(self.code)
         elif self.language == "SQR":
             return prompts.system_message_SQR, prompts.generate_prompt_SQR(self.code)
+        
+#########################################################################################################
 
-class VectorStoreManager:
-    def __init__(self, vector_store_id="vs_O1dgf0DYPPwlft8zgIK1CHKV"):
-        self.vector_store_id = vector_store_id
+# class VectorStoreManager:
+    # def __init__(self, client):
+    #     self.client = client
+    #     self.vector_store = self.client.beta.vector_stores.create(name="Documents")
+
+    # def upload_files(self, file_paths):
+    #     file_streams = [open(path, "rb") for path in file_paths]
+    #     file_batch = self.client.beta.vector_stores.file_batches.upload_and_poll(
+    #         vector_store_id=self.vector_store.id, files=file_streams
+    #     )
+        
+#########################################################################################################
+
+class VectorStoreIDs:
+    def __init__(self, language):
+        self.language = language
+        self.snowflake = os.getenv("SNOWFLAKE_VS_ID") 
+        self.easytrieve = os.getenv("EASYTRIEVE_VS_ID") 
+        self.sqr = os.getenv("SQR_VS_ID") 
+
+    def get(self):
+        if self.language.upper() == "PLSQL":
+            return [self.snowflake]
+        elif self.language.upper() == "ET":
+            return [self.easytrieve]
+        elif self.language.upper() == "SQR":
+            return [self.sqr]
+        else:
+            raise NameError("Parameter 'language' should be in ['PLSQL', 'ET', 'SQR'] and is case insensitive")
+
+#########################################################################################################
 
 class AssistantManager:
-    def __init__(self, client, system_message, vector_store_id):
+    def __init__(self, client, system_message, vector_store_ids):
         self.client = client
         self.assistant = self.client.beta.assistants.create(
             name="SQLConverter",
             instructions=system_message,
-            tools=[{"type": "file_search"}],
-            model="gpt-4o-2024-08-06",
+            tools=[{"type": "file_search"}], # These are tools used by the assistant
+            model="gpt-4o", # This is the LLM
             temperature=0.5,
-            tool_resources={
-                "file_search": {
-                "vector_store_ids": [vector_store_id]
-                }
-            }
+            tool_resources={"file_search": {"vector_store_ids": vector_store_ids}},
         )
 
     def create_thread(self):
@@ -85,6 +119,8 @@ class AssistantManager:
     def get_response_message(self, thread_id):
         response_message = self.client.beta.threads.messages.list(thread_id=thread_id)
         return response_message.data[0].content[0].text.value
+        
+#########################################################################################################
 
 class ErrorHandler:
     def __init__(self, assistant_manager, thread_id):
@@ -104,7 +140,8 @@ class ErrorHandler:
             print("Follow-Up Response:", follow_up_response)
             follow_up = input("Insert Error message here or 'success' if no errors: ")
         return follow_up_response
-    
+        
+#########################################################################################################
 
 # Main 
 def main():
@@ -112,16 +149,21 @@ def main():
 
     client = OpenAIClient(config.api_key)
 
-    code_reader = CodeReader(os.path.join("files", "code_SQR.txt"))
+    code_reader = CodeReader(os.path.join("files", "code_PLSQL.txt"))
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
     system_message, prompt = prompt_generator.generate_prompt()
 
-    vector_store_manager = VectorStoreManager()
-    vector_store_id = vector_store_manager.vector_store_id
+    # vector_store_manager = VectorStoreManager(client.client)
+    # vector_store_manager.upload_files([os.path.join("Documents", "ET.txt"), os.path.join("Documents", "Snowflake_Procedures.txt"), os.path.join("Documents", "SQR.txt")])
+    # vector_store_manager.upload_files([os.path.join("Documents", "Snowflake_Procedures.txt")])
 
-    assistant_manager = AssistantManager(client.client, system_message, vector_store_id)
+    vector_store_ids = VectorStoreIDs(language=config.language).get()
+
+    assistant_manager = AssistantManager(client.client, 
+                                         system_message, 
+                                         vector_store_ids = vector_store_ids)
     thread = assistant_manager.create_thread()
     assistant_manager.send_message(thread.id, prompt)
     assistant_manager.run_thread(thread.id)

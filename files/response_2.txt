@@ -1,4 +1,4 @@
-After retry:
+After debugging:
 CREATE OR REPLACE PROCEDURE process_employee_salaries()
 RETURNS STRING
 LANGUAGE PYTHON

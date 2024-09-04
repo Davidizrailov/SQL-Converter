@@ -2,6 +2,7 @@
 __pycache__/
 __pycache__
 *.py[cod]
-*.temp
-.venv
+files/assistant_id
+files/thread_id
+files/thread_id
 environment.yml
