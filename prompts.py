@@ -134,3 +134,13 @@ def generate_prompt2_SQR(code_description):
         code description: {code_description} 
     """
     return prompt
+    
+    
+def generate_prompt2(response_message, language):
+    if language == "PLSQL":
+        prompt2 = generate_prompt2_PLSQL(response_message)
+    elif language == "SQR":
+        prompt2 = generate_prompt2_SQR(response_message)
+    elif language == "ET":
+        prompt2 = generate_prompt2_ET(response_message)
+    return prompt2 
