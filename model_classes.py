@@ -12,9 +12,9 @@ dotenv.load_dotenv()
 #########################################################################################################
 
 class ConfigLoader:
-    def __init__(self, language="PLSQL"):
-        # load_dotenv()
-        self.api_key = os.getenv("OPENAI_API_KEY_EPS")
+    def __init__(self, language="SQR"):
+        load_dotenv()
+        self.api_key = os.getenv("OPENAI_API_KEY")
         self.language = language
 
 class OpenAIClient:
@@ -93,10 +93,10 @@ class AssistantManager:
     def create_thread(self):
         return self.client.beta.threads.create()
 
-    def send_message(self, thread_id, content):
+    def send_message(self, thread_id, content, role="user"):
         return self.client.beta.threads.messages.create(
             thread_id=thread_id,
-            role="user",
+            role=role,
             content=content
         )
 
@@ -145,7 +145,8 @@ class ErrorHandler:
 
 # Main 
 def main():
-    config = ConfigLoader()
+    config = ConfigLoader() 
+
     client = OpenAIClient(config.api_key)
 
     code_reader = CodeReader(os.path.join("files", "code_PLSQL.txt"))
@@ -164,8 +165,6 @@ def main():
                                          system_message, 
                                          vector_store_ids = vector_store_ids)
     thread = assistant_manager.create_thread()
-    # print(thread.id)
-    # print(assistant_manager.assistant.id)
     assistant_manager.send_message(thread.id, prompt)
     assistant_manager.run_thread(thread.id)
 

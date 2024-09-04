@@ -129,7 +129,7 @@ if uploaded_file is not None:
 # Debugging 
 #############################################################################################            
 
-    demo = False
+    demo = True
     error_message = st.text_area("Error message")
     
     if st.button("Retry", use_container_width=True):

@@ -1,5 +1,7 @@
+# python scripts installed by pip must be executable from program's environment
 import re
 import subprocess
+import sys
 
 def run_command(command):
   result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -30,8 +32,8 @@ class LinterError:
 
 class Linter:
   linter_commands = {
-    "python": "pylint -d C,R,I ", 
-    "sql": "sqlfluff lint --ignore parsing --rules core --dialect snowflake ",
+    "python": sys.executable + " -m pylint -d C,R,I ", 
+    "sql": sys.executable + " -m sqlfluff lint --ignore parsing --rules core --dialect snowflake ",
   }
 
   def __init__(self, type=['python', 'sql']):
@@ -39,12 +41,16 @@ class Linter:
     self.type = type
   
   def _find_code(self, s, lang):
-    sql_pattern = None
+    results = []
     if lang == "sql":
-      sql_pattern = r"(?s)```sql(.*?)```"
+      pattern = r"(?s)```sql(.*?)```"
+      results.extend(re.findall(pattern, s))
     if lang == "python":
-      sql_pattern = r"(?s)```python(.*?)```"
-    return re.findall(sql_pattern, s)
+      pattern = r"(?s)```python(.*?)```"
+      results.extend(re.findall(pattern, s))
+      # pattern = r"LANGUAGE\s+PYTHON(?:[\s\S]*?)AS\s+\$\$(.*?)(?=\$\$)"
+      # results.extend(re.findall(pattern, s, re.DOTALL))
+    return results
   
   def find_code(self, s):
     res = {}
@@ -58,9 +64,9 @@ class Linter:
     errors = {}
     for lang in self.type:
       for i, code in enumerate(matches[lang]):
-        with open(f'temp_code_{i}.code', 'w') as file:
+        with open(f'temp_code_{i}.temp', 'w') as file:
             file.write(code.strip())
-        rc, stdout, stderr = run_command(self.linter_commands[lang] + f"temp_code_{i}.code")
+        rc, stdout, stderr = run_command(self.linter_commands[lang] + f"temp_code_{i}.temp")
         error = LinterError(lang, rc, stdout, stderr)
         if error.is_fatal():
           errors[f'python_code_{i}'] = error
@@ -77,7 +83,6 @@ class Linter:
   
 
 if __name__ == "__main__":
-  linter = Linter(['python', 'sql'])
   sample_response = r"""
   ```sql
 -- Create a sequence to generate unique IDs for each row
@@ -96,42 +101,42 @@ CREATE OR REPLACE FUNCTION split_text(text NVARCHAR, separator CHAR DEFAULT ':')
   EXECUTE AS CALLER
 AS
 $$
-  chars = []
-  strings = []
-  length = 0
-  start = 0
-  split_start = 0
-  split_length = 0
-  first = True
+chars = []
+strings = []
+length = 0
+start = 0
+split_start = 0
+split_length = 0
+first = True
 
-  for char in text:
-      chars.append(char)
+for char in text:
+    chars.append(char)
 
-  for i in range(len(chars)):
-      if first and chars[i] == separator:
-          length = 1
-          split_start = start
-          split_length = i
-          strings.append(text[split_start:split_length])
-          start = i
-          first = False
-          continue
+for i in range(len(chars)):
+    if first and chars[i] == separator:
+        length = 1
+        split_start = start
+        split_length = i
+        strings.append(text[split_start:split_length])
+        start = i
+        first = False
+        continue
 
-      if chars[i] == separator:
-          length += 1
-          split_start = start + 1
-          split_length = i - (start + 1)
-          strings.append(text[split_start:split_length])
-          start = i
-          continue
+    if chars[i] == separator:
+        length += 1
+        split_start = start + 1
+        split_length = i - (start + 1)
+        strings.append(text[split_start:split_length])
+        start = i
+        continue
 
-      if i == len(chars) - 1:
-          split_start = start + 1
-          split_length = i + 1
-          length += 1
-          strings.append(text[split_start:split_length])
+    if i == len(chars) - 1:
+        split_start = start + 1
+        split_length = i + 1
+        length += 1
+        strings.append(text[split_start:split_length])
 
-  return strings
+return strings
 $$;
 
 -- Call the function to split text and output the results
@@ -147,6 +152,8 @@ BEGIN
 END;
 ``` 
 """
+  linter = Linter(['sql', 'python'])
+  # print(linter.find_code(sample_response))
   errors = linter.check_response(sample_response)
   # print(linter.prompt_after_code(errors))
   print(errors)
