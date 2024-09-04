@@ -24,9 +24,6 @@ class Translator:
             prompt_generator = PromptGenerator(self.config.language, self.code)
             system_message, prompt = prompt_generator.generate_prompt()
 
-            # vector_store_manager = VectorStoreManager(client.client)
-            # vector_store_manager.upload_files([os.path.join("Documents", "ET.txt"), os.path.join("Documents", "Snowflake_Procedures.txt"), os.path.join("Documents", "SQR.txt")])
-            # vector_store_manager.upload_files([os.path.join("Documents", "Snowflake_Procedures.txt")])
 
             vector_store_manager = VectorStoreManager(language = self.config.language)
             vector_store_id = vector_store_manager.vector_store_id
