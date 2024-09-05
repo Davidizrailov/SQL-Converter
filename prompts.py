@@ -162,7 +162,8 @@ def content_assessment(code):
 
 def content_assessment2(code):
     prompt = f"""
-    below is a PL/SQL code. You have to extract the following information from reading the source in a semicolon seperated value format. 
+    below is a PL/SQL code. You have to extract the following information from reading the source in a semicolon seperated value format. ONLY GIVE THE SSV, NOTHING ELSE
+    Try and shorten the items as they are extremely long and cluncky. For example "p_staff_id IN staff.staff_id%TYPE" should just be "p_staff_id" when outputting.
     Required Information: 
     1) Name of the procedure
     2) The parameters used

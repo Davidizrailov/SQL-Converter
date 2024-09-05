@@ -1,0 +1,54 @@
+    
+    /*
+        06
+        Get last cashier payout.
+        
+        This function processes all bills created by a cashier
+        for his/her last shift. This function would be called 
+        everytime a cashier finishes a shift in order to find out
+        how much money should be recieved from them.
+    */
+    FUNCTION get_last_cashier_payout (
+        p_staff_id staff.staff_id%TYPE
+    )
+    RETURN cashier_drawer_assignments.cash_amount_end%TYPE
+    IS
+        v_assignment_id cashier_drawer_assignments.assignment_id%TYPE;
+        v_cash_sum cashier_drawer_assignments.cash_amount_end%TYPE := 0;
+    BEGIN
+        
+        -- get last cashier assingment (shift)
+        SELECT MAX(assignment_id) INTO v_assignment_id 
+        FROM cashier_drawer_assignments 
+        WHERE staff_id = p_staff_id;
+
+        
+        -- we can sum the bill amounts, however we do something else instead
+        /*
+            SELECT SUM(nvl(payment_tender, 0)) INTO v_cash_sum
+            FROM customer_bills b 
+            WHERE LOWER(payment_type) = 'cash' 
+            AND assignment_id = v_assignment_id;
+        */
+        
+        -- we can get the payout from the assignment table instead,
+        -- this is because we have now set up the package so that this table
+        -- is automatically updated when the recieve_payment procedure is called
+        -- to pay a bill.
+        SELECT nvl(cash_amount_end, 0) INTO v_cash_sum
+        FROM cashier_drawer_assignments 
+        WHERE assignment_id = v_assignment_id;
+        
+        -- return sum
+        return v_cash_sum;
+    
+    EXCEPTION
+        WHEN no_data_found THEN
+            -- no shift for cashier, no cashier with that id etc...
+            RETURN 0;
+        WHEN OTHERS THEN
+            -- all exceptions will be logged into error table...
+            jta_error.log_error(SQLCODE, SQLERRM);
+            -- return null because the function failed
+            RETURN NULL;
+    END get_last_cashier_payout;

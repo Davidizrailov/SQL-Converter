@@ -1,0 +1,43 @@
+    /*
+        02
+        Private procedure: Get Hours
+        
+        Given staff_id and time period, retrieve the regular, 
+        overtime and doubletime hours that a staff member has 
+        worked for. 
+    */    
+    PROCEDURE get_hours (
+        p_staff_id IN staff.staff_id%TYPE,
+        start_date IN DATE,
+        end_date IN DATE,
+        basic OUT NOCOPY INTEGER,
+        overtime OUT NOCOPY INTEGER,
+        doubletime OUT NOCOPY INTEGER
+    )
+    IS
+    BEGIN
+        
+        basic := 0;
+        overtime := 0;
+        doubletime := 0;
+        
+        SELECT nvl(SUM(hours_worked), 0) INTO doubletime
+            FROM work_hours
+            WHERE work_date BETWEEN start_date AND end_date 
+            AND staff_id = p_staff_id 
+            AND to_char(work_date, 'd') = '1';
+            
+        SELECT nvl(SUM(hours_worked), 0) INTO basic
+            FROM work_hours
+            WHERE work_date BETWEEN start_date AND end_date 
+            AND staff_id = p_staff_id 
+            AND to_char(work_date, 'd') != '1';
+        
+        IF basic > 40 THEN
+            overtime := basic - 40;
+            basic := 40;
+        END IF;
+            
+    -- excpetions will be handled in called procedure
+    END;
+    

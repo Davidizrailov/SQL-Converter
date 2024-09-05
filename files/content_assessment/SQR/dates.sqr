@@ -1,0 +1,185 @@
+!-----------------------------------------------------------------------------------------------!
+!  Report Name:  DATECALC.SQR -- Run Via Process Schedular SQR Report (API Aware)               !
+!  Report Descriptions: PeopleSoft DATE Calculatin & Manipulation								!
+!  Report Create Date: 																			!
+!  Report Run Component: PRCSMULTI ( System Process Request ) 									!
+!-----------------------------------------------------------------------------------------------!
+
+#include 'setenv.sqc'    ! Set Default environment
+
+!******************
+Begin-Program
+!******************
+	 do Init_Report
+	 do Main_Report
+	 do Stdapi-Term
+end-program
+
+!****************************
+Begin-Procedure Init_Report
+!****************************
+	 Do Stdapi-Init
+	 Do Init-DateTime
+	 Do Init-Number
+	 Do Get-Current-DateTime
+end-procedure
+
+!***************************
+Begin-Procedure Main_Report
+!***************************
+
+	!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	!Set back day in [YYYY-MM-DD] format
+	Let $BackDay = '2013-01-01'
+	Let $BackDayYear = '2012-01-01'
+	! Before Using any procedure first call it [Convert-To-DTU-Date] it is actually take Input:  $date_in  (native format)
+	! and convert Output: $dtu_date (YYYY-MM-DD format)
+	do Convert-To-DTU-Date($AsOfToday, $Today)
+	!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	!dtu-diff-days
+        do dtu-diff-days($BackDay,$Today,#diffDays)
+	   Let $GetDateDiff = to_char(#diffDays)
+	   #DEBUG SHOW 'Diff Days -> ' $GetDateDiff
+
+	!Dtu-Diff-Months
+        do Dtu-Diff-Months ($BackDay, $Today, #DiffMonth)
+		Let $GetMonthDiff = to_char(#DiffMonth)
+	    #DEBUG SHOW 'Diff Months -> ' $GetMonthDiff
+
+	!Dtu-Diff-years
+        do Dtu-Diff-years ($BackDayYear, $Today, #DiffYear)
+		Let $GetYearDiff = to_char(#DiffYear)
+	   #DEBUG SHOW 'Diff Year -> ' $GetYearDiff
+
+	!Dtu-Diff-weeks  
+	do dtu-diff-weeks ($BackDay, $Today, #DiffWeek)
+	   Let $GetWeekDiff = to_char(#DiffWeek)
+	   #DEBUG SHOW 'Diff Weeks -> ' $GetWeekDiff
+
+	!dtu-parse-date
+	!Parse Date basically read a date and convert it to Separate Year,Month & Date with Integer Version
+	do dtu-parse-date ($Today,#yyyy,#mm,#dd)
+
+		!Convert it to String
+		Move #yyyy  to $yyyy '0000'
+		Move #mm to $mm '00'
+		Move #dd to $dd '00'
+
+		Let $BuildingStringDateV1 = $yyyy || '/' || $mm || '/' || $dd
+		Let $BuildingStringDateV2 = $yyyy || '-' || $mm || '-' || $dd
+
+			#DEBUG SHOW 'String Building Date V1 -> ' $BuildingStringDateV1
+			#DEBUG SHOW 'String Building Date V2 -> ' $BuildingStringDateV2
+
+		Let #year = to_number('2013')
+		do DTU-Format-Date(#year, 1, 1, $YearBegin)
+			#DEBUG SHOW 'Year Begin Without Convert-From-DTU-Date -> ' $YearBegin
+		do Convert-From-DTU-Date($YearBegin, $YearBegin)
+			#DEBUG SHOW 'Year Begin With Convert-From-DTU-Date -> ' $YearBegin
+
+		do DTU-Format-Date(#year, 12, 31, $YearEnd)
+			#DEBUG SHOW 'Year End Without Convert-From-DTU-Date -> ' $YearEnd
+		do Convert-From-DTU-Date($YearEnd, $YearEnd)
+			#DEBUG SHOW 'Year End With Convert-From-DTU-Date -> ' $YearEnd		
+
+		do DTU-Add-Weeks($Today,7,$WorkDate)
+			#DEBUG SHOW 'New Date After Adding 7 Weeks From Todays Date -> ' $WorkDate	
+
+	!Get_Month_Start_Date
+	do Get_Month_Start_Date($AsOfToday, $BgDt)
+		#DEBUG SHOW 'Month Begin Date -> ' $BgDt
+
+	!Get_Month_End_Date	
+	do Get_Month_End_Date($AsOfToday, $EdDt)
+		#DEBUG SHOW 'Month End Date -> ' $EdDt	
+
+	!Dtu-DayOfWeek# (Returns As Sunday = 1, Monday = 2 etc)
+	do DTU-DayOfWeek#($Today, #StartDay)
+		#DEBUG SHOW 'Days Of Week -> ' #StartDay 
+
+	!dtu-add-months ( Minus Denotes Backward )
+	let #Months = -3
+	do DTU-Add-Months($Today,#Months,$AfterAddingtNewMonth)
+		#DEBUG SHOW 'New Date After Adding Month -> ' $AfterAddingtNewMonth 
+
+	!Dtu-Add-Month
+	Do DTU-Add-Years($Today, -2, $AfterAddingtNewYear)
+	    #DEBUG SHOW 'New Date After Adding Year -> ' $AfterAddingtNewYear	
+
+	!Dtu-Diff-Years
+	Let $Dob = '1988-01-01'
+	do Dtu-Diff-Years($Dob,$Today,#Age_Yrs)
+		Let $AgeYrs = to_char(#Age_Yrs)
+		#DEBUG SHOW 'Diff Years -> ' $AgeYrs	
+
+end-procedure
+
+!****************************************************
+Begin-Procedure Get_Month_End_Date ( $Dte1, :$Dte2 )
+!****************************************************
+
+  do ConvertToComponents($Dte1 , $tmp1_yy , $tmp1_mm , $tmp1_dd)
+  let  #tmp1_mm  = to_number($tmp1_mm)
+  let  #tmp1_yy  = to_number($tmp1_yy)
+
+  if #tmp1_mm = 2
+     move 28 to #MonthDays1
+     if(((mod(#tmp1_yy,4) = 0) and (mod(#tmp1_yy,100) != 0)) or (mod(#tmp1_yy,400) = 0))
+         add 1 to #MonthDays1
+     end-if
+   else
+     if #tmp1_mm = 4 or #tmp1_mm = 6 or #tmp1_mm = 9 or #tmp1_mm = 11
+         move 30 to #MonthDays1
+     else
+         move 31 to #MonthDays1
+     end-if
+   end-if
+
+   let $MonthDays1 = to_char(#MonthDays1)
+   let $E_DT_tmp1 = $tmp1_yy  || $tmp1_mm  || $MonthDays1 || '0000'
+   do Format-DateTime($E_DT_tmp1 , $Dte2, {DEFCMP}, '', 'native')
+
+End-Procedure
+
+!******************************************************
+Begin-Procedure Get_Month_Start_Date ( $Dte1 , :$Dte2 )
+!******************************************************
+
+  do ConvertToComponents($Dte1 , $tmp1_yy , $tmp1_mm , $tpm1_dd)
+
+  let $B_DT_tmp1 = $tmp1_yy  || $tmp1_mm  || '01' || '0000'
+  do Format-DateTime($B_DT_tmp1 , $Dte2, {DEFCMP}, '', 'native')
+
+End-Procedure
+
+!****************************************************************************************
+! WE have made another procedure called diff-week as it was not available in datemath.sqc
+! dtu-diff-weeks
+!   Input:    $dtu_date1, $dtu_date2
+!   Output:   #dtu_weeks
+!****************************************************************************************
+begin-procedure dtu-diff-weeks($dtu_date1, $dtu_date2, :#dtu_weeks)
+
+    declare-variable
+        date    $wkDate1
+        date    $wkDate2
+        integer #dtu_weeks
+    end-declare
+
+    let $wkDate1    = strtodate($dtu_date1,{DTUDateFormat})
+    let $wkDate2    = strtodate($dtu_date2,{DTUDateFormat})
+    let #dtu_weeks  = trunc(datediff($wkDate2,$wkDate1,'week'),0)
+
+end-procedure
+
+!***********************************************************************
+! Standard Include Files
+!***********************************************************************
+#Include 'curdttim.sqc'   !Get-Current-DateTime procedure
+#Include 'datetime.sqc'   !Routines for date and time formatting
+#Include 'number.sqc'     !Routines to format numbers
+#Include 'stdapi.sqc'     !Update Process API
+#Include 'datemath.sqc'   !Date Manipulation functions
+#include 'validdt.sqc'    !Date Validations 
+!***********************************************************************
