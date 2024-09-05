@@ -40,13 +40,13 @@ class AssistantManager2:
         return response_message.data[0].content[0].text.value
 
 
-def main():
-    config = ConfigLoader(language="PLSQL") 
+def modelcall(lang, path):
+    config = ConfigLoader(language=lang) 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader(r"files\content_assessment\test_proc1.txt")
+    code_reader = CodeReader(path)
     code = code_reader.read_code()
-    prompt = prompts.content_assessment2(code)
+    prompt = prompts.content_assessment_outputs(code,lang)
 
     assistant_manager = AssistantManager2(client.client)
     thread = assistant_manager.create_thread()
@@ -57,9 +57,17 @@ def main():
     response_message = assistant_manager.get_response_message(thread.id)
     #print(response_message)
 
-    with open("files\content_assessment\out.txt","w", encoding="utf-8") as file:
+    with open("files\content_assessment\out.txt","a", encoding="utf-8") as file:
         file.write(response_message)
+        file.write(";")
         print("Written!")
+
+
+    with open(r"files\content_assessment\out.txt", 'r') as file:
+        content = file.read()
+        content = content.replace(",","-")
+    with open("files\content_assessment\out.csv","w", encoding="utf-8") as file:
+        file.write(content) 
 
 if __name__ == "__main__":
     main()

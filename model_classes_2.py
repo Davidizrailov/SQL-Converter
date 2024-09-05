@@ -5,7 +5,7 @@ import time
 from dotenv import load_dotenv
 
 class ConfigLoader:
-    def __init__(self, language="PLSQL"):
+    def __init__(self, language="SQR"):
 
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY_EPS")
@@ -113,10 +113,10 @@ class ErrorHandler:
 
 # Main 
 def main():
-    config = ConfigLoader(language="SQR") 
+    config = ConfigLoader() 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader("files/code_PLSQL.txt")
+    code_reader = CodeReader("files/code_SQR.txt")
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)

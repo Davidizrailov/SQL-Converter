@@ -160,17 +160,30 @@ def content_assessment(code):
 
     return prompt
 
-def content_assessment2(code):
+def content_assessment_inputs(code):
     prompt = f"""
     below is a PL/SQL code. You have to extract the following information from reading the source in a semicolon seperated value format. ONLY GIVE THE SSV, NOTHING ELSE
     Try and shorten the items as they are extremely long and cluncky. For example "p_staff_id IN staff.staff_id%TYPE" should just be "p_staff_id" when outputting.
     Required Information: 
-    1) Name of the procedure
-    2) The parameters used
-    3) Output Values/Types	
-    4) Tables Accessed	
-    5) Output Text	
-    6) Errors Thrown
+    1) Name of the procedure, if it doesn't have a name, put none
+    2) Input Types (Tables, csv, json, etc)
+    3) Input Name (Employee, Payroll, etc)
+
+    Here is the code:
+    {code}
+    """
+
+    return prompt
+
+def content_assessment_outputs(code,lang):
+    prompt = f"""
+    below is a {lang} code. You have to extract the following information from reading the source in a semicolon seperated value format. ONLY GIVE THE SSV, NOTHING ELSE
+    Try and shorten the items as they are extremely long and cluncky. For example "p_staff_id IN staff.staff_id%TYPE" should just be "p_staff_id" when outputting.
+    Required Information: 
+
+    1) Name of the procedure, if it doesn't have a name, put none
+    2) Output Types (Tables, csv, json, etc)
+    3) Output Name (Employee, Payroll, etc)
 
     Here is the code:
     {code}

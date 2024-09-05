@@ -63,7 +63,7 @@ if os.path.isfile(explanation_file):
 # Input Code
 #############################################################################################            
 
-uploaded_file = st.file_uploader("Document to translate", type=["txt", "sql", "sqr"])
+uploaded_file = st.file_uploader("Document to translate", type=["txt", "sql", "sqr", "et"])
 
 if uploaded_file is not None:
     file_content = uploaded_file.read().decode("utf-8")
@@ -129,7 +129,7 @@ if uploaded_file is not None:
 # Debugging 
 #############################################################################################            
 
-    demo = True
+    demo = False
     error_message = st.text_area("Error message")
     
     if st.button("Retry", use_container_width=True):

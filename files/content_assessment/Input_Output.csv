@@ -1,0 +1,44 @@
+Object Path,Object Name,Name,Input_or_output
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,PERSFILE DEPTFILE,input
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,PERSFILE,input
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,REPORT_HIGH,output
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,REPORT1,output
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,REPORT2,output
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,REPORT_LOW,output
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,SALARY,output
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,FILETYPE IS FILE,output
+files\content_assessment\DEMO_DB\PLSQL\avg_sal.sql,avg_sal.sql,employees,input
+files\content_assessment\DEMO_DB\PLSQL\avg_sal.sql,avg_sal.sql,DBMS_OUTPUT.PUT_LINE,output
+files\content_assessment\DEMO_DB\PLSQL\cursor.sql,cursor.sql,employees,input
+files\content_assessment\DEMO_DB\PLSQL\cursor.sql,cursor.sql,DBMS_OUTPUT.PUT_LINE,output
+files\content_assessment\DEMO_DB\PLSQL\error_handle.sql,error_handle.sql,DBMS_OUTPUT.PUT_LINE,output
+files\content_assessment\DEMO_DB\PLSQL\loop.sql,loop.sql,DBMS_OUTPUT.PUT_LINE,output
+files\content_assessment\DEMO_DB\PLSQL\nestloop.sql,nestloop.sql,DBMS_OUTPUT.PUT_LINE,output
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Main_Report,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,BuildingStringDateV2,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,E_DT_tmp1,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,GetYearDiff,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Convert,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Get_Month_Start_Date,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,GetWeekDiff,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Dtu,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,wkDate2,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,BackDay,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Get_Month_End_Date,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,dtu,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Init_Report,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Init,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,DTU,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Get,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,wkDate1,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,MonthDays1,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Dob,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Stdapi,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,BuildingStringDateV1,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,ConvertToComponents,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,B_DT_tmp1,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,GetDateDiff,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,BackDayYear,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,AgeYrs,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Format,input
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,GetMonthDiff,input

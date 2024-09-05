@@ -1,0 +1,14 @@
+    REPORT1;FILE;Employee
+REPORT2;FILE;Employee
+REPORT_HIGH;FILE;Employee
+REPORT_LOW;FILE;Employee;Procedure Name;Output Types;Output Name
+N/A;DBMS Output;N/A;Declare; ;
+Cursor;
+Begin;
+Loop;
+End;;No procedure found; ;;; ;;Procedure Name;;Output Types;;Output Name
+
+Note: The provided PLSQL code does not define a procedure- output types- or output names- so there is no information to extract for the specified requirements.;ProcedureName;OutputTypes;OutputName;DATECALC.SQR;Tables;DtDiff-DateParse-DateFormat-MonthStart-MonthEnd-DayOfWeek-DateAdd;none;file;REPORT1
+none;file;REPORT2
+none;file;REPORT_HIGH
+none;file;REPORT_LOW;none;csv;Employee;none;csv;employees;none;none;none;none;n/a;n/a;none;none;none;none;none;none;DATECALC.SQR;None;None;
