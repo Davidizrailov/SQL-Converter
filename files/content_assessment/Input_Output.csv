@@ -1,44 +1,34 @@
-Object Path,Object Name,Name,Input_or_output
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,PERSFILE DEPTFILE,input
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,PERSFILE,input
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,REPORT_HIGH,output
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,REPORT1,output
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,REPORT2,output
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,REPORT_LOW,output
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,SALARY,output
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,FILETYPE IS FILE,output
-files\content_assessment\DEMO_DB\PLSQL\avg_sal.sql,avg_sal.sql,employees,input
-files\content_assessment\DEMO_DB\PLSQL\avg_sal.sql,avg_sal.sql,DBMS_OUTPUT.PUT_LINE,output
-files\content_assessment\DEMO_DB\PLSQL\cursor.sql,cursor.sql,employees,input
-files\content_assessment\DEMO_DB\PLSQL\cursor.sql,cursor.sql,DBMS_OUTPUT.PUT_LINE,output
-files\content_assessment\DEMO_DB\PLSQL\error_handle.sql,error_handle.sql,DBMS_OUTPUT.PUT_LINE,output
-files\content_assessment\DEMO_DB\PLSQL\loop.sql,loop.sql,DBMS_OUTPUT.PUT_LINE,output
-files\content_assessment\DEMO_DB\PLSQL\nestloop.sql,nestloop.sql,DBMS_OUTPUT.PUT_LINE,output
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Main_Report,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,BuildingStringDateV2,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,E_DT_tmp1,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,GetYearDiff,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Convert,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Get_Month_Start_Date,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,GetWeekDiff,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Dtu,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,wkDate2,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,BackDay,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Get_Month_End_Date,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,dtu,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Init_Report,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Init,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,DTU,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Get,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,wkDate1,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,MonthDays1,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Dob,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Stdapi,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,BuildingStringDateV1,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,ConvertToComponents,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,B_DT_tmp1,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,GetDateDiff,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,BackDayYear,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,AgeYrs,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,Format,input
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,GetMonthDiff,input
+Object Path,Object Name,Item Name,Type,Parameters,Inputs,Outputs
+files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,report.et*,Easytrieve Document Generator,None,"PERSFILE DEPTFILE, PERSFILE","REPORT_HIGH, REPORT2, REPORT1, FILETYPE IS FILE, REPORT_LOW, SALARY"
+files\content_assessment\DEMO_DB\PLSQL\avg_sal.sql,avg_sal.sql,avg_sal.sql*,unspecified,"v_job_titleemployees, v_avg_salary, v_total_salary, v_employee_count",employees,DBMS_OUTPUT.PUT_LINE
+files\content_assessment\DEMO_DB\PLSQL\cursor.sql,cursor.sql,cursor.sql*,unspecified,var_record,employees,DBMS_OUTPUT.PUT_LINE
+files\content_assessment\DEMO_DB\PLSQL\error_handle.sql,error_handle.sql,error_handle.sql*,unspecified,"dividend, divisor, result",None,DBMS_OUTPUT.PUT_LINE
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,throw,procedure,"p_code, p_message",None,None
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,log_error,procedure,"p_code, p_message",None,jta_errors
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,show_in_console,procedure,"p_code, p_message",None,None
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_hours,procedure,"doubletime, basic, start_date, overtime, p_staff_id, end_date",work_hours,"overtime, doubletime, basic"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,process_payroll,procedure,p_date,"payroll, staff, work_hours",payroll
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,update_inventory,procedure,"p_quantity, p_product_id, p_new_cost","products, cost_sales_tracker, db",cost_sales_tracker
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,restock_urgent,procedure,p_staff_id,"inventory_by_location, products, them, suppliers_per_products","purchase_order_lines, purchase_orders"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_last_cashier_payout,function,p_staff_id,"customer_bills, cashier_drawer_assignments",cashier_drawer_assignments
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_money_inflow,function,"p_end_date, p_location_id, p_start_date, p_type","cashier_stations, cashier_drawer_assignments, locations",cashier_drawer_assignments
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,update_taxes,procedure,"'dd', SYSDATE","pending, tax_rate_history, pending_tax_changes","tax_rate_history, pending_tax_changes, type"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_price_changes,function,"p_end_date, p_product_id, p_start_date","products, price_history",price_changes_table
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_profits_for,procedure,"p_goods_sold, p_costs, p_start_date, p_end_date, p_gross_gain, p_net_gain","cost_sales_tracker, avg_cost, billed_items, customer_bills, net_gain, total_cost","p_costs, p_goods_sold, p_net_gain, p_gross_gain"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_recommended_price_for,procedure,"p_new_price, p_product_id, p_avg_cost, p_old_price","products, cost_sales_tracker, tax_rates","p_new_price, p_avg_cost, p_old_price"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,evaluate_po_order_line,procedure,"p_not_at_min_level, p_line_id, p_not_enough_to_restock","inventory_by_location, purchase_order_lines, purchase_orders","p_not_at_min_level, p_not_enough_to_restock"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,lookup_barcode,procedure,"p_product_id, p_price_rate, p_product_name, p_barcode, p_tax_rate, p_tax_code","products, inventory, bill, tax_rates","p_product_id, p_price_rate, p_product_name, p_tax_rate, p_tax_code"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,update_from_bill,procedure,p_bill_id,"inventory_by_location, products, cashier_drawer_assignments, cashier_stations, sold_products, billed_items, customer_bills, current","sold, sold_products"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,update_sales,procedure,indx,"collection, sold_products",sold_products
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,add_item_to_bill,procedure,"p_barcode, p_bill_id","customer_bills, billed_items",billed_items
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,receive_payment,function,"p_amount, p_type, p_bill_id","customer_bills, inventory, bill",NUMBER
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_tax_payment_due,function,"p_tax_code, p_year","customer_bills, billed_items, querying",NUMBER
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_quantity_sold,function,"p_product_id, p_location_id, p_date_end, p_date_start","products, cashier_drawer_assignments, cashier_stations, billed_items, customer_bills, locations",NUMBER
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,stock_check,procedure,"p_product_id, p_value_counted, p_location_id, p_in_stock",inventory_by_location,"missing_items, null, p_in_stock"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,sunday_check,procedure,"p_staff_id, p_available, p_month, p_sundays",work_hours,"p_available, p_sundays"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,payout,procedure,"p_net_pay, p_deductions, p_gross_pay, p_hlt, p_nat, p_end_date, p_begin_date, p_staff_id",payroll,"p_net_pay, p_deductions, p_gross_pay, p_nat, p_hlt"
+files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,get_name,function,p_staff_id,staff,VARCHAR2
+files\content_assessment\DEMO_DB\PLSQL\loop.sql,loop.sql,loop.sql*,unspecified,n,None,DBMS_OUTPUT.PUT_LINE
+files\content_assessment\DEMO_DB\PLSQL\nestloop.sql,nestloop.sql,nestloop.sql*,unspecified,"m, n, k",None,DBMS_OUTPUT.PUT_LINE
+files\content_assessment\DEMO_DB\PLSQL\stringfunc.sql,stringfunc.sql,stringfunc.sql*,unspecified,"v_input_stringVARCHAR2, v_trimmed_stringVARCHAR2",v_input_string,None
+files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,dates.sqr*,SQR Job,None,"Format, Get_Month_Start_Date, Init, Dtu, AgeYrs, BackDay, GetMonthDiff, GetDateDiff, GetYearDiff, BuildingStringDateV1, Get, ConvertToComponents, BackDayYear, Main_Report, GetWeekDiff, DTU, B_DT_tmp1, wkDate1, Convert, E_DT_tmp1, Get_Month_End_Date, Init_Report, dtu, Dob, Stdapi, BuildingStringDateV2, wkDate2, MonthDays1",None

@@ -3,6 +3,7 @@ Easytrieve,files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,80
 PLSQL,files\content_assessment\DEMO_DB\PLSQL\avg_sal.sql,avg_sal.sql,39
 PLSQL,files\content_assessment\DEMO_DB\PLSQL\cursor.sql,cursor.sql,15
 PLSQL,files\content_assessment\DEMO_DB\PLSQL\error_handle.sql,error_handle.sql,14
+PLSQL,files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,2017
 PLSQL,files\content_assessment\DEMO_DB\PLSQL\loop.sql,loop.sql,12
 PLSQL,files\content_assessment\DEMO_DB\PLSQL\nestloop.sql,nestloop.sql,24
 PLSQL,files\content_assessment\DEMO_DB\PLSQL\stringfunc.sql,stringfunc.sql,8
