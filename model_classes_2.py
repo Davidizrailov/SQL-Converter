@@ -5,7 +5,7 @@ import time
 from dotenv import load_dotenv
 
 class ConfigLoader:
-    def __init__(self, language="SQR"):
+    def __init__(self, language="C#"):
 
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY_EPS")
@@ -35,6 +35,10 @@ class PromptGenerator:
             return prompts.system_message_ET, prompts.generate_prompt_ET(self.code)
         elif self.language == "SQR":
             return prompts.system_message_SQR, prompts.generate_prompt_SQR(self.code)
+        elif self.language == "C#":
+            return "", prompts.generate_prompt_C(self.code)
+        elif self.language == "Kornshell":
+            return "", prompts.generate_prompt_Kornshell(self.code)
 
 
 class VectorStoreManager:
@@ -45,6 +49,8 @@ class VectorStoreManager:
             self.vector_store_id = os.getenv("SQR_VS_ID")            
         elif language == "ET":
             self.vector_store_id = os.getenv("EASYTRIEVE_VS_ID")
+        else:
+            self.vector_store_id = os.getenv("SNOWFLAKE_VS_ID")  
             
 class AssistantManager:
     def __init__(self, client, vector_store_id):
@@ -116,7 +122,7 @@ def main():
     config = ConfigLoader() 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader("files/code_SQR.txt")
+    code_reader = CodeReader("files/code_C.txt")
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
