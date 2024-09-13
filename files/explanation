@@ -1,0 +1,78 @@
+Sure, let's break down the Easytrieve code step by step:
+
+### File Definitions
+
+1. **PERSFILE**:
+   - **EMPNO**: Employee number (positions 1-5, alphanumeric)
+   - **NAME**: Employee name (positions 6-25, alphanumeric)
+   - **DEPT**: Department code (positions 26-30, alphanumeric)
+   - **SALARY**: Salary (positions 31-36, numeric with 2 decimal places)
+   - **DOJ**: Date of joining (positions 37-44, date)
+
+2. **DEPTFILE**:
+   - **DEPTNO**: Department number (positions 1-4, alphanumeric)
+   - **DEPTNAME**: Department name (positions 5-30, alphanumeric)
+
+### Job 1: Processing PERSFILE
+
+1. **DEFINE Statements**:
+   - **DOJ_YEAR**: Extracts the year from the date of joining (DOJ).
+   - **HIGH_SAL, LOW_SAL, AVG_SAL**: Defined as numeric flags for salary conditions.
+
+2. **Conditional Statements**:
+   - If the department is 'FIN' or 'HR', set **HIGH_SAL** to 1.
+   - If the department is 'IT', set **LOW_SAL** to 1.
+
+3. **TOTAL SALARY**: Summarizes the salary field.
+
+4. **CONTROL DEPT**: Groups the report by department.
+
+5. **PRINT REPORT1**: Generates the first report.
+
+### REPORT1: Employee Report
+
+- **LINESIZE 80**: Sets the line size to 80 characters.
+- **TITLE**: Adds titles to the report.
+- **COLUMN**: Defines columns for employee number, name, department, salary, and date of joining.
+- **LINE**: Specifies the fields to print in each line of the report.
+
+### Job 2: Processing PERSFILE and DEPTFILE
+
+1. **FILETYPE IS FILE**: Specifies that the input is from files.
+2. **JOIN**: Joins PERSFILE and DEPTFILE on the department code (DEPT = DEPTNO).
+3. **PRINT REPORT2**: Generates the second report.
+
+### REPORT2: Department Employee Report
+
+- **LINESIZE 80**: Sets the line size to 80 characters.
+- **TITLE**: Adds titles to the report.
+- **COLUMN**: Defines columns for department number, department name, employee number, employee name, and salary.
+- **LINE**: Specifies the fields to print in each line of the report.
+
+### Conditional Reports
+
+1. **IF HIGH_SAL**:
+   - **PRINT REPORT_HIGH**: Generates a report for high salary employees if the HIGH_SAL flag is set.
+
+2. **IF LOW_SAL**:
+   - **PRINT REPORT_LOW**: Generates a report for low salary employees if the LOW_SAL flag is set.
+
+### REPORT_HIGH: High Salary Employees Report
+
+- **LINESIZE 80**: Sets the line size to 80 characters.
+- **TITLE**: Adds a title to the report.
+- **COLUMN**: Defines columns for employee number, name, department, and salary.
+- **LINE**: Specifies the fields to print in each line of the report.
+
+### REPORT_LOW: Low Salary Employees Report
+
+- **LINESIZE 80**: Sets the line size to 80 characters.
+- **TITLE**: Adds a title to the report.
+- **COLUMN**: Defines columns for employee number, name, department, and salary.
+- **LINE**: Specifies the fields to print in each line of the report.
+
+### Summary
+
+1. **PERSFILE** and **DEPTFILE** are defined with specific fields.
+2. The first job processes **PERSFILE**, sets flags based on department, totals salaries, groups by department, and prints a report.
+3. The second job joins **PERSFILE** and **DEPTFILE** on department code, prints a combined report, and conditionally prints high and low salary reports based on the flags set in the first job.
