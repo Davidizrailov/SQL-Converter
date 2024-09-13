@@ -138,7 +138,55 @@ def generate_prompt2_SQR(code_description):
     """
     return prompt
     
-    
+def generate_prompt_C(code):
+    prompt = f"""
+
+        Below is some C# Code. Right now, only explain what the code is doing, step by step.
+       
+        Here is the code:
+        {code}
+    """
+    return prompt
+
+def generate_prompt2_C(code_description):
+    prompt=f"""
+        Using the code description, write me a snowflake procedure which matches this description. 
+        Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
+        There should be no text other than the code. Use python 3.8 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+
+        Utilize the snowflake documentation file is needed.
+
+        Avoid using pandas. If any packages are being used, do not forget to import them.
+        Utilize the snowflake documentation file is needed. 
+        code description: {code_description} 
+    """
+    return prompt
+
+def generate_prompt_Kornshell(code):
+    prompt = f"""
+
+        Below is some Kornshell Code. Right now, only explain what the code is doing, step by step.
+       
+        Here is the code:
+        {code}
+    """
+    return prompt
+
+def generate_prompt2_Kornshell(code_description):
+    prompt=f"""
+        Using the code description, write me a snowflake procedure which matches this description. 
+        Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
+        There should be no text other than the code. Use python 3.8 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+
+        Utilize the snowflake documentation file is needed.
+
+        Avoid using pandas. If any packages are being used, do not forget to import them.
+        Utilize the snowflake documentation file is needed. 
+        code description: {code_description} 
+    """
+    return prompt
+
+
 def generate_prompt2(response_message, language):
     if language == "PLSQL":
         prompt2 = generate_prompt2_PLSQL(response_message)
@@ -146,6 +194,10 @@ def generate_prompt2(response_message, language):
         prompt2 = generate_prompt2_SQR(response_message)
     elif language == "ET":
         prompt2 = generate_prompt2_ET(response_message)
+    elif language == "C#":
+        prompt2 = generate_prompt2_C(response_message)
+    elif language == "Kornshell":
+        prompt2 = generate_prompt2_Kornshell(response_message)
     return prompt2 
 
 
