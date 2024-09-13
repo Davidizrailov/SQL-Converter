@@ -77,7 +77,7 @@ if uploaded_file is not None:
 # Translation
 #############################################################################################            
     
-    demo = False
+    demo = True
     st.session_state.translator = Translator(code   = file_content, 
                                              config = config)
     
