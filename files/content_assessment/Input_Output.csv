@@ -1,10 +1,18 @@
 Object Path,Object Name,Inputs,Outputs
-files\content_assessment\DEMO_DB\EasyTrieve\report.et,report.et,"PERSFILE, PERSFILE DEPTFILE","REPORT1, REPORT2, REPORT_HIGH, REPORT_LOW, FILETYPE IS FILE, SALARY"
-files\content_assessment\DEMO_DB\PLSQL\avg_sal.sql,avg_sal.sql,employees,None
-files\content_assessment\DEMO_DB\PLSQL\cursor.sql,cursor.sql,employees,None
-files\content_assessment\DEMO_DB\PLSQL\error_handle.sql,error_handle.sql,None,None
-files\content_assessment\DEMO_DB\PLSQL\JTA_Packages.sql,JTA_Packages.sql,"products, pending_tax_changes, billed_items, work_hours, tax_rate_history, customer_bills, price_history, avg_cost, inventory_by_location, cashier_drawer_assignments, sold_products, payroll, staff, locations, authorized_ip_adresses, purchase_order_lines, cost_sales_tracker","pending_tax_changes, billed_items, tax_rate_history, customer_bills, job_posts_history, missing_items, inventory_by_location, purchase_orders, OF, sold_products, payroll, tax_rates, cashier_drawer_assignments, jta_events, purchase_order_lines, jta_errors, cost_sales_tracker"
-files\content_assessment\DEMO_DB\PLSQL\loop.sql,loop.sql,None,None
-files\content_assessment\DEMO_DB\PLSQL\nestloop.sql,nestloop.sql,None,None
-files\content_assessment\DEMO_DB\PLSQL\stringfunc.sql,stringfunc.sql,v_input_string,None
-files\content_assessment\DEMO_DB\SQR\dates.sqr,dates.sqr,"Convert, Get_Month_Start_Date, E_DT_tmp1, GetYearDiff, BuildingStringDateV1, B_DT_tmp1, wkDate1, DTU, MonthDays1, Main_Report, wkDate2, Format, BackDayYear, Dtu, BuildingStringDateV2, GetDateDiff, Get_Month_End_Date, AgeYrs, ConvertToComponents, Get, BackDay, Stdapi, Init_Report, Init, GetMonthDiff, Dob, dtu, GetWeekDiff",None
+files/content_assessment/DEMO_DB\EasyTrieve\report.et,report.et,"PERSFILE DEPTFILE, PERSFILE","REPORT2, SALARY, REPORT_LOW, REPORT_HIGH, FILETYPE IS FILE, REPORT1"
+files/content_assessment/DEMO_DB\PLSQL\avg_sal.sql,avg_sal.sql,employees,None
+files/content_assessment/DEMO_DB\PLSQL\cursor.sql,cursor.sql,employees,None
+files/content_assessment/DEMO_DB\PLSQL\error_handle.sql,error_handle.sql,None,None
+files/content_assessment/DEMO_DB\PLSQL\loop.sql,loop.sql,None,None
+files/content_assessment/DEMO_DB\PLSQL\nestloop.sql,nestloop.sql,None,None
+files/content_assessment/DEMO_DB\PLSQL\stringfunc.sql,stringfunc.sql,v_input_string,None
+files/content_assessment/DEMO_DB\PLSQL\JTA\billing.sql,billing.sql,"sold_products, billed_items, customer_bills","sold_products, inventory_by_location, billed_items, OF, customer_bills, cashier_drawer_assignments"
+files/content_assessment/DEMO_DB\PLSQL\JTA\employee_ops.sql,employee_ops.sql,"staff, payroll, work_hours",None
+files/content_assessment/DEMO_DB\PLSQL\JTA\error_handling.sql,error_handling.sql,None,jta_errors
+files/content_assessment/DEMO_DB\PLSQL\JTA\financial_ops.sql,financial_ops.sql,"avg_cost, locations, payroll, staff, cost_sales_tracker, billed_items, work_hours, cashier_drawer_assignments",payroll
+files/content_assessment/DEMO_DB\PLSQL\JTA\general_ops.sql,general_ops.sql,"products, inventory_by_location","missing_items, inventory_by_location"
+files/content_assessment/DEMO_DB\PLSQL\JTA\inventory_ops.sql,inventory_ops.sql,"cost_sales_tracker, products, purchase_order_lines, inventory_by_location","purchase_orders, cost_sales_tracker, purchase_order_lines"
+files/content_assessment/DEMO_DB\PLSQL\JTA\payroll_ops.sql,payroll_ops.sql,"staff, payroll, work_hours",payroll
+files/content_assessment/DEMO_DB\PLSQL\JTA\product_ops.sql,product_ops.sql,"price_history, locations, cost_sales_tracker, billed_items, products",None
+files/content_assessment/DEMO_DB\PLSQL\JTA\triggers.sql,triggers.sql,"authorized_ip_adresses, products","job_posts_history, jta_events, OF"
+files/content_assessment/DEMO_DB\SQR\dates.sqr,dates.sqr,"Format, AgeYrs, DTU, Init_Report, Get_Month_End_Date, Dob, Stdapi, wkDate2, GetWeekDiff, Init, BuildingStringDateV1, GetMonthDiff, B_DT_tmp1, GetDateDiff, Dtu, Main_Report, wkDate1, Convert, MonthDays1, dtu, Get_Month_Start_Date, BackDay, E_DT_tmp1, GetYearDiff, ConvertToComponents, Get, BackDayYear, BuildingStringDateV2",None
