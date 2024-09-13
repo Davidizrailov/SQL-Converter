@@ -4,7 +4,7 @@ import pandas as pd
 from content_assessment import *
 
 summary_cols = ["Object Type", "Object Path", "Object Name", "Object Line Count"]
-input_output_cols = ["Object Path", "Object Name", "Inputs", "Outputs"]
+input_output_cols = ["Object Path", "Object Name", "Inputs", "Outputs", "Procedures/Functions/Trigger Name"]
 
 df_summary = pd.DataFrame(columns=summary_cols)
 df_inputs_outputs = pd.DataFrame(columns=input_output_cols)
@@ -23,16 +23,21 @@ def extract_table_info_from_plsql(file_path):
     # REGEX patterns for table inputs and outputs
     select_table_pattern = r"FROM\s+([a-zA-Z_][a-zA-Z0-9_\.]*)"
     modify_table_pattern = r"\b(INSERT\s+INTO|UPDATE|DELETE\s+FROM|MERGE\s+INTO)\s+([a-zA-Z_][a-zA-Z0-9_\.]*)"
+
+    proc_names_pattern = r"\b(PROCEDURE|FUNCTION|TRIGGER)\s+([a-zA-Z_][a-zA-Z0-9_\.]*)"
     
     input_tables = re.findall(select_table_pattern, content)
     modified_tables = re.findall(modify_table_pattern, content)
     output_tables = [table[1] for table in modified_tables]
+    proc_names = re.findall(proc_names_pattern, content)
+    procs = [table[1] for table in proc_names]
     
     item_name = file_path.split('/')[-1].split('.')[0] + '*'
     
     results = [{
         "Inputs": ", ".join(set(input_tables)) if input_tables else "None",
-        "Outputs": ", ".join(set(output_tables)) if output_tables else "None"
+        "Outputs": ", ".join(set(output_tables)) if output_tables else "None",
+        "Procedures/Functions/Trigger Name": ", ".join(set(procs)) if procs else "None",
     }]
     
     # Convert to DataFrame
@@ -65,7 +70,8 @@ def detect_easytrieve_inputs_outputs(path):
 
     results = [{  
         "Inputs": ", ".join(set(input_files)) if input_files else "None",
-        "Outputs": ", ".join(set(output_files)) if output_files else "None"
+        "Outputs": ", ".join(set(output_files)) if output_files else "None",
+        "Procedures/Functions/Trigger Name": "None"
     }]
 
     df = pd.DataFrame(results)
@@ -95,7 +101,8 @@ def detect_sqr_inputs_outputs(path):
 
     results = [{
         "Inputs": ", ".join(set(input_items)) if input_items else "None",
-        "Outputs": ", ".join(set(output_items)) if output_items else "None"
+        "Outputs": ", ".join(set(output_items)) if output_items else "None",
+        "Procedures/Functions/Trigger Name": "None"
     }]
 
     df = pd.DataFrame(results)
