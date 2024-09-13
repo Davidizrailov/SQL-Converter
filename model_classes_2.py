@@ -91,6 +91,7 @@ class AssistantManager:
                 run_id=run.id
             )
         print(run.status)
+        print(run.usage.total_tokens)
         return run
 
     def get_response_message(self, thread_id):
