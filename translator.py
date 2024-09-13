@@ -122,7 +122,20 @@ class Translator:
                     run_id    = run.id
                 )
                 print(run.status)
+            print(run.usage["total_tokens"])
             response_message = client.beta.threads.messages.list(thread_id=thread_id)
             follow_up = response_message.data[0].content[0].text.value
 
         return follow_up
+    
+
+if __name__ ==  "__main__":
+    config = ConfigLoader(language="PLSQL")
+    # code = CodeReader(file_path="files/code_SQR.txt")
+    # translator = Translator(code=code, config=config)
+    # translator.translate(demo=False)
+    client = OpenAI(api_key=config.api_key)
+    # print(dir(client.beta.threads.runs.retrieve))
+    print(client.beta.threads.runs.retrieve)
+    
+
