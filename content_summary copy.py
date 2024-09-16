@@ -1,10 +1,10 @@
 import os
 import re
 import pandas as pd
-from content_assessment import *
+import content_summary_genAI
 
 summary_cols = ["Object Type", "Object Path", "Object Name", "Object Line Count"]
-input_output_cols = ["Object Path", "Object Name", "Inputs", "Outputs", "Procedures/Functions/Trigger Name"]
+input_output_cols = ["Object Path", "Object Name", "Inputs", "Outputs", "Procedures/Functions/Trigger Name", "Summary"]
 
 df_summary = pd.DataFrame(columns=summary_cols)
 df_inputs_outputs = pd.DataFrame(columns=input_output_cols)
@@ -27,13 +27,18 @@ def extract_table_info_from_plsql(file_path):
     proc_names_pattern = r"\b(PROCEDURE|FUNCTION|TRIGGER)\s+([a-zA-Z_][a-zA-Z0-9_\.]*)"
     
     input_tables = re.findall(select_table_pattern, content)
+    
     modified_tables = re.findall(modify_table_pattern, content)
     output_tables = [table[1] for table in modified_tables]
+    output_tables = [table for table in output_tables if table.upper() != 'OF']
+    
     proc_names = re.findall(proc_names_pattern, content)
     procs = [table[1] for table in proc_names]
     
     item_name = file_path.split('/')[-1].split('.')[0] + '*'
     
+    
+
     results = [{
         "Inputs": ", ".join(set(input_tables)) if input_tables else "None",
         "Outputs": ", ".join(set(output_tables)) if output_tables else "None",
@@ -120,6 +125,9 @@ def list_files_recursively(folder_path):
 folder_path = "files/content_assessment/DEMO_DB"
 all_files = list_files_recursively(folder_path)
 
+file_num = len(all_files)
+i=1
+
 # Iterate through all files and process
 for file_path in all_files:
     # OBJECT TYPE
@@ -152,9 +160,14 @@ for file_path in all_files:
 
     input_output["Object Path"] = file_path
     input_output["Object Name"] = filename
+    summary = content_summary_genAI.main(file_path, object_type)
+    input_output["Summary"] = summary
 
     # Append to df_inputs_outputs
     df_inputs_outputs = pd.concat([df_inputs_outputs, input_output])
+    
+    print(f"{i}/{file_num}")
+    i+=1
 
 # Export to CSV files
 df_summary.to_csv(r"files/content_assessment/Summary.csv", index=False)
