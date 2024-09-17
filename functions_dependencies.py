@@ -39,7 +39,7 @@ def wrap_summary(summary, max_words_per_line=10):
     for word in words:
         if len(current_line.split()) >= max_words_per_line:
             wrapped_summary += current_line + "<br>"
-            current_line = word
+            current_line = word + ' '
         else:
             current_line += word + " "
 
