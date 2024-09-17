@@ -155,4 +155,8 @@ for func in objects:
 #     for u in G.nodes():
 #         G.add_edge(v, u, style='invis')
 o = Ontology(G)
+# import json
+# with open('graph_data.json', 'w') as jf:
+#     json.dump(nx.readwrite.json_graph.adjacency_data(G), jf)
+
 o.create_visualization("function_dependencies_graph.html", show=True)
