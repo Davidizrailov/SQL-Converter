@@ -85,7 +85,7 @@ def generate_prompt2_PLSQL(code_description):
     prompt=f"""
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Use python 3.8 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+        There should be no text other than the code. Use python 3.10 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
 
         Utilize the snowflake documentation file is needed.
 
@@ -110,7 +110,7 @@ def generate_prompt2_ET(code_description):
     prompt=f"""
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. If you are using a stored procedure, Use python 3.8 rather than javascript. Make sure to add a handler. 
+        There should be no text other than the code. If you are using a stored procedure, Use python 3.10 rather than javascript. Make sure to add a handler. 
         Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
         Utilize the SQR Documentation file is needed.
         code description: {code_description} 
@@ -131,7 +131,7 @@ def generate_prompt2_SQR(code_description):
     prompt=f"""
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. If you are using a stored procedure, Use python 3.8 rather than javascript. Make sure to add a handler. 
+        There should be no text other than the code. If you are using a stored procedure, Use python 3.10 rather than javascript. Make sure to add a handler. 
         Call the procedure as well outside of the procedure creation. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
         Utilize the SQR Documentation file is needed.
         code description: {code_description} 
@@ -152,7 +152,7 @@ def generate_prompt2_C(code_description):
     prompt=f"""
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Use python 3.8 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+        There should be no text other than the code. Use python 3.10 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
 
         Utilize the snowflake documentation file is needed.
 
@@ -176,7 +176,7 @@ def generate_prompt2_Kornshell(code_description):
     prompt=f"""
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Use python 3.8 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+        There should be no text other than the code. Use python 3.10 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
 
         Utilize the snowflake documentation file is needed.
 
