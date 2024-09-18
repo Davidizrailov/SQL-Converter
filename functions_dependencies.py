@@ -39,7 +39,7 @@ def wrap_summary(summary, max_words_per_line=10):
     for word in words:
         if len(current_line.split()) >= max_words_per_line:
             wrapped_summary += current_line + "<br>"
-            current_line = word
+            current_line = word + ' '
         else:
             current_line += word + " "
 
@@ -155,4 +155,8 @@ for func in objects:
 #     for u in G.nodes():
 #         G.add_edge(v, u, style='invis')
 o = Ontology(G)
+# import json
+# with open('graph_data.json', 'w') as jf:
+#     json.dump(nx.readwrite.json_graph.adjacency_data(G), jf)
+
 o.create_visualization("function_dependencies_graph.html", show=True)
