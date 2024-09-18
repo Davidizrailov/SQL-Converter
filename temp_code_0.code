@@ -1,0 +1,59 @@
+CREATE OR REPLACE PROCEDURE process_employee_bonuses()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+def run(session):
+    v_bonus_percentage = 0.10
+    v_raise_percentage = 0.05
+    v_dept_id = 10
+    
+    emp_cursor = session.sql(f"""
+        SELECT employee_id, first_name, salary
+        FROM employees
+        WHERE department_id = {v_dept_id}
+    """).collect()
+    
+    for row in emp_cursor:
+        v_employee_id = row['EMPLOYEE_ID']
+        v_employee_name = row['FIRST_NAME']
+        v_new_salary = row['SALARY']
+        
+        # Calculate bonus
+        v_bonus = v_new_salary * v_bonus_percentage
+
+        # Calculate raise
+        v_raise = v_new_salary * v_raise_percentage
+
+        # Update salary with raise
+        v_new_salary += v_raise
+
+        # Insert the bonus into a bonus table
+        session.sql(f"""
+            INSERT INTO employee_bonus (employee_id, bonus_amount, bonus_date)
+            VALUES ({v_employee_id}, {v_bonus}, CURRENT_TIMESTAMP())
+        """).collect()
+        
+        # Update the employee's salary
+        session.sql(f"""
+            UPDATE employees
+            SET salary = {v_new_salary}
+            WHERE employee_id = {v_employee_id}
+        """).collect()
+        
+        print(f'Employee ID: {v_employee_id}, Name: {v_employee_name}, New Salary: {v_new_salary}, Bonus: {v_bonus}')
+    
+    # Calculate the average salary in the department
+    v_avg_salary = session.sql(f"""
+        SELECT AVG(salary) AS avg_salary
+        FROM employees
+        WHERE department_id = {v_dept_id}
+    """).collect()[0]['AVG_SALARY']
+    
+    print(f'Average Salary in Department {v_dept_id}: {v_avg_salary}')
+    return "SUCCESS"
+
+$$;
