@@ -1,14 +1,40 @@
-from model_classes_2 import *
+import os
 
-class AssistantManager2:
+from openai import OpenAI
+import time
+from dotenv import load_dotenv
+
+class ConfigLoader:
+    def __init__(self, language):
+
+        load_dotenv()
+        self.api_key = os.getenv("OPENAI_API_KEY_EPS")
+        self.language = language
+
+class OpenAIClient:
+    def __init__(self, api_key):
+        self.client = OpenAI(api_key=api_key)
+
+class CodeReader:
+    def __init__(self, file_path):
+        self.file_path = file_path
+
+    def read_code(self):
+        with open(self.file_path, "r") as file:
+            return file.read()
+
+            
+class AssistantManager:
     def __init__(self, client):
         self.client = client
         self.assistant = self.client.beta.assistants.create(
-            name="Content_Assessment_agent",
+            name="CodeDescription",
+
             model="gpt-4o",
-            temperature=0.8,
+            temperature=0.2,
+
         )
-    
+
     def create_thread(self):
         return self.client.beta.threads.create()
 
@@ -26,13 +52,14 @@ class AssistantManager2:
         )
 
         while (run.status != "completed") and (run.status != "failed"):
-            print(run.status)
+            # print(run.status)
             time.sleep(1)
             run = self.client.beta.threads.runs.retrieve(
                 thread_id=thread_id,
                 run_id=run.id
             )
-        print(run.status)
+        # print(run.status)
+        # print(run.usage.total_tokens)
         return run
 
     def get_response_message(self, thread_id):
@@ -40,36 +67,29 @@ class AssistantManager2:
         return response_message.data[0].content[0].text.value
 
 
-def modelcall(lang, path):
-    config = ConfigLoader(language=lang) 
+    
+
+# Main 
+def main(file, lang):
+    config = ConfigLoader(lang) 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader(path)
+    code_reader = CodeReader(file)
     code = code_reader.read_code()
-    prompt = prompts.content_assessment_outputs(code,lang)
+    
+  
+    prompt = f"Describe what the {lang} code does in one or two sentences max. Here is the code: {code}. No need to specify the language. Use sentences not a list"
+    
 
-    assistant_manager = AssistantManager2(client.client)
+
+
+    assistant_manager = AssistantManager(client.client)
     thread = assistant_manager.create_thread()
     assistant_manager.send_message(thread.id, prompt)
     assistant_manager.run_thread(thread.id)
-    print("done!")
+    
     
     response_message = assistant_manager.get_response_message(thread.id)
-    #print(response_message)
-
-    with open("files\content_assessment\out.txt","a", encoding="utf-8") as file:
-        file.write(response_message)
-        file.write(";")
-        print("Written!")
-
-
-    with open(r"files\content_assessment\out.txt", 'r') as file:
-        content = file.read()
-        content = content.replace(",","-")
-    with open("files\content_assessment\out.csv","w", encoding="utf-8") as file:
-        file.write(content) 
-
-if __name__ == "__main__":
-    main()
-
+    return response_message
+    
 
