@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "label": "Node 1",
+      "shape": "rectangle",
+      "color": "#FF0000",
+      "size": "30"
+    },
+    {
+      "id": "2",
+      "label": "Node 2",
+      "shape": "ellipse",
+      "color": "#00FF00",
+      "size": "20"
+    },
+    {
+      "id": "3",
+      "label": "Node 3",
+      "shape": "diamond",
+      "color": "#0000FF",
+      "size": "25"
+    }
+  ],
+  "edges": [
+    {
+      "source": "1",
+      "target": "2",
+      "label": "Edge 1-2",
+      "weight": 1.5
+    },
+    {
+      "source": "2",
+      "target": "3",
+      "label": "Edge 2-3",
+      "weight": 2.0
+    },
+    {
+      "source": "3",
+      "target": "1",
+      "label": "Edge 3-1",
+      "weight": 1.0
+    }
+  ]
+}
