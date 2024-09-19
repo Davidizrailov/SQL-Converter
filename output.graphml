@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d2" for="edge" attr.name="label" attr.type="string" />
+  <key id="d1" for="node" attr.name="shape" attr.type="string" />
+  <key id="d0" for="node" attr.name="label" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="1">
+      <data key="d0">Node 1</data>
+      <data key="d1">rectangle</data>
+    </node>
+    <node id="2">
+      <data key="d0">Node 2</data>
+      <data key="d1">ellipse</data>
+    </node>
+    <node id="3">
+      <data key="d0">Node 3</data>
+      <data key="d1">diamond</data>
+    </node>
+    <edge source="1" target="2">
+      <data key="d2">Edge 1-2</data>
+    </edge>
+    <edge source="2" target="3">
+      <data key="d2">Edge 2-3</data>
+    </edge>
+    <edge source="3" target="1">
+      <data key="d2">Edge 3-1</data>
+    </edge>
+  </graph>
+</graphml>
