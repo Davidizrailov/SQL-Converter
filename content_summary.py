@@ -3,18 +3,12 @@ import re
 import pandas as pd
 import content_summary_genAI
 
-summary_cols = ["Object Type", "Object Path", "Object Name", "Object Line Count"]
+
 input_output_cols = ["Object Path", "Object Name", "Inputs", "Outputs", "Procedures/Functions/Trigger Name", "Summary"]
 
-df_summary = pd.DataFrame(columns=summary_cols)
+
 df_inputs_outputs = pd.DataFrame(columns=input_output_cols)
 
-# Line Counter
-def count_lines(file_path):
-    with open(file_path, 'r') as file:
-        content = file.readlines()
-        lines = len(content)
-    return lines
 
 def extract_table_info_from_plsql(file_path):
     with open(file_path, 'r') as file:
@@ -143,12 +137,6 @@ for file_path in all_files:
     # OBJECT NAME
     filename = os.path.basename(file_path)
 
-    # LINE COUNT
-    lines = count_lines(file_path)
-
-    # Append to df_summary
-    summary_row = [object_type, file_path, filename, lines]
-    df_summary.loc[len(df_summary)] = summary_row
 
     # INPUTS/OUTPUTS
     if ext == "sql":
@@ -170,7 +158,7 @@ for file_path in all_files:
     i+=1
 
 # Export to CSV files
-df_summary.to_csv(r"files/content_assessment/Summary.csv", index=False)
+
 df_inputs_outputs.to_csv(r"files/content_assessment/Input_Output.csv", index=False)
 
 print("Done!")
