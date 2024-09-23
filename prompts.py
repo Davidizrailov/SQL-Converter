@@ -186,6 +186,53 @@ def generate_prompt2_Kornshell(code_description):
     """
     return prompt
 
+def generate_prompt_java(code):
+    prompt = f"""
+
+        Below is some java Code. Right now, only explain what the code is doing, step by step.
+       
+        Here is the code:
+        {code}
+    """
+    return prompt
+
+def generate_prompt2_java(code_description):
+    prompt=f"""
+        Using the code description, write me a snowflake procedure which matches this description. 
+        Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
+        There should be no text other than the code. Use Java as the language. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+
+        Utilize the snowflake documentation file is needed.
+
+        If any packages are being used, do not forget to import them.
+        Utilize the snowflake documentation file is needed. 
+        code description: {code_description} 
+    """
+    return prompt
+
+def generate_prompt_cobol(code):
+    prompt = f"""
+
+        Below is some Cobol Code. Right now, only explain what the code is doing, step by step.
+       
+        Here is the code:
+        {code}
+    """
+    return prompt
+
+def generate_prompt2_cobol(code_description):
+    prompt=f"""
+        Using the code description, write me a snowflake procedure which matches this description. 
+        Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
+        There should be no text other than the code. Use python 3.10 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+
+        Utilize the snowflake documentation file is needed.
+
+        Avoid using pandas. If any packages are being used, do not forget to import them.
+        Utilize the snowflake documentation file is needed. 
+        code description: {code_description} 
+    """
+    return prompt
 
 def generate_prompt2(response_message, language):
     if language == "PLSQL":
@@ -198,6 +245,10 @@ def generate_prompt2(response_message, language):
         prompt2 = generate_prompt2_C(response_message)
     elif language == "Kornshell":
         prompt2 = generate_prompt2_Kornshell(response_message)
+    elif language == "Java":
+        prompt2 = generate_prompt2_java(response_message)
+    elif language == "Cobol":
+        prompt2 = generate_prompt2_cobol(response_message)
     return prompt2 
 
 

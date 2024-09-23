@@ -39,6 +39,11 @@ class PromptGenerator:
             return "", prompts.generate_prompt_C(self.code)
         elif self.language == "Kornshell":
             return "", prompts.generate_prompt_Kornshell(self.code)
+        elif self.language == "Java":
+            return "", prompts.generate_prompt_java(self.code)
+        elif self.language == "Cobol":
+            return "", prompts.generate_prompt_cobol(self.code)
+        
 
 
 class VectorStoreManager:

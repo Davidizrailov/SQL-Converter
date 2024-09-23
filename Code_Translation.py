@@ -41,7 +41,7 @@ if 'translator' not in st.session_state:
 # Configuration & initialization
 #############################################################################################            
 
-language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve"])
+language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve", "Java", "Kornshell", "C#", "Cobol"])
 
 if language=="Easytrieve": 
     language="ET"
@@ -63,7 +63,7 @@ if os.path.isfile(explanation_file):
 # Input Code
 #############################################################################################            
 
-uploaded_file = st.file_uploader("Document to translate", type=["txt", "sql", "sqr", "et"])
+uploaded_file = st.file_uploader("Document to translate", type=["txt", "sql", "sqr", "et", "ksh", "jav", "cs", "col", "cbl"])
 
 if uploaded_file is not None:
     file_content = uploaded_file.read().decode("utf-8")
@@ -130,7 +130,7 @@ if uploaded_file is not None:
 #############################################################################################            
 
     demo = False
-    error_message = st.text_area("Error message")
+    error_message = st.text_area("Follow Up")
     
     if st.button("Retry", use_container_width=True):
         placeholder_ret = st.empty()

@@ -1,0 +1,73 @@
+Sure, let's go through the Oracle PL/SQL code step by step:
+
+### Declaration Section
+1. **Variable Declarations:**
+   - `v_job_title`: A variable to store the job title fetched from the `employees` table.
+   - `v_avg_salary`: A variable to store the average salary for a particular job title.
+   - `v_total_salary`: A variable to accumulate the total salary for a particular job title.
+   - `v_employee_count`: A variable to count the number of employees for a particular job title.
+
+2. **Cursor Declarations:**
+   - `c_job_titles`: A cursor to fetch distinct job titles from the `employees` table.
+   - `c_employees`: A cursor to fetch the salaries of employees based on a job title passed as a parameter (`p_job_title`).
+
+### Begin Section
+3. **Output Header:**
+   - `DBMS_OUTPUT.PUT_LINE('Job Title' || CHR(9) || 'Average Salary');`: Prints the header for the output.
+   - `DBMS_OUTPUT.PUT_LINE('-----------------------------------');`: Prints a separator line.
+
+4. **Open Cursor `c_job_titles`:**
+   - `OPEN c_job_titles;`: Opens the cursor to fetch distinct job titles.
+
+5. **Fetch First Job Title:**
+   - `FETCH c_job_titles INTO v_job_title;`: Fetches the first job title into `v_job_title`.
+
+6. **Loop Through Job Titles:**
+   - `WHILE c_job_titles%FOUND LOOP`: Loops through each job title until no more job titles are found.
+     - **Initialize Salary and Count:**
+       - `v_total_salary := 0;`: Initializes the total salary to 0.
+       - `v_employee_count := 0;`: Initializes the employee count to 0.
+     
+     - **Open Cursor `c_employees`:**
+       - `OPEN c_employees(v_job_title);`: Opens the cursor to fetch salaries for the current job title.
+     
+     - **Fetch First Employee Salary:**
+       - `FETCH c_employees INTO v_avg_salary;`: Fetches the first salary into `v_avg_salary`.
+     
+     - **Loop Through Employee Salaries:**
+       - `WHILE c_employees%FOUND LOOP`: Loops through each salary until no more salaries are found.
+         - **Accumulate Salary and Count:**
+           - `v_total_salary := v_total_salary + v_avg_salary;`: Adds the salary to the total salary.
+           - `v_employee_count := v_employee_count + 1;`: Increments the employee count.
+         - **Fetch Next Employee Salary:**
+           - `FETCH c_employees INTO v_avg_salary;`: Fetches the next salary.
+       - **End Loop for Employee Salaries:**
+         - `END LOOP;`
+     
+     - **Close Cursor `c_employees`:**
+       - `CLOSE c_employees;`: Closes the cursor for employee salaries.
+     
+     - **Calculate Average Salary:**
+       - `IF v_employee_count > 0 THEN`: Checks if there are any employees for the job title.
+         - `v_avg_salary := v_total_salary / v_employee_count;`: Calculates the average salary.
+       - `ELSE`
+         - `v_avg_salary := 0;`: Sets the average salary to 0 if no employees are found.
+       - `END IF;`
+     
+     - **Output Job Title and Average Salary:**
+       - `DBMS_OUTPUT.PUT_LINE(v_job_title || CHR(9) || v_avg_salary);`: Prints the job title and average salary.
+     
+     - **Fetch Next Job Title:**
+       - `FETCH c_job_titles INTO v_job_title;`: Fetches the next job title.
+   - **End Loop for Job Titles:**
+     - `END LOOP;`
+   
+7. **Close Cursor `c_job_titles`:**
+   - `CLOSE c_job_titles;`: Closes the cursor for job titles.
+
+### End Section
+8. **End of PL/SQL Block:**
+   - `END;`: Marks the end of the PL/SQL block.
+
+### Summary
+This PL/SQL code calculates and prints the average salary for each distinct job title in the `employees` table. It uses two cursors: one to fetch distinct job titles and another to fetch salaries for each job title. It accumulates the total salary and counts the number of employees for each job title, then calculates the average salary and prints it.
