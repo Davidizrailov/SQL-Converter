@@ -1,5 +1,6 @@
 import os
 import re
+import time
 
 # Define the file paths
 input_file_path = "C:/Users/NW538RY/OneDrive - EY/Desktop/programme.txt"
@@ -19,6 +20,8 @@ patterns = {
 def save_chunk(content, chunk_type, chunk_num):
     """ Saves the given content to a file with a proper name based on the chunk type and number. """
     file_name = f"{chunk_type}_{chunk_num}.sas"
+    print(file_name)
+    time.sleep(.05)
     with open(os.path.join(output_dir, file_name), 'w') as file:
         file.write(content)
 

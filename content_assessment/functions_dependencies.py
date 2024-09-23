@@ -29,15 +29,15 @@ functions = get_functions()
 
 
 # Define function names, inputs, and outputs (based on the table you provided)
-functions = [
-    {"name": "get_customer_info", "inputs": ["customer_id"], "outputs": ["customer_name", "customer_address", "customer_email"]},
-    {"name": "get_inventory_status", "inputs": ["product_id"], "outputs": ["product_name", "stock_quantity", "product_price"]},
-    {"name": "create_order", "inputs": ["customer_id", "product_id", "quantity", "order_date"], "outputs": ["order_id", "total_order_value"]},
-    {"name": "generate_invoice", "inputs": ["order_id", "customer_info", "total_order_value"], "outputs": ["invoice_id", "invoice_date", "payment_due_date"]},
-    {"name": "process_payment", "inputs": ["invoice_id", "payment_method", "payment_amount"], "outputs": ["payment_confirmation", "balance_due"]},
-    {"name": "update_inventory", "inputs": ["product_id", "quantity_sold"], "outputs": ["updated_stock_quantity"]},
-    {"name": "send_order_confirmation", "inputs": ["customer_email", "order_id", "invoice_id", "total_order_value"], "outputs": ["confirmation_status"]}
-]
+# functions = [
+#     {"name": "get_customer_info", "inputs": ["customer_id"], "outputs": ["customer_name", "customer_address", "customer_email"]},
+#     {"name": "get_inventory_status", "inputs": ["product_id"], "outputs": ["product_name", "stock_quantity", "product_price"]},
+#     {"name": "create_order", "inputs": ["customer_id", "product_id", "quantity", "order_date"], "outputs": ["order_id", "total_order_value"]},
+#     {"name": "generate_invoice", "inputs": ["order_id", "customer_info", "total_order_value"], "outputs": ["invoice_id", "invoice_date", "payment_due_date"]},
+#     {"name": "process_payment", "inputs": ["invoice_id", "payment_method", "payment_amount"], "outputs": ["payment_confirmation", "balance_due"]},
+#     {"name": "update_inventory", "inputs": ["product_id", "quantity_sold"], "outputs": ["updated_stock_quantity"]},
+#     {"name": "send_order_confirmation", "inputs": ["customer_email", "order_id", "invoice_id", "total_order_value"], "outputs": ["confirmation_status"]}
+# ]
 
 # Create a directed graph
 G = nx.DiGraph()
