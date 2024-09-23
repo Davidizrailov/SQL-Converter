@@ -1,78 +1,73 @@
-Sure, let's break down the Easytrieve code step by step:
+Sure, let's go through the Oracle PL/SQL code step by step:
 
-### File Definitions
+### Declaration Section
+1. **Variable Declarations:**
+   - `v_job_title`: A variable to store the job title fetched from the `employees` table.
+   - `v_avg_salary`: A variable to store the average salary for a particular job title.
+   - `v_total_salary`: A variable to accumulate the total salary for a particular job title.
+   - `v_employee_count`: A variable to count the number of employees for a particular job title.
 
-1. **PERSFILE**:
-   - **EMPNO**: Employee number (positions 1-5, alphanumeric)
-   - **NAME**: Employee name (positions 6-25, alphanumeric)
-   - **DEPT**: Department code (positions 26-30, alphanumeric)
-   - **SALARY**: Salary (positions 31-36, numeric with 2 decimal places)
-   - **DOJ**: Date of joining (positions 37-44, date)
+2. **Cursor Declarations:**
+   - `c_job_titles`: A cursor to fetch distinct job titles from the `employees` table.
+   - `c_employees`: A cursor to fetch the salaries of employees based on a job title passed as a parameter (`p_job_title`).
 
-2. **DEPTFILE**:
-   - **DEPTNO**: Department number (positions 1-4, alphanumeric)
-   - **DEPTNAME**: Department name (positions 5-30, alphanumeric)
+### Begin Section
+3. **Output Header:**
+   - `DBMS_OUTPUT.PUT_LINE('Job Title' || CHR(9) || 'Average Salary');`: Prints the header for the output.
+   - `DBMS_OUTPUT.PUT_LINE('-----------------------------------');`: Prints a separator line.
 
-### Job 1: Processing PERSFILE
+4. **Open Cursor `c_job_titles`:**
+   - `OPEN c_job_titles;`: Opens the cursor to fetch distinct job titles.
 
-1. **DEFINE Statements**:
-   - **DOJ_YEAR**: Extracts the year from the date of joining (DOJ).
-   - **HIGH_SAL, LOW_SAL, AVG_SAL**: Defined as numeric flags for salary conditions.
+5. **Fetch First Job Title:**
+   - `FETCH c_job_titles INTO v_job_title;`: Fetches the first job title into `v_job_title`.
 
-2. **Conditional Statements**:
-   - If the department is 'FIN' or 'HR', set **HIGH_SAL** to 1.
-   - If the department is 'IT', set **LOW_SAL** to 1.
+6. **Loop Through Job Titles:**
+   - `WHILE c_job_titles%FOUND LOOP`: Loops through each job title until no more job titles are found.
+     - **Initialize Salary and Count:**
+       - `v_total_salary := 0;`: Initializes the total salary to 0.
+       - `v_employee_count := 0;`: Initializes the employee count to 0.
+     
+     - **Open Cursor `c_employees`:**
+       - `OPEN c_employees(v_job_title);`: Opens the cursor to fetch salaries for the current job title.
+     
+     - **Fetch First Employee Salary:**
+       - `FETCH c_employees INTO v_avg_salary;`: Fetches the first salary into `v_avg_salary`.
+     
+     - **Loop Through Employee Salaries:**
+       - `WHILE c_employees%FOUND LOOP`: Loops through each salary until no more salaries are found.
+         - **Accumulate Salary and Count:**
+           - `v_total_salary := v_total_salary + v_avg_salary;`: Adds the salary to the total salary.
+           - `v_employee_count := v_employee_count + 1;`: Increments the employee count.
+         - **Fetch Next Employee Salary:**
+           - `FETCH c_employees INTO v_avg_salary;`: Fetches the next salary.
+       - **End Loop for Employee Salaries:**
+         - `END LOOP;`
+     
+     - **Close Cursor `c_employees`:**
+       - `CLOSE c_employees;`: Closes the cursor for employee salaries.
+     
+     - **Calculate Average Salary:**
+       - `IF v_employee_count > 0 THEN`: Checks if there are any employees for the job title.
+         - `v_avg_salary := v_total_salary / v_employee_count;`: Calculates the average salary.
+       - `ELSE`
+         - `v_avg_salary := 0;`: Sets the average salary to 0 if no employees are found.
+       - `END IF;`
+     
+     - **Output Job Title and Average Salary:**
+       - `DBMS_OUTPUT.PUT_LINE(v_job_title || CHR(9) || v_avg_salary);`: Prints the job title and average salary.
+     
+     - **Fetch Next Job Title:**
+       - `FETCH c_job_titles INTO v_job_title;`: Fetches the next job title.
+   - **End Loop for Job Titles:**
+     - `END LOOP;`
+   
+7. **Close Cursor `c_job_titles`:**
+   - `CLOSE c_job_titles;`: Closes the cursor for job titles.
 
-3. **TOTAL SALARY**: Summarizes the salary field.
-
-4. **CONTROL DEPT**: Groups the report by department.
-
-5. **PRINT REPORT1**: Generates the first report.
-
-### REPORT1: Employee Report
-
-- **LINESIZE 80**: Sets the line size to 80 characters.
-- **TITLE**: Adds titles to the report.
-- **COLUMN**: Defines columns for employee number, name, department, salary, and date of joining.
-- **LINE**: Specifies the fields to print in each line of the report.
-
-### Job 2: Processing PERSFILE and DEPTFILE
-
-1. **FILETYPE IS FILE**: Specifies that the input is from files.
-2. **JOIN**: Joins PERSFILE and DEPTFILE on the department code (DEPT = DEPTNO).
-3. **PRINT REPORT2**: Generates the second report.
-
-### REPORT2: Department Employee Report
-
-- **LINESIZE 80**: Sets the line size to 80 characters.
-- **TITLE**: Adds titles to the report.
-- **COLUMN**: Defines columns for department number, department name, employee number, employee name, and salary.
-- **LINE**: Specifies the fields to print in each line of the report.
-
-### Conditional Reports
-
-1. **IF HIGH_SAL**:
-   - **PRINT REPORT_HIGH**: Generates a report for high salary employees if the HIGH_SAL flag is set.
-
-2. **IF LOW_SAL**:
-   - **PRINT REPORT_LOW**: Generates a report for low salary employees if the LOW_SAL flag is set.
-
-### REPORT_HIGH: High Salary Employees Report
-
-- **LINESIZE 80**: Sets the line size to 80 characters.
-- **TITLE**: Adds a title to the report.
-- **COLUMN**: Defines columns for employee number, name, department, and salary.
-- **LINE**: Specifies the fields to print in each line of the report.
-
-### REPORT_LOW: Low Salary Employees Report
-
-- **LINESIZE 80**: Sets the line size to 80 characters.
-- **TITLE**: Adds a title to the report.
-- **COLUMN**: Defines columns for employee number, name, department, and salary.
-- **LINE**: Specifies the fields to print in each line of the report.
+### End Section
+8. **End of PL/SQL Block:**
+   - `END;`: Marks the end of the PL/SQL block.
 
 ### Summary
-
-1. **PERSFILE** and **DEPTFILE** are defined with specific fields.
-2. The first job processes **PERSFILE**, sets flags based on department, totals salaries, groups by department, and prints a report.
-3. The second job joins **PERSFILE** and **DEPTFILE** on department code, prints a combined report, and conditionally prints high and low salary reports based on the flags set in the first job.
+This PL/SQL code calculates and prints the average salary for each distinct job title in the `employees` table. It uses two cursors: one to fetch distinct job titles and another to fetch salaries for each job title. It accumulates the total salary and counts the number of employees for each job title, then calculates the average salary and prints it.
