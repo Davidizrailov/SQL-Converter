@@ -122,7 +122,7 @@ class Translator:
                     run_id    = run.id
                 )
                 print(run.status)
-            print(run.usage["total_tokens"])
+            # print(run.usage["total_tokens"])
             response_message = client.beta.threads.messages.list(thread_id=thread_id)
             follow_up = response_message.data[0].content[0].text.value
 

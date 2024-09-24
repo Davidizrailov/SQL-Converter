@@ -5,8 +5,7 @@ import time
 from dotenv import load_dotenv
 
 class ConfigLoader:
-    def __init__(self, language="C#"):
-
+    def __init__(self, language):
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY_EPS")
         self.language = language
@@ -43,20 +42,19 @@ class PromptGenerator:
             return "", prompts.generate_prompt_java(self.code)
         elif self.language == "Cobol":
             return "", prompts.generate_prompt_cobol(self.code)
-        
-
 
 class VectorStoreManager:
     def __init__(self, language):
-        if language == "PLSQL":
-            self.vector_store_id = os.getenv("SNOWFLAKE_VS_ID")            
-        elif language == "SQR":
-            self.vector_store_id = os.getenv("SQR_VS_ID")            
-        elif language == "ET":
-            self.vector_store_id = os.getenv("EASYTRIEVE_VS_ID")
+        if language in ["PLSQL", "SQR", "ET"]:
+            if language == "PLSQL":
+                self.vector_store_id = os.getenv("SNOWFLAKE_VS_ID")            
+            elif language == "SQR":
+                self.vector_store_id = os.getenv("SQR_VS_ID")            
+            elif language == "ET":
+                self.vector_store_id = os.getenv("EASYTRIEVE_VS_ID")
         else:
-            self.vector_store_id = os.getenv("SNOWFLAKE_VS_ID")  
-            
+            self.vector_store_id = None  # Do not use vector store for other languages
+
 class AssistantManager:
     def __init__(self, client, vector_store_id):
         self.client = client
@@ -67,7 +65,7 @@ class AssistantManager:
             temperature=0.3,
             tool_resources={
                 "file_search": {
-                "vector_store_ids": [vector_store_id]
+                    "vector_store_ids": [vector_store_id] if vector_store_id else []
                 }
             }
         )
@@ -96,7 +94,6 @@ class AssistantManager:
                 run_id=run.id
             )
         print(run.status)
-        print(run.usage.total_tokens)
         return run
 
     def get_response_message(self, thread_id):
@@ -125,10 +122,10 @@ class ErrorHandler:
 
 # Main 
 def main():
-    config = ConfigLoader() 
+    config = ConfigLoader(language="Java") 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader("files/code_C.txt")
+    code_reader = CodeReader("files/code_java.txt")
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
@@ -148,15 +145,15 @@ def main():
     #show analysis
     print(response_message)
     
-    prompt2 = prompts.generate_prompt2(response_message, config.language)
+    if config.language != "Java":
+        prompt2 = prompts.generate_prompt2(response_message, config.language)
 
+        assistant_manager.send_message(thread.id, prompt2)
+        assistant_manager.run_thread(thread.id)
+        print("compilation complete!")
 
-    assistant_manager.send_message(thread.id, prompt2)
-    assistant_manager.run_thread(thread.id)
-    print("compilation complete!")
-
-    response_message = assistant_manager.get_response_message(thread.id)
-    print(response_message)
+        response_message = assistant_manager.get_response_message(thread.id)
+        print(response_message)
 
     error_handler = ErrorHandler(assistant_manager, thread.id)
     error_handler.handle_errors()

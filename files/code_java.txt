@@ -1,0 +1,109 @@
+// Custom Exception for Insufficient Funds
+class InsufficientFundsException extends Exception {
+    public InsufficientFundsException(String message) {
+        super(message);
+    }
+}
+
+// Abstract class representing a bank account
+abstract class BankAccount {
+    protected String accountHolder;
+    protected double balance;
+
+    public BankAccount(String accountHolder, double balance) {
+        this.accountHolder = accountHolder;
+        this.balance = balance;
+    }
+
+    // Abstract method for withdrawing money
+    public abstract void withdraw(double amount) throws InsufficientFundsException;
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println(amount + " deposited. New balance: " + balance);
+        } else {
+            System.out.println("Invalid deposit amount");
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public String getAccountHolder() {
+        return accountHolder;
+    }
+}
+
+// Interface for earning interest
+interface InterestEarning {
+    void addInterest();
+}
+
+// SavingsAccount class implementing InterestEarning
+class SavingsAccount extends BankAccount implements InterestEarning {
+    private double interestRate;
+
+    public SavingsAccount(String accountHolder, double balance, double interestRate) {
+        super(accountHolder, balance);
+        this.interestRate = interestRate;
+    }
+
+    @Override
+    public void withdraw(double amount) throws InsufficientFundsException {
+        if (amount > balance) {
+            throw new InsufficientFundsException("Insufficient funds in the account.");
+        }
+        balance -= amount;
+        System.out.println(amount + " withdrawn. New balance: " + balance);
+    }
+
+    @Override
+    public void addInterest() {
+        double interest = balance * interestRate / 100;
+        balance += interest;
+        System.out.println("Interest of " + interest + " added. New balance: " + balance);
+    }
+}
+
+// CheckingAccount class (without interest)
+class CheckingAccount extends BankAccount {
+    private double overdraftLimit;
+
+    public CheckingAccount(String accountHolder, double balance, double overdraftLimit) {
+        super(accountHolder, balance);
+        this.overdraftLimit = overdraftLimit;
+    }
+
+    @Override
+    public void withdraw(double amount) throws InsufficientFundsException {
+        if (amount > balance + overdraftLimit) {
+            throw new InsufficientFundsException("Overdraft limit exceeded.");
+        }
+        balance -= amount;
+        System.out.println(amount + " withdrawn. New balance: " + balance);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        BankAccount savings = new SavingsAccount("John Doe", 5000, 2.5);
+        BankAccount checking = new CheckingAccount("Jane Smith", 1000, 500);
+
+        try {
+            savings.deposit(1000);
+            savings.withdraw(2000);
+            ((SavingsAccount) savings).addInterest(); // Type cast to SavingsAccount to call addInterest
+        } catch (InsufficientFundsException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            checking.deposit(500);
+            checking.withdraw(2000);
+        } catch (InsufficientFundsException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}

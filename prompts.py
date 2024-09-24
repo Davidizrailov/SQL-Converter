@@ -189,26 +189,26 @@ def generate_prompt2_Kornshell(code_description):
 def generate_prompt_java(code):
     prompt = f"""
 
-        Below is some java Code. Right now, only explain what the code is doing, step by step.
+        Below is some legacy java Code. Convert it to Java 14. Return ONLY the translated code
        
         Here is the code:
         {code}
     """
     return prompt
 
-def generate_prompt2_java(code_description):
-    prompt=f"""
-        Using the code description, write me a snowflake procedure which matches this description. 
-        Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
-        There should be no text other than the code. Use Java as the language. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
+# def generate_prompt2_java(code_description):
+#     prompt=f"""
+#         Using the code description, write me a snowflake procedure which matches this description. 
+#         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
+#         There should be no text other than the code. Use Java as the language. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
 
-        Utilize the snowflake documentation file is needed.
+#         Utilize the snowflake documentation file is needed.
 
-        If any packages are being used, do not forget to import them.
-        Utilize the snowflake documentation file is needed. 
-        code description: {code_description} 
-    """
-    return prompt
+#         If any packages are being used, do not forget to import them.
+#         Utilize the snowflake documentation file is needed. 
+#         code description: {code_description} 
+#     """
+#     return prompt
 
 def generate_prompt_cobol(code):
     prompt = f"""
