@@ -1,7 +1,6 @@
 # python scripts installed by pip must be executable from program's environment
 import re
 import subprocess
-import sys
 
 def run_command(command):
   result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -32,8 +31,8 @@ class LinterError:
 
 class Linter:
   linter_commands = {
-    "python": sys.executable + " -m pylint -d C,R,I ", 
-    "sql": sys.executable + " -m sqlfluff lint --ignore parsing --rules core --dialect snowflake ",
+    "python": "pylint -d C,R,I ", 
+    "sql": "sqlfluff lint --ignore parsing --rules core --dialect snowflake ",
   }
 
   def __init__(self, type=['python', 'sql']):
@@ -41,16 +40,12 @@ class Linter:
     self.type = type
   
   def _find_code(self, s, lang):
-    results = []
+    sql_pattern = None
     if lang == "sql":
-      pattern = r"(?s)```sql(.*?)```"
-      results.extend(re.findall(pattern, s))
+      sql_pattern = r"(?s)```sql(.*?)```"
     if lang == "python":
-      pattern = r"(?s)```python(.*?)```"
-      results.extend(re.findall(pattern, s))
-      # pattern = r"LANGUAGE\s+PYTHON(?:[\s\S]*?)AS\s+\$\$(.*?)(?=\$\$)"
-      # results.extend(re.findall(pattern, s, re.DOTALL))
-    return results
+      sql_pattern = r"(?s)```python(.*?)```"
+    return re.findall(sql_pattern, s)
   
   def find_code(self, s):
     res = {}
@@ -64,9 +59,9 @@ class Linter:
     errors = {}
     for lang in self.type:
       for i, code in enumerate(matches[lang]):
-        with open(f'temp_code_{i}.temp', 'w') as file:
+        with open(f'temp_code_{i}.code', 'w') as file:
             file.write(code.strip())
-        rc, stdout, stderr = run_command(self.linter_commands[lang] + f"temp_code_{i}.temp")
+        rc, stdout, stderr = run_command(self.linter_commands[lang] + f"temp_code_{i}.code")
         error = LinterError(lang, rc, stdout, stderr)
         if error.is_fatal():
           errors[f'python_code_{i}'] = error
@@ -83,78 +78,46 @@ class Linter:
   
 
 if __name__ == "__main__":
+  linter = Linter(['python', 'sql'])
   sample_response = r"""
-  ```sql
--- Create a sequence to generate unique IDs for each row
-CREATE SEQUENCE seq_string_utils;
 
--- Create a table type to store list of characters
-CREATE OR REPLACE TYPE list_char AS TABLE (char_val CHAR(1));
-
--- Create a table type to store list of strings
-CREATE OR REPLACE TYPE list_string AS TABLE (string_val NVARCHAR(500));
-
--- Create a function to split text based on a separator
-CREATE OR REPLACE FUNCTION split_text(text NVARCHAR, separator CHAR DEFAULT ':')
-  RETURNS list_string
+  ```python
+  CREATE OR REPLACE PROCEDURE process_employee_salaries()
+  RETURNS STRING
   LANGUAGE PYTHON
-  EXECUTE AS CALLER
-AS
-$$
-chars = []
-strings = []
-length = 0
-start = 0
-split_start = 0
-split_length = 0
-first = True
+  RUNTIME_VERSION = '3.8'
+  PACKAGES = ('snowflake-snowpark-python')
+  HANDLER = 'main'
+  AS
+  $$
+  def main(session):
+      v_dept_id = 10
+      v_bonus_percentage = 0.10
+      v_raise_percentage = 0.05
 
-for char in text:
-    chars.append(char)
+      emp_cursors = session.sql(f"SELECT employee_id, first_name, salary FROM employees WHERE department_id = {v_dept_id}").collect()
 
-for i in range(len(chars)):
-    if first and chars[i] == separator:
-        length = 1
-        split_start = start
-        split_length = i
-        strings.append(text[split_start:split_length])
-        start = i
-        first = False
-        continue
+      for emp in emp_cursor:
+          v_employee_id = emp['EMPLOYEE_ID']
+          v_employee_name = emp['FIRST_NAME']
+          v_new_salary = emp['SALARY']
 
-    if chars[i] == separator:
-        length += 1
-        split_start = start + 1
-        split_length = i - (start + 1)
-        strings.append(text[split_start:split_length])
-        start = i
-        continue
+          v_bonus = v_new_salary * v_bonus_percentage
+          v_raise = v_new_salary * v_raise_percentage
+          v_new_salary = v_new_salary + v_raise
 
-    if i == len(chars) - 1:
-        split_start = start + 1
-        split_length = i + 1
-        length += 1
-        strings.append(text[split_start:split_length])
+          session.sql(f"INSERT INTO employee_bonus (employee_id, bonus_amount, bonus_date) VALUES ({v_employee_id}, {v_bonus}, CURRENT_DATE)").collect()
+          session.sql(f"UPDATE employees SET salary = {v_new_salary} WHERE employee_id = {v_employee_id}").collect()
 
-return strings
-$$;
+          print(f'Employee ID: {v_employee_id}, Name: {v_employee_name}, New Salary: {v_new_salary}, Bonus: {v_bonus}')
 
--- Call the function to split text and output the results
-DECLARE
-  v_strings list_string;
-BEGIN
-  v_strings := split_text('12,9993,3,3,99,11,1,333333333333,4', ',');
-  FOR i, val IN SELECT * FROM TABLE(v_strings) ORDER BY seq_string_utils.NEXTVAL LOOP
-    -- Output each string value
-    v_output := val.string_val;
-    -- PRINT(v_output); -- Snowflake does not support DBMS_OUTPUT
-  END LOOP;
-END;
-``` 
+      v_avg_salary = session.sql(f"SELECT AVG(salary) AS AVG_SALARY FROM employees WHERE department_id = {v_dept_id}").collect()[0]['AVG_SALARY']
+
+      print(f'Average Salary in Department {v_dept_id}: {v_avg_salary}')
+      return "SUCCESS"
+  $$;
+  ```
 """
-  linter = Linter(['sql', 'python'])
-  # print(linter.find_code(sample_response))
   errors = linter.check_response(sample_response)
-  # print(linter.prompt_after_code(errors))
-  print(errors)
+  print(linter.prompt_after_code(errors))
   
