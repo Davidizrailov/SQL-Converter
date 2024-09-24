@@ -1,5 +1,5 @@
 import os
-import app.prompts as prompts
+import prompts as prompts
 from openai import OpenAI
 import time
 from dotenv import load_dotenv
