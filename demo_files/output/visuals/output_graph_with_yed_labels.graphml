@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:y="http://www.yworks.com/xml/graphml"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
+    <key for="node" id="d6" yfiles.type="nodegraphics"/>
+    <key for="edge" id="d10" yfiles.type="edgegraphics"/>
+    <graph id="G" edgedefault="undirected">
+    
+        <node id="n1">
+            <data key="d6">
+                <y:ShapeNode>
+                    <y:Geometry height="30.0" width="155" x="-15.0" y="-15.0"/>
+                    <y:Fill color="#BBBBBB" transparent="false"/>
+                    <y:NodeLabel modelName="internal" visible="false" >This is a new tooltip</y:NodeLabel>
+                    <y:NodeLabel modelName="custom"   visible="true" > This is a long node name<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+                    <y:Shape type="ellipse"/>
+                </y:ShapeNode>
+            </data>
+        </node>
+        
+        <node id="n2">
+            <data key="d6">
+                <y:ShapeNode>
+                    <y:Geometry height="30.0" width="195" x="-15.0" y="-15.0"/>
+                    <y:Fill color="#BBBBBB" transparent="false"/>
+                    <y:NodeLabel modelName="internal" visible="false" >This is a new tooltip</y:NodeLabel>
+                    <y:NodeLabel modelName="custom"   visible="true" > This is another long node name 2<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+                    <y:Shape type="rectangle"/>
+                </y:ShapeNode>
+            </data>
+        </node>
+        
+        <edge source="n1" target="n2">
+            <data key="d10">
+                <y:PolyLineEdge>
+                    <y:LineStyle type="line" width="1.0" color="#FF0000"/>
+                    <y:Arrows source="none" target="standard"/>
+                    <y:BendStyle smoothed="false"/>
+                </y:PolyLineEdge>
+            </data>
+        </edge>
+        
+    </graph>
+</graphml>
+    

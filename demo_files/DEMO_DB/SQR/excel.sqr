@@ -1,0 +1,329 @@
+!-----------------------------------------------------------------------------------------------!
+!  Report Name: SQRXL  -- Run Via Process Scheduler SQR Report (API Aware)                      !
+!  Report Descriptions: Sample SQR Report Produce Excel                                         !
+!  Report Create Date: 30-Nov-2014                                                              !
+!  Report Run Component: PRCSMULTI ( System Process )                                           !
+!  Written By - DBTutorBlog    https://www.dbtutor.com                                           !
+!------------------------------------------------------------------------------------------------
+
+#include 'setenv.sqc'       !Set environment
+#define RecordLength  10000 !Set Record Length
+
+!*****************
+Begin-Program
+!****************
+     Do Init_Report
+     Do Init_Variables
+     Do Main_Report
+     Do Stdapi-Term
+End-Program
+
+
+!*****************************
+Begin-Procedure Init_Variables
+!*****************************
+        !Variable Init & Constant Declaration 
+        Let $Quote = ''''    ! Used to make dynamic where caluse.
+        Let $WorksheetName = 'Employee Report'
+End-Procedure
+
+
+!****************************
+Begin-Procedure Init_Report
+!****************************
+     !Init Report & Load Lookup Section
+     Do Stdapi-Init
+     
+End-Procedure
+
+
+!***************************
+Begin-Procedure Main_Report 
+!***************************
+    !Do Get_Runcntl_Value
+    !Do Validate_RunCntl_Value
+    Do Init_Excel_File
+    Do Write_XML_HTML_Code
+    Do Generate_Excel
+    Do Close_HTML_Tag
+End-Procedure
+
+
+!*************************************
+!Begin-Procedure Get_Runcntl_Value
+!************************************
+!Move 0 to #Row_In_Run_Cntl_Table
+!Begin-Select On-Error=SQL-Error Loops=1 !Run Only 1 Time As RunControl is Key Field
+!RC.SOA_RPT_TYPE_FLAG
+!RC.COMPANY
+!        
+!        !Run Control Row Should be Only One
+!        Add 1 to #Row_In_Run_Cntl_Table
+!        
+!        !Getting Run Control Value
+!        Let $Soa_Rpt_Type_Flag  = rtrim(ltrim(&RC.SOA_RPT_TYPE_FLAG, ' '), ' ')
+!        Let $Company  = rtrim(ltrim(&RC.COMPANY, ' '), ' ')
+!        !----------- End
+
+!FROM PS_SOA_RUNCNTL_TBL RC
+!WHERE RC.OPRID = $prcs_oprid
+!AND   RC.RUN_CNTL_ID = $prcs_run_cntl_id
+!End-Select
+!End-Procedure
+  
+!**************************************
+!Begin-Procedure Validate_RunCntl_Value
+!**************************************
+    
+    !Validate Run Control Value
+    !If #Row_In_Run_Cntl_Table = 1
+        ! To Make Dynamic Where clause according to input parameters.
+        !IF NOT ISBLANK (LTRIM(RTRIM(&BUSINESS_UNIT,' '),' ')) 
+        !    LET $WHERE = ' AND BUSINESS_UNIT = ' || $QUOTE || &BUSINESS_UNIT || $QUOTE
+        !END-IF
+
+        !IF NOT ISBLANK (LTRIM(RTRIM(&LOCATION,' '),' ')) 
+        !        LET $WHERE = $WHERE || ' AND LOCATION = ' || $QUOTE || &LOCATION || $QUOTE
+        !END-IF
+    !else
+        !Show 'This program must be run from the Process Monitor. with valid Run Control Value.'
+        !Stop Quiet
+    !End-If
+    
+!End-Procedure
+
+!*********************************
+Begin-Procedure Init_Excel_File
+!*********************************
+    
+    !*************************************************************
+    ! Now lets initialize the Excel File.
+    ! We Will put Excel File to Process Scheduler Output Directory
+    !*************************************************************
+                                  
+    Do Get-Prcsoutputdir      !** Procedure To Get The Path Of The Output Folder.
+                                    
+    If (rtrim($prcsoutputdir,' ') <> '')
+        Let $GenerateNewFile = $prcsoutputdir || 'ExcelReport' || '_' || $prcs_process_instance || '.xls' !* The Output File Represented By the Variable $GenerateNewFile Is Suffixed With The Report Name And The Process Instance
+    End-if
+    
+    !Open File For Writing From Line No - 1
+    Open $GenerateNewFile as 1 for-writing record = {RecordLength}:vary status = #FileStatus
+    
+    !Checking For File Status
+     if #FileStatus != 0
+          display $GenerateNewFile noline
+          display 'Unable to Write File'
+     end-if
+    
+End-Procedure
+
+!*********************************
+Begin-Procedure Write_Excel_Header
+!*********************************
+
+        Write 1 From '<html xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/tr/REC-html40">'
+        Write 1 From '<body>'
+        Write 1 From '<table border="1">'
+        Write 1 From ' '
+        
+        !Start Printing Top Excel Information, Specially Run Date Time & Run Control Values
+        Write 1 From '<tr>'
+        Write 1 From '<td class=tablehead colspan=6 align=center>Oracle PeopleSoft Enterprise</td>'
+        Write 1 From '</tr>'
+
+        Write 1 From '<tr>'
+        Write 1 From '<td colspan=6 align=center>Employee Info Sheet</td>'
+        Write 1 From '</tr>'
+
+        Write 1 From '<tr><td colspan=6></td></tr>'
+        
+        Write 1 From '<tr>'
+        Write 1 From '<td colspan=6 align=center>No INPUT PARAMETERS</td>'
+        Write 1 From '</tr>'
+        
+        Write 1 From '<tr><td colspan=6></td></tr>'
+        !End Printing Top Excel Information
+        
+        !Start Writing Column Header Information , Put your Column Name Here
+        WRITE 1 FROM '<tr>'
+                WRITE 1 FROM '<th bgcolor = "#98AFC7" rowspan="1"> Emplid </th>'
+                WRITE 1 FROM '<th bgcolor = "#98AFC7" rowspan="1"> Name </th>'
+                WRITE 1 FROM '<th bgcolor = "#98AFC7" rowspan="1"> Business Unit </th>'
+                WRITE 1 FROM '<th bgcolor = "#98AFC7" rowspan="1"> Department </th>'
+                WRITE 1 FROM '<th bgcolor = "#98AFC7" rowspan="1"> Job Title </th>'
+                WRITE 1 FROM '<th bgcolor = "#98AFC7" rowspan="1"> Location </th>'
+        WRITE 1 FROM '</tr>'
+        !End Writing Column Header Information
+            
+End-Procedure 
+
+!*******************************
+Begin-Procedure Generate_Excel
+!************/******************
+    Do Write_Excel_Header
+    Do Fetch_Excel_Data
+    Do Write_Excel_Data
+End-Procedure
+
+
+!********************************
+! Driving SQL 
+!********************************
+!********************************
+Begin-Procedure Fetch_Excel_Data
+!********************************
+Begin-Select DISTINCT
+
+JOB.EMPLID
+NAMES.NAME_DISPLAY
+JOB.DEPTID
+JOB.BUSINESS_UNIT
+JOB.JOBCODE
+JOB.SETID_JOBCODE
+JOB.LOCATION
+JOB.SETID_LOCATION
+
+    !**** Getting Column Value *****
+    Let $EMPLID = &JOB.EMPLID
+    Let $NAME_DISPLAY = &NAMES.NAME_DISPLAY
+    Let $DEPTID = &JOB.DEPTID
+    Let $BusUnit = &JOB.BUSINESS_UNIT
+    Let $JOBCODE = &JOB.JOBCODE
+    Let $SetIDJobCode = &JOB.SETID_JOBCODE
+    Let $Location = &JOB.LOCATION
+    Let $SetidLocation = &JOB.SETID_LOCATION
+    !**************************************
+    
+    DO Write_Excel_Data     ! Calling another procedure to write details in excel file.
+   
+FROM PS_JOB JOB,  PS_PERSON_NAME NAMES 
+  WHERE (JOB.EFFDT = 
+        (SELECT MAX(A_ED.EFFDT) FROM PS_JOB A_ED 
+        WHERE JOB.EMPLID = A_ED.EMPLID 
+          AND JOB.EMPL_RCD = A_ED.EMPL_RCD 
+          AND A_ED.EFFDT <= $current-date)
+    AND JOB.EFFSEQ = 
+        (SELECT MAX(A_ES.EFFSEQ) FROM PS_JOB A_ES 
+        WHERE JOB.EMPLID = A_ES.EMPLID 
+          AND JOB.EMPL_RCD = A_ES.EMPL_RCD 
+          AND JOB.EFFDT = A_ES.EFFDT) 
+     AND JOB.EMPLID = NAMES.EMPLID)   
+     AND JOB.EMPL_STATUS IN ('A','L','P','S')
+![$WHERE]
+ORDER BY JOB.EMPLID
+
+End-select
+End-Procedure
+
+
+!********************************
+Begin-Procedure Write_Excel_Data
+!********************************
+
+        WRITE 1 FROM '<tr>'
+
+        WRITE 1 FROM '<td align = left>' $EMPLID '</td>'
+        WRITE 1 FROM '<td>' $NAME_DISPLAY
+        Let $BU = $BusUnit
+        Do Get-Business-Unit-Name
+        WRITE 1 FROM '</td><td>' $BU_DESCR
+            Let $DeptID = $DEPTID
+            Let $AsOfDate = $AsOfToday
+            DO Get-Department-Name
+        WRITE 1 FROM '</td><td>' $DeptName
+            Let $SetID = $SetIDJobCode
+            Let $JobCode = $JOBCODE
+            DO Get-Job-Title
+        WRITE 1 FROM '</td><td>' $JobTitle
+            Let $Location = $Location
+            Let $Setid = $SetidLocation
+            Do Get-Location-Name
+        WRITE 1 FROM '</td><td>' $LocationName '</td></tr>'
+
+End-Procedure
+
+
+
+!**********************************************************************************
+! Open_HTML_Code procedure - To convert html to excel file and make it landscape
+!**********************************************************************************
+Begin-Procedure Write_XML_HTML_Code
+
+        Write 1 From '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">'
+        Write 1 From '<head>'
+        Write 1 From '<style>'
+        Write 1 From '    {mso-displayed-decimal-separator:"\.";'
+        Write 1 From '    mso-displayed-thousand-separator:"\,";}'
+        Write 1 From '@page'
+        Write 1 From '    {margin:1.0in .75in 1.0in .75in;'
+        Write 1 From '    mso-header-margin:.5in;'
+        Write 1 From '    mso-footer-margin:.5in;'
+        Write 1 From '    mso-page-orientation:landscape;}'
+        Write 1 From '.tablehead{'
+        Write 1 From 'white-space:nowrap;'
+        Write 1 From 'font-family:Arial;'
+        Write 1 From 'font-weight:bold;'
+        Write 1 From 'font-Size:13px;'
+        Write 1 From 'color:#333333;'
+        Write 1 From 'background-color:#ECF1F4;'
+        Write 1 From 'Padding:4px;'
+        Write 1 From 'text-align:center;'
+        Write 1 From 'border:1px solid #d1d1d1;}'
+        Write 1 From '</style>'
+        Write 1 From '<xml>'
+        Write 1 From ' <x:ExcelWorkbook>'
+        Write 1 From '  <x:ExcelWorksheets>'
+        Write 1 From '   <x:ExcelWorksheet>'
+        Write 1 From '      <x:Name>' $WorksheetName '</x:Name>'
+        Write 1 From '    <x:WorksheetOptions>'
+        Write 1 From '     <x:Print>'
+        Write 1 From '      <x:ValidPrinterInfo/>'
+        Write 1 From '      <x:HorizontalResolution>600</x:HorizontalResolution>'
+        Write 1 From '      <x:VerticalResolution>0</x:VerticalResolution>'
+        Write 1 From '     </x:Print>'
+        Write 1 From '     <x:Selected/>'
+        Write 1 From '     <x:DoNotDisplayGridlines/>'
+        Write 1 From '    </x:WorksheetOptions>'
+        Write 1 From '   </x:ExcelWorksheet>'
+        Write 1 From '  </x:ExcelWorksheets>'
+        Write 1 From '  <x:WindowHeight>8700</x:WindowHeight>'
+        Write 1 From '  <x:WindowWidth>15195</x:WindowWidth>'
+        Write 1 From '  <x:WindowTopX>0</x:WindowTopX>'
+        Write 1 From '  <x:WindowTopY>120</x:WindowTopY>'
+        Write 1 From '  <x:ProtectStructure>False</x:ProtectStructure>'
+        Write 1 From '  <x:ProtectWindows>False</x:ProtectWindows>'
+        Write 1 From ' </x:ExcelWorkbook>'
+        Write 1 From '</xml>'
+
+End-Procedure 
+
+
+!*****************************
+! Close HTML Tags
+!***************************** 
+Begin-Procedure Close_HTML_Tag
+    
+      Write 1 From '</table>'
+      Write 1 From '</body>'
+      Write 1 From '</html>'
+      Close 1
+      
+End-Procedure 
+
+!***********************************************************************
+! Standard Include Files
+!***********************************************************************
+#Include 'curdttim.sqc'   !Get-Current-DateTime procedure
+#Include 'datetime.sqc'   !Routines for date and time formatting
+#Include 'datemath.sqc'   !Date Manipulation functions
+#Include 'readxlat.sqc'   !Read Translate Table
+#Include 'number.sqc'     !Routines to format numbers
+#Include 'stdapi.sqc'     !Update Process API
+#include 'getlogou.sqc'   !get current logoutput directory
+#include 'getlocnm.sqc'   !Get Location Description
+#include 'getjobtl.sqc'   !Get JobCode Title
+#include 'getdptnm.sqc'   !Get Department Name
+#include 'getbunam.sqc'   !Get Business Unit Name
+#include 'getsetid.sqc'   !Get Setid for the BU and Record Name
+!***********************************************************************

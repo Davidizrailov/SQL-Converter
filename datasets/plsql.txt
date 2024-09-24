@@ -1,0 +1,3197 @@
+<CASE>
+DECLARE
+      v_result NUMBER;
+BEGIN
+   v_result := 1 / 0;
+   EXCEPTION
+      WHEN ZERO_DIVIDE THEN
+         DBMS_OUTPUT.PUT_LINE( SQLERRM );
+END;
+<CASE>
+<RES>
+ORA-01476: divisor is equal to zero
+<RES>
+<CASE>
+DECLARE
+    l_total_sales NUMBER(15,2);
+    l_credit_limit NUMBER (10,0);
+    l_contact_name VARCHAR2(255);
+BEGIN
+    NULL;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+  l_product_name VARCHAR2( 100 ) := 'Laptop';
+BEGIN
+  NULL;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+   l_product_name VARCHAR2(100) DEFAULT 'Laptop';
+BEGIN
+   NULL;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+    l_customer_group VARCHAR2(100) := 'Silver';
+BEGIN
+    l_customer_group := 'Gold';
+    DBMS_OUTPUT.PUT_LINE(l_customer_group);
+END;
+<CASE>
+<RES>
+Gold
+<RES>
+<CASE>
+DECLARE
+    l_business_parter VARCHAR2(100) := 'Distributor';
+    l_lead_for VARCHAR2(100);
+BEGIN
+    l_lead_for := l_business_parter;
+    DBMS_OUTPUT.PUT_LINE(l_lead_for);
+END;
+<CASE>
+<RES>
+Distributor
+<RES>
+<CASE>
+DECLARE
+  l_customer_name customers.name%TYPE;
+  l_credit_limit customers.credit_limit%TYPE;
+BEGIN
+  SELECT
+    name, credit_limit
+  INTO
+    l_customer_name, l_credit_limit
+  FROM
+    customers
+  WHERE
+    customer_id = 38;
+
+  DBMS_OUTPUT.PUT_LINE(l_customer_name || ':' || l_credit_limit );
+END;
+<CASE>
+<RES>
+Kraft Heinz:500
+<RES>
+<CASE>
+DECLARE
+    l_credit_limit   customers.credit_limit%TYPE;
+    l_average_credit l_credit_limit%TYPE;
+    l_max_credit     l_credit_limit%TYPE;
+    l_min_credit     l_credit_limit%TYPE;
+BEGIN
+    -- get credit limits
+    SELECT
+        MIN(credit_limit),
+        MAX(credit_limit),
+        AVG(credit_limit)
+    INTO
+        l_min_credit,
+        l_max_credit,
+        l_average_credit
+    FROM customers;
+
+
+    SELECT
+        credit_limit
+    INTO
+        l_credit_limit
+    FROM
+        customers
+    WHERE
+        customer_id = 100;
+
+    -- show the credits
+    dbms_output.put_line('Min Credit: ' || l_min_credit);
+    dbms_output.put_line('Max Credit: ' || l_max_credit);
+    dbms_output.put_line('Avg Credit: ' || l_average_credit);
+
+    -- show customer credit
+    dbms_output.put_line('Customer Credit: ' || l_credit_limit);
+END;
+<CASE>
+<RES>
+Min Credit: 100
+Max Credit: 5000
+Avg Credit: 1894.67
+Customer Credit: 1894.67
+<RES>
+<CASE>
+DECLARE
+    co_payment_term   CONSTANT NUMBER   := 45; -- days
+    co_payment_status CONSTANT BOOLEAN  := FALSE;
+BEGIN
+    NULL;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE 
+    co_pi     CONSTANT REAL := 3.14159;
+    co_radius CONSTANT REAL := 10;
+    co_area   CONSTANT REAL := (co_pi * co_radius**2);
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(co_area);
+END;
+<CASE>
+<RES>
+314.159
+<RES>
+<CASE>
+DECLARE n_sales NUMBER := 2000000;
+BEGIN
+   IF n_sales > 100000 THEN
+      DBMS_OUTPUT.PUT_LINE( 'Sales revenue is greater than 100K ' );
+   END IF;
+END;
+<CASE>
+<RES>
+Sales revenue is greater than 100K
+<RES>
+<CASE>
+DECLARE
+  n_sales NUMBER := 300000;
+  n_commission NUMBER( 10, 2 ) := 0;
+BEGIN
+  IF n_sales > 200000 THEN
+    n_commission := n_sales * 0.1;
+  ELSIF n_sales <= 200000 AND n_sales > 100000 THEN
+    n_commission := n_sales * 0.05;
+  ELSIF n_sales <= 100000 AND n_sales > 50000 THEN
+    n_commission := n_sales * 0.03;
+  ELSE
+    n_commission := n_sales * 0.02;
+  END IF;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+  n_sales NUMBER := 300000;
+  n_commission NUMBER( 10, 2 ) := 0;
+BEGIN
+  IF n_sales > 200000 THEN
+    n_commission := n_sales * 0.1;
+  ELSE
+    n_commission := n_sales * 0.05;
+  END IF;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+  c_grade CHAR( 1 );
+  c_rank  VARCHAR2( 20 );
+BEGIN
+  c_grade := 'B';
+  CASE c_grade
+  WHEN 'A' THEN
+    c_rank := 'Excellent' ;
+  WHEN 'B' THEN
+    c_rank := 'Very Good' ;
+  WHEN 'C' THEN
+    c_rank := 'Good' ;
+  WHEN 'D' THEN
+    c_rank := 'Fair' ;
+  WHEN 'F' THEN
+    c_rank := 'Poor' ;
+  ELSE
+    c_rank := 'No such grade' ;
+  END CASE;
+  DBMS_OUTPUT.PUT_LINE( c_rank );
+END;
+<CASE>
+<RES>
+Very Good
+<RES>
+<CASE>
+DECLARE
+  n_sales      NUMBER;
+  n_commission NUMBER;
+BEGIN
+  n_sales := 150000;
+  CASE
+  WHEN n_sales    > 200000 THEN
+    n_commission := 0.2;
+  WHEN n_sales   >= 100000 AND n_sales < 200000 THEN
+    n_commission := 0.15;
+  WHEN n_sales   >= 50000 AND n_sales < 100000 THEN
+    n_commission := 0.1;
+  WHEN n_sales    > 30000 THEN
+    n_commission := 0.05;
+  ELSE
+    n_commission := 0;
+  END CASE;
+
+  DBMS_OUTPUT.PUT_LINE( 'Commission is ' || n_commission * 100 || '%'
+  );
+END;
+<CASE>
+<RES>
+Commission is 15%
+<RES>
+<CASE>
+BEGIN
+  GOTO second_message;
+
+  <<first_message>>
+  DBMS_OUTPUT.PUT_LINE( 'Hello' );
+  GOTO the_end;
+
+  <<second_message>>
+  DBMS_OUTPUT.PUT_LINE( 'PL/SQL GOTO Demo' );
+  GOTO first_message;
+
+  <<the_end>>
+  DBMS_OUTPUT.PUT_LINE( 'and good bye...' );
+
+END;
+<CASE>
+<RES>
+PL/SQL GOTO Demo
+Hello
+and good Bye...
+<RES>
+<CASE>
+DECLARE
+  n_credit_status VARCHAR2( 50 );
+BEGIN
+  n_credit_status := 'GOOD';
+
+  CASE n_credit_status
+  WHEN 'BLOCK' THEN
+    request_for_aproval;
+  WHEN 'WARNING' THEN
+    send_email_to_accountant;
+  ELSE
+    NULL;
+  END CASE;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+  l_counter NUMBER := 0;
+BEGIN
+  LOOP
+    l_counter := l_counter + 1;
+    IF l_counter > 3 THEN
+      EXIT;
+    END IF;
+    dbms_output.put_line( 'Inside loop: ' || l_counter )  ;
+  END LOOP;
+  -- control resumes here after EXIT
+  dbms_output.put_line( 'After loop: ' || l_counter );
+END;
+<CASE>
+<RES>
+Inside loop: 1
+Inside loop: 2
+Inside loop: 3
+After loop: 4
+<RES>
+<CASE>
+DECLARE
+  l_counter NUMBER := 0;
+BEGIN
+  LOOP
+    l_counter := l_counter + 1;
+    EXIT WHEN l_counter > 3;
+    dbms_output.put_line( 'Inside loop: ' || l_counter ) ;
+  END LOOP;
+
+  -- control resumes here after EXIT
+  dbms_output.put_line( 'After loop: ' || l_counter );
+END;
+<CASE>
+<RES>
+Inside loop: 1
+Inside loop: 2
+Inside loop: 3
+After loop: 4
+<RES>
+<CASE>
+DECLARE
+  l_i NUMBER := 0;
+  l_j NUMBER := 0;
+BEGIN
+  <<outer_loop>>
+  LOOP
+    l_i := l_i + 1;
+    EXIT outer_loop WHEN l_i > 2;
+    dbms_output.put_line('Outer counter ' || l_i);
+    -- reset inner counter
+    l_j := 0;
+      <<inner_loop>> LOOP
+      l_j := l_j + 1;
+      EXIT inner_loop WHEN l_j > 3;
+      dbms_output.put_line(' Inner counter ' || l_j);
+    END LOOP inner_loop;
+  END LOOP outer_loop;
+END;
+<CASE>
+<RES>
+Outer counter 1
+ Inner counter 1
+ Inner counter 2
+ Inner counter 3
+Outer counter 2
+ Inner counter 1
+ Inner counter 2
+ Inner counter 3
+<RES>
+<CASE>
+BEGIN
+  FOR l_counter IN 1..5
+  LOOP
+    DBMS_OUTPUT.PUT_LINE( l_counter );
+  END LOOP;
+END;
+<CASE>
+<RES>
+1
+2
+3
+4
+5
+<RES>
+<CASE>
+DECLARE
+  l_step  PLS_INTEGER := 2;
+BEGIN
+  FOR l_counter IN 1..5 LOOP
+    dbms_output.put_line (l_counter*l_step);
+  END LOOP;
+END;
+<CASE>
+<RES>
+2
+4
+6
+8
+10
+<RES>
+<CASE>
+DECLARE
+  l_counter PLS_INTEGER := 10;
+BEGIN
+  FOR l_counter IN 1.. 5 loop
+    DBMS_OUTPUT.PUT_LINE (l_counter);
+  end loop;
+  -- after the loop
+  DBMS_OUTPUT.PUT_LINE (l_counter);
+END;
+<CASE>
+<RES>
+1
+2
+3
+4
+5
+10
+<RES>
+<CASE>
+<<outer>>
+DECLARE
+  l_counter PLS_INTEGER := 10;
+BEGIN
+  FOR l_counter IN 1.. 5 loop
+    DBMS_OUTPUT.PUT_LINE ('Local counter:' ||  l_counter);
+    outer.l_counter := l_counter;
+  end loop;
+  -- after the loop
+  DBMS_OUTPUT.PUT_LINE ('Global counter' || l_counter);
+END outer;
+<CASE>
+<RES>
+Local counter:1
+Local counter:2
+Local counter:3
+Local counter:4
+Local counter:5
+Global counter:5
+<RES>
+<CASE>
+BEGIN
+  FOR l_counter IN REVERSE 1..3
+  LOOP
+    DBMS_OUTPUT.PUT_LINE( l_counter );
+  END LOOP;
+END;
+<CASE>
+<RES>
+3
+2
+1
+<RES>
+<CASE>
+BEGIN
+  FOR l_counter IN 1..3
+  LOOP
+    DBMS_OUTPUT.PUT_LINE( l_counter );
+  END LOOP;
+END;
+<CASE>
+<RES>
+1
+2
+3
+<RES>
+<CASE>
+DECLARE
+  n_counter NUMBER := 1;
+BEGIN
+  WHILE n_counter <= 5
+  LOOP
+    DBMS_OUTPUT.PUT_LINE( 'Counter : ' || n_counter );
+    n_counter := n_counter + 1;
+  END LOOP;
+END;
+<CASE>
+<RES>
+Counter : 1
+Counter : 2
+Counter : 3
+Counter : 4
+Counter : 5
+<RES>
+<CASE>
+DECLARE
+   n_counter NUMBER := 1;
+BEGIN
+   WHILE n_counter <= 5
+      LOOP
+        DBMS_OUTPUT.PUT_LINE( 'Counter : ' || n_counter );
+        n_counter := n_counter + 1;
+        EXIT WHEN n_counter = 3;
+      END LOOP;
+   END;
+<CASE>
+<RES>
+Counter : 1
+Counter : 2
+<RES>
+<CASE>
+BEGIN
+  FOR n_index IN 1 .. 10
+  LOOP
+    -- skip odd numbers
+    IF MOD( n_index, 2 ) = 1 THEN
+      CONTINUE;
+    END IF;
+    DBMS_OUTPUT.PUT_LINE( n_index );
+  END LOOP;
+END;
+<CASE>
+<RES>
+2
+4
+6
+8
+10
+<RES>
+<CASE>
+BEGIN
+  FOR n_index IN 1 .. 10
+  LOOP
+    -- skip even numbers
+    CONTINUE
+  WHEN MOD( n_index, 2 ) = 0;
+    DBMS_OUTPUT.PUT_LINE( n_index );
+  END LOOP;
+END;
+<CASE>
+<RES>
+1
+3
+5
+7
+9
+<RES>
+<CASE>
+DECLARE
+  l_customer_name customers.name%TYPE;
+BEGIN
+  -- get name of the customer 100 and assign it to l_customer_name
+  SELECT name INTO l_customer_name
+  FROM customers
+  WHERE customer_id = 100;
+
+  -- show the customer name
+  dbms_output.put_line( l_customer_name );
+END;
+<CASE>
+<RES>
+Verizon
+<RES>
+<CASE>
+DECLARE
+  r_customer customers%ROWTYPE;
+BEGIN
+  -- get the information of the customer 100
+  SELECT * INTO r_customer
+  FROM customers
+  WHERE customer_id = 100;
+  -- show the customer info
+  dbms_output.put_line( r_customer.name || ', website: ' || r_customer.website );
+END;
+<CASE>
+<RES>
+Verizon, website: http://www.verizon.com
+<RES>
+<CASE>
+DECLARE
+  l_customer_name customers.name%TYPE;
+  l_contact_first_name contacts.first_name%TYPE;
+  l_contact_last_name contacts.last_name%TYPE;
+BEGIN
+  -- get customer and contact names
+  SELECT
+    name,
+    first_name,
+    last_name
+  INTO
+    l_customer_name,
+    l_contact_first_name,
+    l_contact_last_name
+  FROM
+    customers
+  INNER JOIN contacts USING( customer_id )
+  WHERE
+    customer_id = 100;
+  -- show the information
+  dbms_output.put_line(
+    l_customer_name || ', Contact Person: ' ||
+    l_contact_first_name || ' ' || l_contact_last_name );
+END;
+<CASE>
+<RES>
+Verizon, Contact Person: Elisha Lloyd
+<RES>
+<CASE>
+DECLARE
+  -- define a record type
+TYPE r_customer_contact_t
+IS
+  RECORD
+  (
+    customer_name customers.name%TYPE,
+    first_name    contacts.first_name%TYPE,
+    last_name     contacts.last_name%TYPE );
+  -- declare a record
+  r_customer_contacts r_customer_contact_t;
+BEGIN
+  NULL;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+  r_person persons%ROWTYPE;
+
+BEGIN
+  -- get person data of person id 1
+  SELECT * INTO r_person
+  FROM persons
+  WHERE person_id = 1;
+
+  -- change the person's last name
+  r_person.last_name  := 'Smith';
+
+  -- update the person
+  UPDATE persons
+  SET ROW = r_person
+  WHERE person_id = r_person.person_id;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+  TYPE address IS RECORD (
+    street_name VARCHAR2(255),
+    city VARCHAR2(100),
+    state VARCHAR2(100),
+    postal_code VARCHAR(10),
+    country VARCHAR2(100)
+  );
+  TYPE customer IS RECORD(
+      customer_name VARCHAR2(100),
+      ship_to address,
+      bill_to address
+  );
+  r_one_time_customer customer;
+BEGIN
+
+  r_one_time_customer.customer_name := 'John Doe';
+  -- assign address
+  r_one_time_customer.ship_to.street_name := '4000 North 1st street';
+  r_one_time_customer.ship_to.city := 'San Jose';
+  r_one_time_customer.ship_to.state := 'CA';
+  r_one_time_customer.ship_to.postal_code := '95134';
+  r_one_time_customer.ship_to.country := 'USA';
+  -- bill-to address is same as ship-to address
+  r_one_time_customer.bill_to := one_time_customer.ship_to;
+END;
+<CASE>
+<RES>
+<RES>
+<CASE>
+DECLARE
+    l_name customers.NAME%TYPE;
+    l_customer_id customers.customer_id%TYPE := &customer_id;
+BEGIN
+    -- get the customer
+    SELECT NAME INTO l_name
+    FROM customers
+    WHERE customer_id = l_customer_id;
+
+    -- show the customer name
+    dbms_output.put_line('customer name is ' || l_name);
+
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            dbms_output.put_line('Customer ' || l_customer_id ||  ' does not exist');
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+DECLARE
+    l_name customers.NAME%TYPE;
+    l_customer_id customers.customer_id%TYPE := &customer_id;
+BEGIN
+    -- get the customer
+    SELECT NAME INTO l_name
+    FROM customers
+    WHERE customer_id > l_customer_id;
+
+    -- show the customer name
+    dbms_output.put_line('Customer name is ' || l_name);
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            dbms_output.put_line('Customer ' || l_customer_id ||  ' does not exist');
+        WHEN TOO_MANY_ROWS THEN
+            dbms_output.put_line('The database returns more than one customer');
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+DECLARE
+    e_credit_too_high EXCEPTION;
+    PRAGMA exception_init( e_credit_too_high, -20001 );
+    l_max_credit customers.credit_limit%TYPE;
+    l_customer_id customers.customer_id%TYPE := &customer_id;
+    l_credit customers.credit_limit%TYPE := &credit_limit;
+BEGIN
+    -- get the meax credit limit
+    SELECT MAX(credit_limit)
+    INTO l_max_credit
+    FROM customers;
+
+    -- check if input credit is greater than the max credit
+    IF l_credit > l_max_credit THEN
+        RAISE e_credit_too_high;
+    END IF;
+
+    -- if not, update credit limit
+    UPDATE customers
+    SET credit_limit = l_credit
+    WHERE customer_id = l_customer_id;
+
+    COMMIT;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+DECLARE
+    l_customer_id customers.customer_id%TYPE := &customer_id;
+BEGIN
+    -- get the meax credit limit
+    IF l_customer_id < 0 THEN
+        RAISE invalid_number;
+    END IF;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+DECLARE
+    e_credit_too_high EXCEPTION;
+    PRAGMA exception_init( e_credit_too_high, -20001 );
+    l_max_credit customers.credit_limit%TYPE;
+    l_customer_id customers.customer_id%TYPE := &customer_id;
+    l_credit customers.credit_limit%TYPE     := &credit_limit;
+BEGIN
+    BEGIN
+        -- get the max credit limit
+        SELECT MAX(credit_limit)
+        INTO l_max_credit
+        FROM customers;
+
+        -- check if input credit is greater than the max credit
+        IF l_credit > l_max_credit THEN
+            RAISE e_credit_too_high;
+        END IF;
+        EXCEPTION
+            WHEN e_credit_too_high THEN
+                dbms_output.put_line('The credit is too high' || l_credit);
+                RAISE; -- reraise the exception
+    END;
+EXCEPTION
+    WHEN e_credit_too_high THEN
+        -- get average credit limit
+        SELECT avg(credit_limit)
+        into l_credit
+        from customers;
+
+        -- adjust the credit limit to the average
+        dbms_output.put_line('Adjusted credit to ' || l_credit);
+
+        --  update credit limit
+        UPDATE customers
+        SET credit_limit = l_credit
+        WHERE customer_id = l_customer_id;
+
+        COMMIT;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+DECLARE
+    credit_limit_exceed EXCEPTION;
+    PRAGMA exception_init(credit_limit_exceed, -20111);
+
+    l_customer_id     customers.customer_id%TYPE := &customer_id;
+    l_credit_limit    customers.credit_limit%TYPE := &credit_limit;
+
+    l_customer_credit customers.credit_limit%TYPE;
+
+BEGIN
+    -- get customer credit limit
+    SELECT credit_limit INTO l_customer_credit
+    FROM customers
+    WHERE customer_id = l_customer_id;
+
+    -- raise an exception if the credit limit is exceeded
+    IF l_customer_credit > l_credit_limit THEN
+        raise_application_error(-20111,'Credit Limit Exceeded');
+    END IF;
+
+    dbms_output.put_line('Credit Limit is checked and passed');
+
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            dbms_output.put_line('Customer with id ' || l_customer_id || ' does not exist.');
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+DECLARE
+    e1 EXCEPTION;
+    PRAGMA exception_init (e1, -20001);
+    e2 EXCEPTION;
+    PRAGMA exception_init (e2, -20002);
+    e3 EXCEPTION;
+    PRAGMA exception_init (e2, -20003);
+    l_input NUMBER := &input_number;
+BEGIN
+    -- inner block
+    BEGIN
+        IF l_input = 1 THEN
+            raise_application_error(-20001,'Exception: the input number is 1');
+        ELSIF l_input = 2 THEN
+            raise_application_error(-20002,'Exception: the input number is 2');
+        ELSE
+            raise_application_error(-20003,'Exception: the input number is not 1 or 2');
+        END IF;
+    -- exception handling of the inner block
+    EXCEPTION
+        WHEN e1 THEN
+            dbms_output.put_line('Handle exception when the input number is 1');
+    END;
+    -- exception handling of the outer block
+    EXCEPTION
+        WHEN e2 THEN
+            dbms_output.put_line('Handle exception when the input number is 2');
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+DECLARE
+    l_msg VARCHAR2(255);
+    r_customer customers%rowtype;
+BEGIN
+    SELECT * INTO r_customer FROM customers;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+        l_msg := SQLERRM;
+        dbms_output.put_line(l_msg);
+END;
+<CASE>
+<RES>
+ORA-01422: exact fetch returns more than requested number of rows
+<RES>
+<CASE>
+DECLARE
+    l_first_name  contacts.first_name%TYPE := 'Flor';
+    l_last_name   contacts.last_name%TYPE := 'Stone';
+    l_email       contacts.email%TYPE := 'flor.stone@raytheon.com';
+    l_phone       contacts.phone%TYPE := '+1 317 123 4105';
+    l_customer_id contacts.customer_id%TYPE := -1;
+BEGIN
+    -- insert a new contact
+    INSERT INTO contacts(first_name, last_name, email, phone, customer_id)
+    VALUES(l_first_name, l_last_name, l_email, l_phone, l_customer_id);
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            DECLARE
+                l_error PLS_INTEGER := SQLCODE;
+                l_msg VARCHAR2(255) := sqlerrm;
+            BEGIN
+                CASE l_error
+                WHEN -1 THEN
+                    -- duplicate email
+                    dbms_output.put_line('duplicate email found ' || l_email);
+                    dbms_output.put_line(l_msg);
+
+                WHEN -2291 THEN
+                    -- parent key not found
+                    dbms_output.put_line('Invalid customer id ' || l_customer_id);
+                    dbms_output.put_line(l_msg);
+                END CASE;
+                -- reraise the current exception
+                RAISE;
+            END;
+
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+#
+<CASE>
+CREATE OR REPLACE PROCEDURE print_contact(
+    in_customer_id NUMBER
+)
+IS
+  r_contact contacts%ROWTYPE;
+BEGIN
+  -- get contact based on customer id
+  SELECT *
+  INTO r_contact
+  FROM contacts
+  WHERE customer_id = p_customer_id;
+
+  -- print out contact's information
+  dbms_output.put_line( r_contact.first_name || ' ' ||
+  r_contact.last_name || '<' || r_contact.email ||'>' );
+
+EXCEPTION
+   WHEN OTHERS THEN
+      dbms_output.put_line( SQLERRM );
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+CREATE OR REPLACE FUNCTION get_total_sales(
+    in_year PLS_INTEGER
+)
+RETURN NUMBER
+IS
+    l_total_sales NUMBER := 0;
+BEGIN
+    -- get total sales
+    SELECT SUM(unit_price * quantity)
+    INTO l_total_sales
+    FROM order_items
+    INNER JOIN orders USING (order_id)
+    WHERE status = 'Shipped'
+    GROUP BY EXTRACT(YEAR FROM order_date)
+    HAVING EXTRACT(YEAR FROM order_date) = in_year;
+
+    -- return the total sales
+    RETURN l_total_sales;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+CREATE OR REPLACE FUNCTION get_direct_reports(
+      in_manager_id IN employees.manager_id%TYPE)
+   RETURN SYS_REFCURSOR
+AS
+   c_direct_reports SYS_REFCURSOR;
+BEGIN
+
+   OPEN c_direct_reports FOR
+   SELECT
+      employee_id,
+      first_name,
+      last_name,
+      email
+   FROM
+      employees
+   WHERE
+      manager_id = in_manager_id
+   ORDER BY
+         first_name,
+         last_name;
+
+   RETURN c_direct_reports;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+CREATE OR REPLACE PROCEDURE get_customer_by_credit(
+    min_credit NUMBER
+)
+AS
+    c_customers SYS_REFCURSOR;
+BEGIN
+    -- open the cursor
+    OPEN c_customers FOR
+        SELECT customer_id, credit_limit, name
+        FROM customers
+        WHERE credit_limit > min_credit
+        ORDER BY credit_limit;
+    -- return the result set
+    dbms_sql.return_result(c_customers);
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<CASE>
+CREATE OR REPLACE PROCEDURE get_customers(
+    page_no NUMBER,
+    page_size NUMBER
+)
+AS
+    c_customers SYS_REFCURSOR;
+    c_total_row SYS_REFCURSOR;
+BEGIN
+    -- return the total of customers
+    OPEN c_total_row FOR
+        SELECT COUNT(*)
+        FROM customers;
+
+    dbms_sql.return_result(c_total_row);
+
+    -- return the customers
+    OPEN c_customers FOR
+        SELECT customer_id, name
+        FROM customers
+        ORDER BY name
+        OFFSET page_size * (page_no - 1) ROWS
+        FETCH NEXT page_size ROWS ONLY;
+
+    dbms_sql.return_result(c_customers);
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+
+
+
+<CASE>
+CREATE OR REPLACE PROCEDURE get_customers(
+    page_no NUMBER,
+    page_size NUMBER
+)
+AS
+    c_customers SYS_REFCURSOR;
+    c_total_row SYS_REFCURSOR;
+BEGIN
+    -- return the total of customers
+    OPEN c_total_row FOR
+        SELECT COUNT(*)
+        FROM customers;
+
+    dbms_sql.return_result(c_total_row);
+
+    -- return the customers
+    OPEN c_customers FOR
+        SELECT customer_id, name
+        FROM customers
+        ORDER BY name
+        OFFSET page_size * (page_no - 1) ROWS
+        FETCH NEXT page_size ROWS ONLY;
+
+    dbms_sql.return_result(c_customers);
+END;
+
+SET SERVEROUTPUT ON
+
+DECLARE
+l_sql_cursor    PLS_INTEGER;
+c_cursor        SYS_REFCURSOR;
+l_return        PLS_INTEGER;
+
+l_column_count  PLS_INTEGER;
+l_desc_tab      dbms_sql.desc_tab;
+
+l_total_rows    NUMBER;
+l_customer_id   customers.customer_id%TYPE;
+l_name          customers.NAME%TYPE;
+BEGIN
+-- Execute the function.
+l_sql_cursor := dbms_sql.open_cursor(treat_as_client_for_results => TRUE);
+
+dbms_sql.parse(C             => l_sql_cursor,
+                STATEMENT     => 'BEGIN get_customers(1,10); END;',
+                language_flag => dbms_sql.NATIVE);
+
+l_return := dbms_sql.EXECUTE(l_sql_cursor);
+
+-- Loop over the result sets.
+LOOP
+    -- Get the next resultset.
+    BEGIN
+    dbms_sql.get_next_result(l_sql_cursor, c_cursor);
+    EXCEPTION
+    WHEN no_data_found THEN
+        EXIT;
+    END;
+
+    -- Get the number of columns in each result set.
+    l_return := dbms_sql.to_cursor_number(c_cursor);
+    dbms_sql.describe_columns (l_return, l_column_count, l_desc_tab);
+    c_cursor := dbms_sql.to_refcursor(l_return);
+
+    -- Handle the result set based on the number of columns.
+    CASE l_column_count
+    WHEN 1 THEN
+        dbms_output.put_line('The total number of customers:');
+        FETCH c_cursor
+        INTO  l_total_rows;
+
+        dbms_output.put_line(l_total_rows);
+        CLOSE c_cursor;
+    WHEN 2 THEN
+        dbms_output.put_line('The customer list:');
+        LOOP
+        FETCH c_cursor
+        INTO  l_customer_id, l_name;
+
+        EXIT WHEN c_cursor%notfound;
+
+        dbms_output.put_line(l_customer_id || ' ' || l_name);
+        END LOOP;
+        CLOSE c_cursor;
+    ELSE
+        dbms_output.put_line('An error occurred!');
+    END CASE;
+END LOOP;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+<TRANS>
+
+
+
+
+#
+<CASE>
+DECLARE
+  l_budget NUMBER := 1000000;
+   -- cursor
+  CURSOR c_sales IS
+  SELECT  *  FROM sales
+  ORDER BY total DESC;
+   -- record
+   r_sales c_sales%ROWTYPE;
+BEGIN
+
+  -- reset credit limit of all customers
+  UPDATE customers SET credit_limit = 0;
+
+  OPEN c_sales;
+
+  LOOP
+    FETCH  c_sales  INTO r_sales;
+    EXIT WHEN c_sales%NOTFOUND;
+
+    -- update credit for the current customer
+    UPDATE
+        customers
+    SET
+        credit_limit =
+            CASE WHEN l_budget > r_sales.credit
+                        THEN r_sales.credit
+                            ELSE l_budget
+            END
+    WHERE
+        customer_id = r_sales.customer_id;
+
+    --  reduce the budget for credit limit
+    l_budget := l_budget - r_sales.credit;
+
+    DBMS_OUTPUT.PUT_LINE( 'Customer id: ' ||r_sales.customer_id ||
+' Credit: ' || r_sales.credit || ' Remaining Budget: ' || l_budget );
+
+    -- check the budget
+    EXIT WHEN l_budget <= 0;
+  END LOOP;
+
+  CLOSE c_sales;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE update_customer_credit()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+from snowflake.snowpark.functions import col
+
+# Set up logging
+logger = logging.getLogger("python_logger")
+
+def run(session: Session) -> str:
+    # Initialize budget
+    l_budget = 1000000
+    
+    # Reset credit limit of all customers
+    session.sql("UPDATE customers SET credit_limit = 0").collect()
+    
+    # Fetch all sales ordered by total descending
+    sales_df = session.sql("SELECT * FROM sales ORDER BY total DESC")
+    
+    # Iterate over sales records
+    for row in sales_df.to_local_iterator():
+        customer_id = row['customer_id']
+        credit = row['credit']
+        
+        # Calculate new credit limit
+        new_credit_limit = min(l_budget, credit)
+        
+        # Update the customer's credit limit
+        session.sql(f"""
+            UPDATE customers
+            SET credit_limit = {new_credit_limit}
+            WHERE customer_id = '{customer_id}'
+        """).collect()
+        
+        # Reduce the budget by the current credit
+        l_budget -= credit
+        
+        # Log the current state
+        logger.info(f"Customer id: {customer_id} Credit: {credit} Remaining Budget: {l_budget}")
+        
+        # Exit loop if budget is depleted
+        if l_budget <= 0:
+            break
+    
+    return "Customer credit update completed."
+
+$$;
+CALL update_customer_credit();
+<TRANS>
+
+
+
+<CASE>
+DECLARE
+  CURSOR c_product
+  IS
+    SELECT
+        product_name, list_price
+    FROM
+        products
+    ORDER BY
+        list_price DESC;
+BEGIN
+  FOR r_product IN c_product
+  LOOP
+    dbms_output.put_line( r_product.product_name || ': $' ||  r_product.list_price );
+  END LOOP;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE print_products()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'execute_procedure'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+
+# Configure logging
+logger = logging.getLogger("python_logger")
+
+def execute_procedure(session: Session) -> str:
+    try:
+        # SQL query to fetch product names and prices
+        query = """
+        SELECT product_name, list_price
+        FROM products
+        ORDER BY list_price DESC
+        """
+        
+        # Execute the query
+        result = session.sql(query).collect()
+
+        # Iterate through the results and log the product details
+        for row in result:
+            product_name = row['PRODUCT_NAME']
+            list_price = row['LIST_PRICE']
+            logger.info(f"{product_name}: ${list_price}")
+        
+        return "Products listed successfully."
+
+    except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
+        return f"An error occurred: {str(e)}"
+
+$$;
+CALL print_products();
+<TRANS>
+
+
+
+<CASE>
+BEGIN
+  FOR r_product IN (
+        SELECT
+            product_name, list_price
+        FROM
+            products
+        ORDER BY list_price DESC
+    )
+  LOOP
+     dbms_output.put_line( r_product.product_name ||
+        ': $' ||
+        r_product.list_price );
+  END LOOP;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE print_product_prices()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import logging
+
+def run(session):
+    # Initialize logger
+    logger = logging.getLogger("python_logger")
+    logger.setLevel(logging.INFO)
+
+    # Fetch data from the products table
+    query = "SELECT product_name, list_price FROM products ORDER BY list_price DESC"
+    results = session.sql(query).collect()
+
+    # Iterate over each row in the result set
+    for row in results:
+        product_name = row['PRODUCT_NAME']
+        list_price = row['LIST_PRICE']
+        # Log the output similar to dbms_output.put_line
+        logger.info(f"{product_name}: ${list_price}")
+
+    return "Procedure completed successfully."
+$$;
+CALL print_product_prices();
+<TRANS>
+
+
+
+<CASE>
+DECLARE
+    r_product products%rowtype;
+    CURSOR c_product (low_price NUMBER, high_price NUMBER)
+    IS
+        SELECT *
+        FROM products
+        WHERE list_price BETWEEN low_price AND high_price;
+BEGIN
+    -- show mass products
+    dbms_output.put_line('Mass products: ');
+    OPEN c_product(50,100);
+    LOOP
+        FETCH c_product INTO r_product;
+        EXIT WHEN c_product%notfound;
+        dbms_output.put_line(r_product.product_name || ': ' ||r_product.list_price);
+    END LOOP;
+    CLOSE c_product;
+
+    -- show luxury products
+    dbms_output.put_line('Luxury products: ');
+    OPEN c_product(800,1000);
+    LOOP
+        FETCH c_product INTO r_product;
+        EXIT WHEN c_product%notfound;
+        dbms_output.put_line(r_product.product_name || ': ' ||r_product.list_price);
+    END LOOP;
+    CLOSE c_product;
+
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE show_products()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'show_products_handler'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+
+# Set up logging
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def show_products_handler(session: Session) -> str:
+    # Helper function to fetch and log products within a price range
+    def fetch_and_log_products(low_price, high_price, category_name):
+        query = f"""
+        SELECT product_name, list_price
+        FROM products
+        WHERE list_price BETWEEN {low_price} AND {high_price}
+        """
+        
+        result = session.sql(query).collect()
+
+        logger.info(f'{category_name} products:')
+        for row in result:
+            logger.info(f"{row['PRODUCT_NAME']}: {row['LIST_PRICE']}")
+
+    # Fetch and log mass products
+    fetch_and_log_products(50, 100, "Mass")
+    
+    # Fetch and log luxury products
+    fetch_and_log_products(800, 1000, "Luxury")
+
+    return "Product listing completed."
+$$;
+CALL show_products();
+
+<TRANS>
+
+
+<CASE>
+DECLARE
+    CURSOR c_revenue (in_year NUMBER :=2017 , in_customer_id NUMBER := 1)
+    IS
+        SELECT SUM(quantity * unit_price) revenue
+        FROM order_items
+        INNER JOIN orders USING (order_id)
+        WHERE status = 'Shipped' AND EXTRACT( YEAR FROM order_date) = in_year
+        GROUP BY customer_id
+        HAVING customer_id = in_customer_id;
+
+    r_revenue c_revenue%rowtype;
+BEGIN
+    OPEN c_revenue;
+    LOOP
+        FETCH c_revenue INTO r_revenue;
+        EXIT    WHEN c_revenue%notfound;
+        -- show the revenue
+        dbms_output.put_line(r_revenue.revenue);
+    END LOOP;
+    CLOSE c_revenue;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE calculate_revenue(in_year NUMBER, in_customer_id NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+from snowflake.snowpark.functions import col, sql_expr, sum as snowflake_sum
+
+def run(session: Session, in_year: int, in_customer_id: int) -> str:
+    logger = logging.getLogger("python_logger")
+
+    # Construct and execute the query
+    revenue_df = (
+        session.table("order_items")
+        .join(session.table("orders"), "order_id")
+        .filter((col("status") == 'Shipped') & (sql_expr("YEAR(order_date)") == in_year))
+        .group_by("customer_id")
+        .agg(snowflake_sum(col("quantity") * col("unit_price")).alias("revenue"))
+        .filter(col("customer_id") == in_customer_id)
+    )
+
+    # Iterate through the results and log the revenue
+    for row in revenue_df.collect():
+        revenue = row['REVENUE']
+        logger.info(f"Revenue for customer {in_customer_id} in year {in_year}: {revenue}")
+
+    return "Revenue calculation completed."
+$$;
+<TRANS>
+
+
+
+<CASE>
+DECLARE
+    -- customer cursor
+    CURSOR c_customers IS
+        SELECT
+            customer_id,
+            name,
+            credit_limit
+        FROM
+            customers
+        WHERE
+            credit_limit > 0
+        FOR UPDATE OF credit_limit;
+    -- local variables
+    l_order_count PLS_INTEGER := 0;
+    l_increment   PLS_INTEGER := 0;
+
+BEGIN
+    FOR r_customer IN c_customers
+    LOOP
+        -- get the number of orders of the customer
+        SELECT COUNT(*)
+        INTO l_order_count
+        FROM orders
+        WHERE customer_id = r_customer.customer_id;
+        --
+        IF l_order_count >= 5 THEN
+            l_increment := 5;
+        ELSIF l_order_count < 5 AND l_order_count >=2 THEN
+            l_increment := 2;
+        ELSIF l_increment = 1 THEN
+            l_increment := 1;
+        ELSE
+            l_increment := 0;
+        END IF;
+
+        IF l_increment > 0 THEN
+            -- update the credit limit
+            UPDATE
+                customers
+            SET
+                credit_limit = credit_limit * ( 1 +  l_increment/ 100)
+            WHERE
+                customer_id = r_customer.customer_id;
+
+            -- show the customers whose credits are increased
+            dbms_output.put_line('Increase credit for customer '
+                || r_customer.NAME || ' by '
+                || l_increment || '%' );
+        END IF;
+    END LOOP;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            dbms_output.put_line('Error code:' || SQLCODE);
+            dbms_output.put_line('Error message:' || sqlerrm);
+            RAISE;
+
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE update_customer_credit()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snp
+import logging
+
+# Configure the logger
+logger = logging.getLogger("python_logger")
+
+def main(session: snp.Session) -> str:
+    try:
+        # Fetch customers with a positive credit limit
+        customers_df = session.sql("""
+            SELECT customer_id, name, credit_limit
+            FROM customers
+            WHERE credit_limit > 0
+        """).collect()
+
+        # Iterate over each customer
+        for customer in customers_df:
+            customer_id = customer['CUSTOMER_ID']
+            customer_name = customer['NAME']
+            credit_limit = customer['CREDIT_LIMIT']
+
+            # Get the number of orders for the customer
+            order_count = session.sql(f"""
+                SELECT COUNT(*)
+                FROM orders
+                WHERE customer_id = {customer_id}
+            """).collect()[0][0]
+
+            # Determine the increment percentage
+            if order_count >= 5:
+                increment = 5
+            elif order_count >= 2:
+                increment = 2
+            elif order_count == 1:
+                increment = 1
+            else:
+                increment = 0
+
+            # Update the credit limit if increment is greater than 0
+            if increment > 0:
+                new_credit_limit = credit_limit * (1 + increment / 100.0)
+                session.sql(f"""
+                    UPDATE customers
+                    SET credit_limit = {new_credit_limit}
+                    WHERE customer_id = {customer_id}
+                """).collect()
+
+                # Log the increase information
+                logger.info(f"Increase credit for customer {customer_name} by {increment}%")
+
+        return "Customer credit update completed successfully."
+
+    except Exception as e:
+        # Log the error details
+        logger.error(f"Error code: {e.args[0]}")
+        logger.error(f"Error message: {str(e)}")
+        raise e
+
+$$;
+CALL update_customer_credit();
+<TRANS>
+
+
+<CASE>
+CREATE OR REPLACE TRIGGER customers_audit_trg
+    AFTER
+    UPDATE OR DELETE
+    ON customers
+    FOR EACH ROW
+DECLARE
+   l_transaction VARCHAR2(10);
+BEGIN
+   -- determine the transaction type
+   l_transaction := CASE
+         WHEN UPDATING THEN 'UPDATE'
+         WHEN DELETING THEN 'DELETE'
+   END;
+
+   -- insert a row into the audit table
+   INSERT INTO audits (table_name, transaction_name, by_user, transaction_date)
+   VALUES('CUSTOMERS', l_transaction, USER, SYSDATE);
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+-- Step 1: Create a Stream on the 'customers' table
+CREATE OR REPLACE STREAM customers_stream ON TABLE customers
+  APPEND_ONLY = FALSE;  -- Allows capturing UPDATE and DELETE changes
+
+-- Step 2: Create the Procedure for audit logging
+CREATE OR REPLACE PROCEDURE log_customers_changes()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'log_changes'
+AS
+$$
+import snowflake.snowpark as snp
+from snowflake.snowpark import Session
+import logging
+
+logger = logging.getLogger("python_logger")
+
+def log_changes(session: Session) -> str:
+    try:
+        # Query the stream to get the changes
+        changes = session.table("customers_stream").to_pandas()
+
+        # Iterate over the changes and insert into audits table
+        for index, row in changes.iterrows():
+            transaction_type = 'UPDATE' if row['_METADATA$ACTION'] == 'UPDATE' else 'DELETE'
+            session.sql(f"""
+                INSERT INTO audits (table_name, transaction_name, by_user, transaction_date)
+                VALUES ('CUSTOMERS', '{transaction_type}', CURRENT_USER(), CURRENT_TIMESTAMP())
+            """).collect()
+
+        return "Audit log updated successfully."
+
+    except Exception as e:
+        logger.error(f"Error in log_customers_changes: {e}")
+        return f"Error in procedure: {str(e)}"
+
+$$;
+
+-- Step 3: Create a Task to run the Procedure periodically
+CREATE OR REPLACE TASK customers_audit_task
+  WAREHOUSE = 'COMPUTE_WH'
+  SCHEDULE = 'USING CRON 5 * * * *'  -- Adjust the schedule as needed
+AS
+  CALL log_customers_changes();
+
+-- Step 4: Start the Task
+ALTER TASK customers_audit_task RESUME;
+
+<TRANS>
+
+
+<CASE>
+CREATE OR REPLACE TRIGGER customers_credit_trg
+    BEFORE UPDATE OF credit_limit
+    ON customers
+DECLARE
+    l_day_of_month NUMBER;
+BEGIN
+    -- determine the transaction type
+    l_day_of_month := EXTRACT(DAY FROM sysdate);
+
+    IF l_day_of_month BETWEEN 28 AND 31 THEN
+        raise_application_error(-20100,'Cannot update customer credit from 28th to 31st');
+    END IF;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE STREAM customers_updates_stream
+ON TABLE customers
+APPEND_ONLY = FALSE;  -- Track all DML changes, not just inserts
+CREATE OR REPLACE PROCEDURE customers_credit_check()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+
+def run(session: Session) -> str:
+    # Set up logging
+    logger = logging.getLogger("python_logger")
+
+    # Get the current day of the month
+    l_day_of_month = session.sql("SELECT EXTRACT(DAY FROM CURRENT_DATE)").collect()[0][0]
+    
+    # Check if the day is between 28 and 31
+    if 28 <= l_day_of_month <= 31:
+        logger.error("Cannot update customer credit from 28th to 31st")
+        raise ValueError('Cannot update customer credit from 28th to 31st')
+
+    return "Check completed without error"
+$$;
+CREATE OR REPLACE TASK check_customers_credit_limit_task
+WAREHOUSE = MY_WAREHOUSE  -- Specify the warehouse to run the task
+SCHEDULE = 'USING CRON 0 * * * * UTC'  -- Adjust the schedule as needed, here it runs every hour
+AS
+BEGIN
+    -- Check if there are any updates to the credit_limit column
+    DECLARE
+        updates_count INTEGER;
+
+    -- Count the number of updates to the credit_limit column from the stream
+    updates_count := (SELECT COUNT(*) 
+                      FROM customers_updates_stream 
+                      WHERE metadata$action = 'UPDATE'
+                      AND credit_limit IS NOT NULL);
+
+    IF updates_count > 0 THEN
+        -- Call the stored procedure to validate the updates
+        CALL customers_credit_check();
+    END IF;
+END;
+ALTER TASK check_customers_credit_limit_task RESUME;
+
+<TRANS>
+
+
+<CASE>
+CREATE OR REPLACE TRIGGER customers_update_credit_trg
+    BEFORE UPDATE OF credit_limit
+    ON customers
+    FOR EACH ROW
+    WHEN (NEW.credit_limit > 0)
+BEGIN
+    -- check the credit limit
+    IF :NEW.credit_limit >= 2 * :OLD.credit_limit THEN
+        raise_application_error(-20101,'The new credit ' || :NEW.credit_limit ||
+            ' cannot increase to more than double, the current credit ' || :OLD.credit_limit);
+    END IF;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+-- Create a stream on the customers table to capture changes
+CREATE OR REPLACE STREAM customers_stream ON TABLE customers 
+    APPEND_ONLY = FALSE;
+CREATE OR REPLACE PROCEDURE check_credit_limit()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'process_credit_limit'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+
+# Initialize logging
+logger = logging.getLogger("python_logger")
+
+def process_credit_limit(session: Session):
+    # Fetch changes from the stream
+    df = session.table("customers_stream").to_pandas()
+    
+    for index, row in df.iterrows():
+        new_credit_limit = row['credit_limit']  # New credit limit
+        old_credit_limit = row['credit_limit__old']  # Old credit limit
+        
+        # Check if the new credit limit is more than double the old one
+        if new_credit_limit > 0 and new_credit_limit >= 2 * old_credit_limit:
+            # Log error message
+            error_message = f"The new credit {new_credit_limit} cannot increase to more than double the current credit {old_credit_limit}"
+            logger.error(error_message, extra={'custom_error_code': -20101})
+            return error_message
+    
+    return "Check completed"
+$$;
+-- Create a task that runs the stored procedure every minute
+CREATE OR REPLACE TASK check_credit_limit_task
+    WAREHOUSE = MY_WAREHOUSE
+    SCHEDULE = 'USING CRON * * * * *' -- This cron expression runs the task every minute
+AS
+CALL check_credit_limit();
+-- Enable the task
+ALTER TASK check_credit_limit_task RESUME;
+
+<TRANS>
+
+
+<CASE>
+CREATE VIEW vw_customers AS
+    SELECT
+        name,
+        address,
+        website,
+        credit_limit,
+        first_name,
+        last_name,
+        email,
+        phone
+    FROM
+        customers
+    INNER JOIN contacts USING (customer_id);
+
+CREATE OR REPLACE TRIGGER new_customer_trg
+    INSTEAD OF INSERT ON vw_customers
+    FOR EACH ROW
+DECLARE
+    l_customer_id NUMBER;
+BEGIN
+    -- insert a new customer first
+    INSERT INTO customers(name, address, website, credit_limit)
+    VALUES(:NEW.NAME, :NEW.address, :NEW.website, :NEW.credit_limit)
+    RETURNING customer_id INTO l_customer_id;
+    
+    -- insert the contact
+    INSERT INTO contacts(first_name, last_name, email, phone, customer_id)
+    VALUES(:NEW.first_name, :NEW.last_name, :NEW.email, :NEW.phone, l_customer_id);
+END;
+
+INSERT INTO 
+    vw_customers(
+        name, 
+        address, 
+        website, 
+        credit_limit, 
+        first_name, 
+        last_name, 
+        email, 
+        phone
+    )
+VALUES(
+    'Lam Research',
+    'Fremont, California, USA', 
+    'https://www.lamresearch.com/',
+    2000,
+    'John',
+    'Smith',
+    'john.smith@lamresearch.com',
+    '+1-510-572-0200'
+);
+
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE VIEW vw_customers AS
+SELECT
+    c.name,
+    c.address,
+    c.website,
+    c.credit_limit,
+    ct.first_name,
+    ct.last_name,
+    ct.email,
+    ct.phone
+FROM
+    customers c
+INNER JOIN contacts ct ON c.customer_id = ct.customer_id;
+CREATE OR REPLACE PROCEDURE insert_into_customers_and_contacts(
+    name STRING, 
+    address STRING, 
+    website STRING, 
+    credit_limit NUMBER, 
+    first_name STRING, 
+    last_name STRING, 
+    email STRING, 
+    phone STRING
+)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'insert_handler'
+AS
+$$
+import snowflake.snowpark as snp
+import logging
+
+def insert_handler(session: snp.Session, name, address, website, credit_limit, first_name, last_name, email, phone):
+    logger = logging.getLogger("python_logger")
+    
+    try:
+        # Insert into customers table and get the new customer_id
+        result = session.sql(f"""
+            INSERT INTO customers(name, address, website, credit_limit)
+            VALUES ('{name}', '{address}', '{website}', {credit_limit})
+            RETURNING customer_id;
+        """).collect()
+        
+        customer_id = result[0]['CUSTOMER_ID']
+
+        # Insert into contacts table using the customer_id
+        session.sql(f"""
+            INSERT INTO contacts(first_name, last_name, email, phone, customer_id)
+            VALUES ('{first_name}', '{last_name}', '{email}', '{phone}', {customer_id});
+        """).execute()
+
+        logger.info(f"Inserted customer '{name}' with associated contact '{first_name} {last_name}' successfully.")
+        
+        return "SUCCESS"
+    except Exception as e:
+        logger.error(f"Error inserting customer and contact: {str(e)}")
+        return "FAILURE"
+$$;
+CALL insert_into_customers_and_contacts(
+    'Lam Research',
+    'Fremont, California, USA',
+    'https://www.lamresearch.com/',
+    2000,
+    'John',
+    'Smith',
+    'john.smith@lamresearch.com',
+    '+1-510-572-0200'
+);
+<TRANS>
+
+
+
+<CASE>
+CREATE OR REPLACE TRIGGER customers_bd_trg
+    BEFORE DELETE
+    ON customers
+    FOR EACH ROW
+    DISABLE
+DECLARE
+    l_order_count PLS_INTEGER;
+BEGIN
+    -- check if the customer has a transaction
+    SELECT COUNT(*) INTO l_order_count
+    FROM orders
+    WHERE customer_id = :OLD.customer_id;
+
+    -- raise an exception if the customer has at least one order
+    IF l_order_count > 0 THEN
+        raise_application_error(-20010,'Cannot delete customer ' || :OLD.NAME ||
+        ' because it already has transactions');
+    END IF;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE STREAM customers_delete_stream ON TABLE customers 
+  APPEND_ONLY = FALSE; -- Track all changes, including deletes
+CREATE OR REPLACE PROCEDURE check_customer_delete()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'check_delete'
+AS
+$$
+import snowflake.snowpark as snowpark
+import logging
+
+def check_delete(session):
+    logger = logging.getLogger("python_logger")
+
+    # Fetch records from the stream
+    customer_deletions = session.sql("SELECT * FROM TABLE(changes('customers_delete_stream')) WHERE METADATA$ACTION = 'DELETE'").collect()
+
+    for customer in customer_deletions:
+        customer_id = customer['CUSTOMER_ID']
+        customer_name = customer['NAME']
+
+        # Check if the customer has any associated orders
+        result = session.sql(f"SELECT COUNT(*) FROM orders WHERE customer_id = '{customer_id}'").collect()
+        l_order_count = result[0][0]
+
+        if l_order_count > 0:
+            # Log the error and raise an exception
+            error_message = f"Cannot delete customer {customer_name} because it already has transactions."
+            logger.error(error_message)
+            raise Exception(error_message)
+
+    return "Check complete"
+$$;
+CREATE OR REPLACE TASK check_customer_delete_task
+  WAREHOUSE = my_warehouse
+  SCHEDULE = 'USING CRON * * * * *'  -- Runs every minute
+AS
+CALL check_customer_delete();
+ALTER TASK check_customer_delete_task RESUME;
+
+<TRANS>
+
+
+
+<CASE>
+CREATE OR REPLACE PROCEDURE drop_trigger_if_exists(
+    in_trigger_name VARCHAR2
+)
+AS
+    l_exist PLS_INTEGER;
+BEGIN
+    -- get the trigger count
+    SELECT COUNT(*) INTO l_exist
+    FROM user_triggers
+    WHERE trigger_name = UPPER(in_trigger_name);
+
+    -- if the trigger exist, drop it
+    IF l_exist > 0 THEN
+        EXECUTE IMMEDIATE 'DROP TRIGGER ' ||  in_trigger_name;
+    END IF;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE drop_trigger_if_exists(in_trigger_name STRING)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'execute_procedure'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+import snowflake.snowpark.functions as F
+
+# Set up logging
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def execute_procedure(session: Session) -> str:
+    # Convert trigger name to upper case to ensure case-insensitive comparison
+    in_trigger_name_upper = in_trigger_name.upper()
+    
+    # Query the count of objects that match the trigger name
+    result_df = session.sql(f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '{in_trigger_name_upper}'").collect()
+    
+    # Fetch the count result
+    l_exist = result_df[0][0] if result_df else 0
+    
+    # Check if the object exists
+    if l_exist > 0:
+        try:
+            # Attempt to drop the object
+            session.sql(f"DROP TABLE {in_trigger_name_upper}").collect()
+            logger.info(f"Trigger '{in_trigger_name_upper}' dropped successfully.")
+        except Exception as e:
+            # Log any errors during dropping
+            logger.error(f"Failed to drop trigger '{in_trigger_name_upper}': {str(e)}")
+            return f"Failed to drop trigger: {str(e)}"
+    else:
+        logger.info(f"Trigger '{in_trigger_name_upper}' does not exist.")
+        return f"Trigger '{in_trigger_name_upper}' does not exist."
+    
+    return "Procedure executed successfully."
+$$;
+<TRANS>
+
+
+<CASE>
+DECLARE
+    -- declare an associative array type
+    TYPE t_capital_type
+        IS TABLE OF VARCHAR2(100)
+        INDEX BY VARCHAR2(50);
+    -- declare a variable of the t_capital_type
+    t_capital t_capital_type;
+    -- local variable
+    l_country VARCHAR2(50);
+BEGIN
+
+    t_capital('USA')            := 'Washington, D.C.';
+    t_capital('United Kingdom') := 'London';
+    t_capital('Japan')          := 'Tokyo';
+
+    l_country := t_capital.FIRST;
+
+    WHILE l_country IS NOT NULL LOOP
+        dbms_output.put_line('The capital of ' ||
+            l_country ||
+            ' is ' ||
+            t_capital(l_country));
+        l_country := t_capital.NEXT(l_country);
+    END LOOP;
+END;
+<CASE>
+<RES>
+The capital of Japan is Tokyo
+The capital of USA is Washington, D.C.
+The capital of United Kingdom is London
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE print_capitals()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run_procedure'
+AS
+$$
+import logging
+
+# Set up logging
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def run_procedure(session):
+    # Simulating the associative array using a Python dictionary
+    t_capital = {
+        'USA': 'Washington, D.C.',
+        'United Kingdom': 'London',
+        'Japan': 'Tokyo'
+    }
+
+    # Retrieve the keys in order (similar to how PL/SQL FIRST and NEXT work)
+    countries = list(t_capital.keys())
+    index = 0
+
+    # Loop through the dictionary and log each country's capital
+    while index < len(countries):
+        l_country = countries[index]
+        logger.info(f"The capital of {l_country} is {t_capital[l_country]}")
+        index += 1
+
+    return "Capitals printed successfully"
+$$;
+CALL print_capitals();
+<TRANS>
+
+
+<CASE>
+DECLARE
+    -- declare a cursor that return customer name
+    CURSOR c_customer IS
+        SELECT name
+        FROM customers
+        ORDER BY name
+        FETCH FIRST 10 ROWS ONLY;
+    -- declare a nested table type
+    TYPE t_customer_name_type
+        IS TABLE OF customers.name%TYPE;
+
+    -- declare and initialize a nested table variable
+    t_customer_names t_customer_name_type := t_customer_name_type();
+
+BEGIN
+    -- populate customer names from a cursor
+    FOR r_customer IN c_customer
+    LOOP
+        t_customer_names.EXTEND;
+        t_customer_names(t_customer_names.LAST) := r_customer.name;
+    END LOOP;
+
+    -- display customer names
+    FOR l_index IN t_customer_names.FIRST..t_customer_names.LAST
+    LOOP
+        dbms_output.put_line(t_customer_names(l_index));
+    END LOOP;
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE process_customer_names()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def run(session: Session) -> str:
+    # Fetch first 10 customer names ordered by name
+    query = "SELECT name FROM customers ORDER BY name FETCH FIRST 10 ROWS ONLY"
+    result_set = session.sql(query).collect()
+    
+    # Extract names into a list
+    customer_names = [row['NAME'] for row in result_set]
+    
+    # Log each customer name
+    for name in customer_names:
+        logger.info(name)
+    
+    return "Processed customer names successfully."
+$$;
+CALL process_customer_names();
+<TRANS>
+
+
+<CASE>
+DECLARE
+    TYPE r_customer_type IS RECORD(
+        customer_name customers.name%TYPE,
+        credit_limit customers.credit_limit%TYPE
+    );
+
+    TYPE t_customer_type IS VARRAY(5)
+        OF r_customer_type;
+
+    t_customers t_customer_type := t_customer_type();
+
+    CURSOR c_customer IS
+        SELECT NAME, credit_limit
+        FROM customers
+        ORDER BY credit_limit DESC
+        FETCH FIRST 5 ROWS ONLY;
+BEGIN
+    -- fetch data from a cursor
+    FOR r_customer IN c_customer LOOP
+        t_customers.EXTEND;
+        t_customers(t_customers.LAST).customer_name := r_customer.name;
+        t_customers(t_customers.LAST).credit_limit  := r_customer.credit_limit;
+    END LOOP;
+
+    -- show all customers
+    FOR l_index IN t_customers .FIRST..t_customers.LAST
+    LOOP
+        dbms_output.put_line(
+            'The customer ' ||
+            t_customers(l_index).customer_name ||
+            ' has a credit of ' ||
+            t_customers(l_index).credit_limit
+        );
+    END LOOP;
+
+END;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE process_customers()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'process_customers_handler'
+AS
+$$
+import logging
+from snowflake.snowpark import Session
+from snowflake.snowpark.functions import col
+
+# Configure logging
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def process_customers_handler(session: Session) -> str:
+    # Execute the query to fetch top 5 customers by credit limit
+    df_customers = session.sql("""
+        SELECT name AS customer_name, credit_limit
+        FROM customers
+        ORDER BY credit_limit DESC
+        LIMIT 5
+    """)
+
+    # Collect the DataFrame as a list of rows (dictionary format)
+    customer_list = df_customers.collect()
+
+    # Log each customer's information
+    for customer in customer_list:
+        customer_name = customer['CUSTOMER_NAME']
+        credit_limit = customer['CREDIT_LIMIT']
+        logger.info(f"The customer {customer_name} has a credit of {credit_limit}")
+
+    return "Processing completed successfully."
+
+$$;
+CALL process_customers();
+<TRANS>
+
+
+<CASE>
+DECLARE
+message varchar2(20):= 'Hello, World!';
+BEGIN
+dbms_output.put_line(message);
+END;
+<CASE>
+<RES>
+Hello World
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE log_message()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'log_message_handler'
+AS
+$$
+import logging
+
+# Configure logging
+logger = logging.getLogger("python_logger")
+
+def log_message_handler(session):
+    # Declare and initialize the message variable
+    message = 'Hello, World!'
+    
+    # Log the message using the logger
+    logger.info(message)
+    
+    return 'Message logged successfully'
+$$;
+CALL log_message();
+<TRANS>
+
+
+<CASE>
+Declare
+Var1 integer;
+Var2 integer;
+Var3 integer;
+Begin
+Var1:=&var1;
+Var2:=&var2;
+Var3:=var1+var2;
+Dbms_output.put_line(var3);
+End;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE add_two_numbers(var1 INTEGER, var2 INTEGER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'add_numbers'
+AS
+$$
+import logging
+
+# Setting up the logger
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def add_numbers(session):
+    # Summing the input variables
+    var3 = var1 + var2
+
+    # Logging the result
+    logger.info(f"The sum of {var1} and {var2} is: {var3}")
+    
+    return f"The sum of {var1} and {var2} is: {var3}"
+$$;
+<TRANS>
+
+
+<CASE>
+declare
+	n number;
+	i number;
+	flag number;
+
+begin
+	i:=2;
+	flag:=1;
+	n:=12;
+
+	for i in 2..n/2
+	loop
+		if mod(n,i)=0
+		then
+			flag:=0;
+			exit;
+		end if;
+	end loop;
+
+	if flag=1
+	then
+		dbms_output.put_line('prime');
+	else
+		dbms_output.put_line('not prime');
+	end if;
+end;
+<CASE>
+<RES>
+not prime
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE check_prime(n NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'check_prime_handler'
+AS
+$$
+import logging
+
+def check_prime_handler(session, n):
+    logger = logging.getLogger("python_logger")
+    
+    # Initialize variables
+    flag = 1
+
+    # Loop to check if the number is prime
+    for i in range(2, int(n/2) + 1):
+        if n % i == 0:
+            flag = 0
+            break
+
+    # Determine and log the result
+    if flag == 1:
+        result = "prime"
+    else:
+        result = "not prime"
+    
+    logger.info(result)
+    return result
+$$;
+CALL check_prime(12);
+<TRANS>
+
+
+<CASE>
+declare
+	n number;
+	fac number:=1;
+	i number;
+
+begin
+	n:=10;
+
+	for i in 1..n
+	loop
+		fac:=fac*i;
+	end loop;
+
+	dbms_output.put_line('factorial='||fac);
+end;
+<CASE>
+<RES>
+3628800
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE calculate_factorial(n NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'calculate_factorial_python'
+AS
+$$
+import logging
+
+def calculate_factorial_python(session, n):
+    logger = logging.getLogger("python_logger")
+    
+    # Initialize factorial to 1
+    fac = 1
+
+    # Calculate factorial using a loop
+    for i in range(1, n + 1):
+        fac *= i
+
+    # Log the result
+    logger.info(f'factorial={fac}', extra={'factorial': fac})
+
+    return f'The factorial of {n} is {fac}'
+$$;
+CALL calculate_factorial(10);
+<TRANS>
+
+
+<CASE>
+declare
+	n number;
+	i number;
+
+begin
+	n:=5;
+
+	for i in 1..10
+	loop
+		dbms_output.put_line(n||' x '||i||' = '||n*i);
+	end loop;
+end;
+<CASE>
+<RES>
+5 x 1 = 5
+5 x 2 = 10
+5 x 3 = 15
+5 x 4 = 20
+5 x 5 = 25
+5 x 6 = 30
+5 x 7 = 35
+5 x 8 = 40
+5 x 9 = 45
+5 x 10 = 50
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE generate_multiplication_table(n NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'generate_table'
+AS
+$$
+import logging
+
+# Initialize the logger
+logger = logging.getLogger("python_logger")
+
+def generate_table(session):
+    # The input number for which we want to generate a multiplication table
+    number = n
+    
+    # Loop from 1 to 10
+    for i in range(1, 11):
+        # Compute the multiplication
+        result = number * i
+        # Format the output string
+        output = f"{number} x {i} = {result}"
+        # Log the output
+        logger.info(output)
+
+    return "Multiplication table generated successfully."
+$$;
+<TRANS>
+
+
+<CASE>
+declare
+	n number;
+	i number;
+	rev number:=0;
+	r number;
+
+begin
+	n:=&n;
+
+	while n>0
+	loop
+		r:=mod(n,10);
+		rev:=(rev*10)+r;
+		n:=trunc(n/10);
+	end loop;
+
+	dbms_output.put_line('reverse is '||rev);
+
+end;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE reverse_number(n NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+HANDLER = 'reverse_number_handler'
+AS
+$$
+import logging
+
+# Initialize the logger for Snowflake
+logger = logging.getLogger("python_logger")
+
+def reverse_number_handler(session, n):
+    rev = 0
+
+    # Reverse the number using similar logic
+    while n > 0:
+        r = n % 10
+        rev = (rev * 10) + r
+        n = n // 10
+
+    # Log the reversed number
+    logger.info(f"reverse is {rev}")
+
+    # Return the reversed number as a string
+    return f"reverse is {rev}"
+$$;
+<TRANS>
+
+
+<CASE>
+declare
+	n number;
+	i number;
+	rev number:=0;
+	r number;
+
+begin
+	n:=4578;
+
+	while n>0
+	loop
+		r:=mod(n,10);
+		rev:=(rev*10)+r;
+		n:=trunc(n/10);
+	end loop;
+
+	dbms_output.put_line('reverse is '||rev);
+
+end;
+<CASE>
+<RES>
+reverse is 8754
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE reverse_number(input_number INT)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import logging
+
+def run(session, input_number):
+    # Initialize logger
+    logger = logging.getLogger("python_logger")
+    
+    # Use the provided input number
+    n = input_number
+    rev = 0
+    
+    # Reverse logic
+    while n > 0:
+        r = n % 10
+        rev = (rev * 10) + r
+        n = n // 10  # Integer division to truncate the last digit
+    
+    # Log the reversed number
+    logger.info(f'reverse is {rev}')
+    
+    return f'The reversed number is {rev}'
+$$;
+CALL reverse_number(4578);
+<TRANS>
+
+<CASE>
+declare
+	first number:=0;
+	second number:=1;
+	third number;
+	n number:=6;
+	i number;
+
+begin
+	dbms_output.put_line('Fibonacci series is:');
+	dbms_output.put_line(first);
+	dbms_output.put_line(second);
+
+	for i in 2..n
+	loop
+		third:=first+second;
+		first:=second;
+		second:=third;
+		dbms_output.put_line(third);
+	end loop;
+end;
+<CASE>
+<RES>
+Fibonacci series is:
+0
+1
+1
+2
+3
+5
+8
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE fibonacci_series(n NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'calculate_fibonacci'
+AS
+$$
+import logging
+
+# Configure logger for Snowflake
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def calculate_fibonacci(session, n):
+    first = 0
+    second = 1
+
+    # Logging the initial messages
+    logger.info('Fibonacci series is:')
+    logger.info(first)
+    logger.info(second)
+
+    # Calculating Fibonacci sequence
+    for i in range(2, n):
+        third = first + second
+        first = second
+        second = third
+        logger.info(third)
+    
+    return 'Fibonacci series calculation completed.'
+
+$$;
+CALL fibonacci_series(6);
+<TRANS>
+
+
+<CASE>
+declare
+	n number:=7;
+
+begin
+	if mod(n,2)=0
+	then
+		dbms_output.put_line('number is even');
+	else
+		dbms_output.put_line('number is odd');
+	end if;
+end;
+<CASE>
+<RES>
+number is odd
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE check_even_odd(n NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'check_even_odd_python'
+AS
+$$
+import logging
+
+# Setting up the logger
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def check_even_odd_python(session, n):
+    # Check if the number is even or odd
+    if n % 2 == 0:
+        message = "number is even"
+    else:
+        message = "number is odd"
+    
+    # Log the result
+    logger.info(message)
+    
+    # Return the message (if needed)
+    return message
+$$;
+
+<TRANS>
+
+
+<CASE>
+declare
+	str1 varchar2(50):='hello world';
+	str2 varchar2(50);
+	len number;
+	i number;
+
+begin
+	len:=length(str1);
+
+	for i in reverse 1..len
+	loop
+		str2:=str2 || substr(str1,i,1);
+	end loop;
+
+	dbms_output.put_line('Reverse of String is:'||str2);
+end;
+<CASE>
+<RES>
+Reverse of String is:dlrow olleh
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE reverse_string_python(string_input STRING)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'reverse_string'
+AS
+$$
+import logging
+
+def reverse_string(session, string_input):
+    # Initialize logger
+    logger = logging.getLogger("python_logger")
+    
+    # Original string
+    str1 = string_input
+    str2 = ''
+    
+    # Get length of the string
+    length = len(str1)
+    
+    # Reverse the string using a loop
+    for i in range(length - 1, -1, -1):
+        str2 += str1[i]
+    
+    # Log the reversed string
+    logger.info('Reverse of String is: ' + str2, extra={'custom1': 'ReverseString'})
+
+    return str2
+$$;
+CALL reverse_string_python('hello world');
+<TRANS>
+
+
+<CASE>
+declare
+    n number;
+    m number;
+    rev number:=0;
+    r number;
+
+begin
+    n:=12321;
+    m:=n;
+
+    while n>0
+    loop
+        r:=mod(n,10);
+        rev:=(rev*10)+r;
+        n:=trunc(n/10);
+    end loop;
+
+    if m=rev
+    then
+        dbms_output.put_line('number is palindrome');
+    else
+        dbms_output.put_line('number is not palindrome');
+    end if;
+end;
+<CASE>
+<RES>
+number is palindrome
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE check_palindrome(number_input INT)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'check_if_palindrome'
+AS
+$$
+import logging
+
+# Set up logging for Snowflake
+logger = logging.getLogger("python_logger")
+
+def check_if_palindrome(session, number_input):
+    # Initialize variables
+    n = number_input
+    m = n
+    rev = 0
+    
+    # Logic to reverse the number
+    while n > 0:
+        r = n % 10
+        rev = (rev * 10) + r
+        n = n // 10
+    
+    # Check if the number is a palindrome
+    if m == rev:
+        result = "number is palindrome"
+    else:
+        result = "number is not palindrome"
+    
+    # Log the result
+    logger.info(result)
+    
+    return result
+$$;
+CALL check_palindrome(12321);
+<TRANS>
+
+
+<CASE>
+declare
+    a number;
+    b number;
+    temp number;
+
+begin
+    a:=5;
+    b:=10;
+
+    dbms_output.put_line('before swapping:');
+    dbms_output.put_line('a='||a||' b='||b);
+
+    temp:=a;
+    a:=b;
+    b:=temp;
+
+    dbms_output.put_line('after swapping:');
+    dbms_output.put_line('a='||a||' b='||b);
+
+end;
+<CASE>
+<RES>
+before swapping:
+a=5 b=10
+after swapping:
+a=10 b=5
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE swap_variables()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'swap_logic'
+AS
+$$
+import logging
+
+# Set up logger
+logger = logging.getLogger("python_logger")
+
+def swap_logic(session):
+
+    # Declare and initialize variables
+    a = 5
+    b = 10
+
+    # Output before swapping
+    logger.info(f'before swapping: a={a} b={b}')
+
+    # Swapping logic
+    temp = a
+    a = b
+    b = temp
+
+    # Output after swapping
+    logger.info(f'after swapping: a={a} b={b}')
+
+    return "Swapping Completed"
+$$;
+
+<TRANS>
+
+
+<CASE>
+declare
+    a number;
+    b number;
+
+begin
+    a:=5;
+    b:=10;
+
+    dbms_output.put_line('before swapping:');
+    dbms_output.put_line('a='||a||' b='||b);
+
+    a:=a+b;
+    b:=a-b;
+    a:=a-b;
+
+    dbms_output.put_line('after swapping:');
+    dbms_output.put_line('a='||a||' b='||b);
+
+end;
+<CASE>
+<RES>
+before swapping:
+a=5 b=10
+after swapping:
+a=10 b=5
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE swap_numbers()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import logging
+
+logger = logging.getLogger("python_logger")
+logger.setLevel(logging.INFO)
+
+def run(session):
+    # Initialize variables
+    a = 5
+    b = 10
+
+    # Log the values before swapping
+    logger.info(f'before swapping: a={a} b={b}')
+
+    # Swapping logic
+    a = a + b
+    b = a - b
+    a = a - b
+
+    # Log the values after swapping
+    logger.info(f'after swapping: a={a} b={b}')
+
+    return "Swapping Completed"
+$$;
+<TRANS>
+
+<CASE>
+declare
+    n number;
+    s number:=0;
+    r number;
+    len number;
+    m number;
+
+begin
+		n:=&n;
+    m:=n;
+
+    len:=length(to_char(n));
+
+    while n>0
+    loop
+        r:=mod(n,10);
+        s:=s+power(r,len);
+        n:=trunc(n/10);
+    end loop;
+
+    if m=s
+    then
+        dbms_output.put_line('armstrong number');
+    else
+        dbms_output.put_line('not armstrong number');
+    end if;
+
+end;
+<CASE>
+<RES>
+CASE-SPECIFIC
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE check_armstrong_number(n NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'check_armstrong'
+AS
+$$
+import logging
+
+logger = logging.getLogger("python_logger")
+
+def check_armstrong(session, n):
+    # Initialize variables
+    s = 0
+    m = n
+    len_n = len(str(n))
+
+    # While loop to calculate Armstrong number
+    while n > 0:
+        r = n % 10
+        s += r ** len_n
+        n = n // 10
+
+    # Check if the number is an Armstrong number
+    if m == s:
+        logger.info('armstrong number')
+        return 'armstrong number'
+    else:
+        logger.info('not armstrong number')
+        return 'not armstrong number'
+$$;
+<TRANS>
+
+<CASE>
+declare
+	a number:=10;
+	b number:=12;
+	c number:=5;
+begin
+	dbms_output.put_line('a='||a||' b='||b||' c='||c);
+	if a>b AND a>c
+	then
+		dbms_output.put_line('a is greatest');
+	else
+		if b>a AND b>c
+		then
+			dbms_output.put_line('b is greatest');
+		else
+			dbms_output.put_line('c is greatest');
+		end if;
+	end if;
+end;
+<CASE>
+<RES>
+a=10 b=12 c=5
+b is greatest
+<RES>
+<TRANS>
+CREATE OR REPLACE PROCEDURE find_greatest()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+HANDLER = 'run'
+AS
+$$
+import logging
+
+def run(session):
+    # Initialize the logger
+    logger = logging.getLogger("python_logger")
+    
+    # Variables
+    a = 10
+    b = 12
+    c = 5
+    
+    # Output the values of a, b, c
+    logger.info(f'a={a} b={b} c={c}')
+    
+    # Conditional Logic to find the greatest value
+    if a > b and a > c:
+        logger.info('a is greatest')
+    elif b > a and b > c:
+        logger.info('b is greatest')
+    else:
+        logger.info('c is greatest')
+    
+    return 'Greatest value determination completed'
+$$;
+<TRANS>
+
