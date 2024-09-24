@@ -1,8 +1,8 @@
 # Code for the streamlit app
 
 import streamlit as st
-from app.translator import Translator
-from app.model_classes_2 import ConfigLoader
+from translator import Translator
+from model_classes import ConfigLoader
 import os
 
 #############################################################################################            

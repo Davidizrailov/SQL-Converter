@@ -95,7 +95,7 @@ def list_files_recursively(folder_path):
             all_files.append(os.path.join(root, file))
     return all_files
 
-folder_path = "files/content_assessment/DEMO_DB"
+folder_path = "demo_files/DEMO_DB"
 all_files = list_files_recursively(folder_path)
 
 
@@ -245,7 +245,7 @@ for file_path in all_files:
 # df_SQR.to_csv(r"files/content_assessment/ComplexitySQR.csv", index=False)
 
 
-with pd.ExcelWriter('files/content_assessment/Complexity.xlsx', engine='openpyxl') as writer:
+with pd.ExcelWriter('demo_files/output/Complexity.xlsx', engine='openpyxl') as writer:
 
     df_PLSQL.to_excel(writer, sheet_name='PLSQL', index=False)
     df_SQR.to_excel(writer, sheet_name='SQR', index=False)

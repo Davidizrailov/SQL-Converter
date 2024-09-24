@@ -116,7 +116,7 @@ def list_files_recursively(folder_path):
     return all_files
 
 # Example usage
-folder_path = "files/content_assessment/DEMO_DB"
+folder_path = "demo_files/DEMO_DB"
 all_files = list_files_recursively(folder_path)
 
 file_num = len(all_files)
@@ -159,6 +159,6 @@ for file_path in all_files:
 
 # Export to CSV files
 
-df_inputs_outputs.to_csv(r"files/content_assessment/Input_Output.csv", index=False)
+df_inputs_outputs.to_csv(r"demo_files/output/Input_Output.csv", index=False)
 
 print("Done!")

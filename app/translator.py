@@ -1,5 +1,4 @@
-from app.model_classes_2 import *
-from code_checker import Linter
+from model_classes import *
 import os
 
 class Translator:
@@ -51,13 +50,13 @@ class Translator:
 
         return response_message
     
-    def test_syntax(self, input_code, demo=True):
-        if demo:
-            errors = {}
-        else:
-            linter = Linter(['python', 'sql'])
-            errors = linter.check_response(input_code)
-        return errors
+    # def test_syntax(self, input_code, demo=True):
+    #     if demo:
+    #         errors = {}
+    #     else:
+    #         linter = Linter(['python', 'sql'])
+    #         errors = linter.check_response(input_code)
+    #     return errors
     
     
     def retry(self, error_message, demo=True):

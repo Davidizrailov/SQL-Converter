@@ -16,7 +16,7 @@ def get_functions():
         else:
             return []
 
-    df = pd.read_csv("content_assessment/Input_Output.csv")
+    df = pd.read_csv("demo_files/output/Input_Output.csv")
     functions = []
     for i in range(len(df)):
         functions.append({
@@ -57,7 +57,7 @@ for func in functions:
         G.add_node(output_val, label=output_val, color="#97c2fc", tooltip="Output tooltip", shape="rectangle")
         G.add_edge(func["name"], output_val, color="#FF0000")
 
-folder = "C:/Users/NW538RY/OneDrive - EY/Desktop/Work/git/SQL-Converter/content_assessment/"
+folder = "demo_files/output/visuals/"
 
 path = folder+"functions_dependencies.graphml"
 to_graphml(G, path = path)
