@@ -122,10 +122,10 @@ class ErrorHandler:
 
 # Main 
 def main():
-    config = ConfigLoader(language="Java") 
+    config = ConfigLoader(language="Cobol") 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader("files/code_java.txt")
+    code_reader = CodeReader("coboltest.cbl")
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
@@ -145,7 +145,7 @@ def main():
     #show analysis
     print(response_message)
     
-    if config.language != "Java":
+    if config.language != "Java" and config.language !="Cobol":
         prompt2 = prompts.generate_prompt2(response_message, config.language)
 
         assistant_manager.send_message(thread.id, prompt2)
