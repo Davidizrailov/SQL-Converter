@@ -1,13 +1,12 @@
 import os
 import re
 import time
+import shutil
 
 # Define the file paths
-input_file_path = "C:/Users/NW538RY/OneDrive - EY/Desktop/programme.txt"
+input_file_path = "C:/Users/NW538RY/OneDrive - EY/Desktop/monolithe.sas"
 output_dir = "C:/Users/NW538RY/OneDrive - EY/Desktop/monolith_segments"
 
-# Ensure the output directory exists
-os.makedirs(output_dir, exist_ok=True)
 
 # Define regex patterns for key sections
 patterns = {
@@ -17,11 +16,32 @@ patterns = {
     "OTHER": r"(PROC.*?QUIT;|RUN;)"  # General PROC and RUN blocks
 }
 
+
+
+
+def delete_files_in_folder(folder_path):
+    if not os.path.exists(folder_path):
+        print(f"The folder '{folder_path}' does not exist.")
+        return
+
+    # List all files and folders in the given directory
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        
+        try:
+            # If it's a file, remove it
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.remove(file_path)
+            # If it's a directory, remove it and its contents
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except: pass
+
 def save_chunk(content, chunk_type, chunk_num):
     """ Saves the given content to a file with a proper name based on the chunk type and number. """
     file_name = f"{chunk_type}_{chunk_num}.sas"
     print(file_name)
-    time.sleep(.05)
+    time.sleep(.02)
     with open(os.path.join(output_dir, file_name), 'w') as file:
         file.write(content)
 
@@ -42,4 +62,12 @@ def split_sas_code(input_file_path):
             save_chunk(content, "UNKNOWN", chunk_num)
 
 # Execute the global splitting function
-split_sas_code(input_file_path)
+os.startfile(input_file_path)
+start = input("Start Analysis (y/n):  ")
+if start:
+    # Ensure the output directory exists
+    os.makedirs(output_dir, exist_ok=True)
+    delete_files_in_folder(output_dir)
+    os.startfile(output_dir)
+    time.sleep(2)
+    split_sas_code(input_file_path)

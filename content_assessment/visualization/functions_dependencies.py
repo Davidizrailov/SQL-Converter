@@ -1,7 +1,7 @@
 # import networkx as nx
 # from ontology import Ontology
 import pandas as pd
-from content_assessment.visualization.generate_yed_graph import *
+from generate_yed_graph import *
 import os
 
 def get_functions():
@@ -16,12 +16,12 @@ def get_functions():
         else:
             return []
 
-    df = pd.read_csv("demo_files/output/Input_Output.csv")
+    df = pd.read_csv(r"C:\Users\NW538RY\OneDrive - EY\Desktop\Work\git\SQL-Converter\demo_files\output\Input_Output.csv")
     functions = []
     for i in range(len(df)):
         functions.append({
-            "name": df.iloc[i]["Item Name"],
-            "inputs": split_cell(df.iloc[i]["Parameters"]),
+            "name": df.iloc[i]["Object Name"],
+            "inputs": split_cell(df.iloc[i]["Inputs"]),
             "outputs": split_cell(df.iloc[i]["Outputs"])
         })
     return functions
@@ -57,9 +57,9 @@ for func in functions:
         G.add_node(output_val, label=output_val, color="#97c2fc", tooltip="Output tooltip", shape="rectangle")
         G.add_edge(func["name"], output_val, color="#FF0000")
 
-folder = "demo_files/output/visuals/"
+folder = r"C:\Users\NW538RY\OneDrive - EY\Desktop\Work\git\SQL-Converter\demo_files\output\visuals"
 
-path = folder+"functions_dependencies.graphml"
+path = folder+r"\functions_dependencies.graphml"
 to_graphml(G, path = path)
 os.startfile(path)
 # nx.write_graphml_xml(G, folder+"output.xml")
