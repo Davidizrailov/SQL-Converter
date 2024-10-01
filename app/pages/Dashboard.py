@@ -13,7 +13,7 @@ import time
 st.image(os.path.join("files", "ey.jpg"),width=300)  
 # st.title("EY Content Assessment Dashboard")
 
-st.title("Interactive Charts Dashboard")
+st.title("Code Analysis Report")
 st.write('''''')
 
 #############################################################################################            
@@ -54,7 +54,7 @@ pie_data = load_data(pie_chart_csv)
 scatter_data = load_data(scatter_chart_csv)
 
 folder_path = st.text_input(label="Enter the path to the folder containing the coding files",
-                            value="/full/path/to/folder/")
+                            value=r"C:\Users\NW538RY\OneDrive - EY\Desktop\Work\ReplaceSAS")
 
 button_clicked = st.button(label="Start Analysis")
 generate_charts = False
