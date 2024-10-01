@@ -3,31 +3,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModernJavaCode {
+public class LegacyJavaCode {
     public static void main(String[] args) {
-        // Modern try-with-resources with AutoCloseable support
+        // Modern try-with-resources
         try (Resource resource = new Resource()) {
             resource.process();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Enhanced for loop and type inference with var
+        // Enhanced for-loop and type inference with var
         List<String> names = new ArrayList<>();
         names.add("John");
         names.add("Jane");
         names.add("Doe");
 
-        for (String name : names) {
+        for (var name : names) {
             System.out.println(name);
         }
 
-        // Modern map initialization with type inference and concise lambda expressions
-        Map<Integer, String> modernMap = new HashMap<>();
-        modernMap.put(1, "one");
-        modernMap.put(2, "two");
+        // Modern map initialization and lambda expressions
+        Map<Integer, String> legacyMap = Map.of(
+            1, "one",
+            2, "two"
+        );
 
-        modernMap.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
+        legacyMap.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
 
         // Enhanced switch expression
         int day = 2;

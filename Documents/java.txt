@@ -1,0 +1,107 @@
+Here are some syntax changes from legacy Java versions (Java 7 and earlier) to modern Java (Java 17):
+
+1. Try-with-Resources Enhancement
+Before (Java 7):
+BufferedReader reader = null;
+try {
+    reader = new BufferedReader(new FileReader("file.txt"));
+    String line;
+    while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+} finally {
+    if (reader != null) {
+        try {
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+After (Java 17):
+try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}
+The try-with-resources statement automatically closes the reader, simplifying resource management.
+ 
+2. Switch Statements (Switch Expressions)
+Before (Java 7):
+int day = 3;
+String dayName;
+switch (day) {
+    case 1:
+        dayName = "Monday";
+        break;
+    case 2:
+        dayName = "Tuesday";
+        break;
+    case 3:
+        dayName = "Wednesday";
+        break;
+    case 4:
+        dayName = "Thursday";
+        break;
+    case 5:
+        dayName = "Friday";
+        break;
+    case 6:
+        dayName = "Saturday";
+        break;
+    case 7:
+        dayName = "Sunday";
+        break;
+    default:
+        dayName = "Invalid day";
+}
+After (Java 17):
+int day = 3;
+String dayName = switch (day) {
+    case 1 -> "Monday";
+    case 2 -> "Tuesday";
+    case 3 -> "Wednesday";
+    case 4 -> "Thursday";
+    case 5 -> "Friday";
+    case 6 -> "Saturday";
+    case 7 -> "Sunday";
+    default -> "Invalid day";
+};
+Switch expressions in Java 17 can return values and use the -> arrow notation for concise cases.
+ 
+3. Text Blocks for Multi-line Strings
+Before (Java 7):
+String html = "<html>\n" +
+              "    <body>\n" +
+              "        <p>Hello, World!</p>\n" +
+              "    </body>\n" +
+              "</html>";
+After (Java 17):
+String html = """
+              <html>
+                  <body>
+                      <p>Hello, World!</p>
+                  </body>
+              </html>
+              """;
+Text blocks make multi-line strings easier to read and write, preserving formatting without the need for escape characters.
+ 
+4. Type Inference with var
+
+Before (Java 7):
+List<String> names = new ArrayList<>();
+names.add("Alice");
+names.add("Bob");
+
+After (Java 17):
+var names = new ArrayList<String>();
+names.add("Alice");
+names.add("Bob");
+The var keyword allows for type inference, reducing boilerplate when the type is obvious from context.
+
