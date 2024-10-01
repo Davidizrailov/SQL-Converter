@@ -1,0 +1,63 @@
+```sql
+CREATE OR REPLACE PROCEDURE FILEREAD_SNOWFLAKE()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col
+import csv
+
+def truncate_table(session):
+    session.sql("TRUNCATE TABLE PS_UD_TMP_DATA").collect()
+
+def insert_data(session, data):
+    session.write_pandas(data, "PS_UD_TMP_DATA")
+
+def process_input_file(session, file_path):
+    total_records = 0
+    total_inserted_records = 0
+    rejected_records = 0
+
+    try:
+        with open(file_path, mode='r') as file:
+            csv_reader = csv.reader(file)
+            next(csv_reader)  # Skip header
+            data = []
+
+            for row in csv_reader:
+                total_records += 1
+                if len(row) == 6:
+                    data.append({
+                        "EMPLID": row[0],
+                        "EMPLNAME": row[1],
+                        "COUNTRY": row[2],
+                        "DESCR": row[3],
+                        "NATIONAL_ID": row[4],
+                        "PRIMARY_NID": row[5]
+                    })
+                    total_inserted_records += 1
+                else:
+                    rejected_records += 1
+
+            if data:
+                insert_data(session, data)
+
+    except Exception as e:
+        return f"Error processing file: {str(e)}"
+
+    return f"Total records: {total_records}, Inserted records: {total_inserted_records}, Rejected records: {rejected_records}"
+
+def main(session: snowpark.Session) -> str:
+    file_path = 'E:/AppEngineFiles/GBI_29October2013.csv'
+    truncate_table(session)
+    result = process_input_file(session, file_path)
+    return result
+
+$$;
+
+CALL FILEREAD_SNOWFLAKE();
+```

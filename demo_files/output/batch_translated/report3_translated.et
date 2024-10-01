@@ -1,0 +1,50 @@
+```sql
+CREATE OR REPLACE PROCEDURE process_employee_data()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snowpark
+
+def main(session: snowpark.Session) -> str:
+    # Define the input data
+    input_data = [
+        ("000100", "RAJESH", "SURNAME1", 23125478, "MECH"),
+        ("000200", "SIVA", "SURNAME2", 22351875, "CHEM"),
+        ("000300", "HARI", "SURNAME3", 21357987, "MCA"),
+        ("000400", "PAVAN", "SURNAME4", 22574821, "MTEC")
+    ]
+    
+    # Create a DataFrame from the input data
+    df = session.create_dataframe(input_data, schema=["SEQ_NUM", "FIRST_NAME", "SECOND_NAME", "EMPLOYEE_NUM", "BRANCH"])
+    
+    # Define the branch mapping
+    branch_mapping = {
+        "CHEM": "CHEMICAL",
+        "MCA": "MASTERCOMP",
+        "MECH": "MECHANICAL",
+        "MTEC": "MTECHNOLGY"
+    }
+    
+    # Filter records where EMPLOYEE_NUM > 20000000
+    df_filtered = df.filter(df["EMPLOYEE_NUM"] > 20000000)
+    
+    # Map the BRANCH code to its description
+    df_mapped = df_filtered.with_column("BRANCH_TEXT", df_filtered["BRANCH"].map(branch_mapping))
+    
+    # Select the required columns
+    df_result = df_mapped.select("FIRST_NAME", "SECOND_NAME", "EMPLOYEE_NUM", "BRANCH_TEXT")
+    
+    # Show the result
+    df_result.show()
+    
+    return "Procedure executed successfully"
+
+$$;
+
+-- Call the procedure
+CALL process_employee_data();
+```

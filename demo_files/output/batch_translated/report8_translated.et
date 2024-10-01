@@ -1,0 +1,63 @@
+```python
+CREATE OR REPLACE PROCEDURE DEMOESY1()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col
+
+def main(session: snowpark.Session) -> str:
+    # Define input and output tables
+    input_table = "FILEIN"
+    output_table = "FILEOUT"
+    
+    # Read input data
+    df = session.table(input_table)
+    
+    # Filter numeric WAGE and RATE
+    df_filtered = df.filter((col("WAGE").cast("double").isNotNull()) & (col("RATE").cast("double").isNotNull()))
+    
+    # Calculate BONUS
+    df_with_bonus = df_filtered.withColumn("BONUS", col("WAGE") * (col("RATE") / 100))
+    
+    # Select and rename columns for output
+    df_output = df_with_bonus.select(
+        col("COMPANY").alias("OCOMPANY"),
+        col("BRANCH").alias("OBRANCH"),
+        col("OFFICER").alias("OOFFICER"),
+        col("WAGE").alias("OWAGE"),
+        col("RATE").alias("ORATE"),
+        col("BONUS").alias("OBONUS")
+    )
+    
+    # Write to output table
+    df_output.write.mode("overwrite").saveAsTable(output_table)
+    
+    # Generate report
+    report_df = df_output.groupBy("OCOMPANY").agg({
+        "OWAGE": "sum",
+        "OBONUS": "sum"
+    }).select(
+        col("OCOMPANY").alias("COMPANY"),
+        col("sum(OWAGE)").alias("TOTAL_WAGE"),
+        col("sum(OBONUS)").alias("TOTAL_BONUS")
+    )
+    
+    # Print report
+    report = report_df.collect()
+    print("EXECUTIVE BONUS REPORT")
+    print("COMPANY | TOTAL_WAGE | TOTAL_BONUS")
+    for row in report:
+        print(f"{row['COMPANY']} | {row['TOTAL_WAGE']} | {row['TOTAL_BONUS']}")
+    
+    return "Procedure DEMOESY1 executed successfully."
+
+$$;
+
+-- Call the procedure
+CALL DEMOESY1();
+```

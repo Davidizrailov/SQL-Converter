@@ -1,0 +1,36 @@
+```sql
+CREATE OR REPLACE PROCEDURE generate_report()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snowpark
+
+def main(session: snowpark.Session) -> str:
+    # Define working storage variables
+    WS_VAL1 = 'V1'
+    WS_VAL2 = 'V2'
+    WS_VAL3 = 'V3'
+    
+    # Create a DataFrame to simulate the report output
+    data = [
+        ('VAL 1 IS ', WS_VAL1),
+        ('VAL 2 IS ', WS_VAL2),
+        ('VAL 3 IS ', WS_VAL3)
+    ]
+    
+    df = session.create_dataframe(data, schema=["Label", "Value"])
+    
+    # Print the report to the console (simulating printer output)
+    df.show()
+    
+    return "Report generated successfully"
+
+$$;
+
+-- Call the procedure
+CALL generate_report();
+```

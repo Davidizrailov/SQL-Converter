@@ -1,0 +1,52 @@
+```sql
+CREATE OR REPLACE PROCEDURE Get_Runcntl_Defn(prcs_process_instance NUMBER)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import snowflake.snowpark as snowpark
+
+def run(session: snowpark.Session, prcs_process_instance: int) -> str:
+    # Get Process Name By Process Instance
+    prcsname = session.sql(f"CALL Get_Process_Name({prcs_process_instance})").collect()[0][0]
+
+    # First Select Statement
+    component = session.sql(f"""
+        SELECT PNLGRPNAME
+        FROM PS_PRCSDEFNPNL
+        WHERE PRCSNAME = '{prcsname}'
+    """).collect()[0][0]
+
+    # Second Select Statement
+    result = session.sql(f"""
+        SELECT PF.RECNAME, PF.FIELDNAME, PF.LBLTEXT
+        FROM PSPNLGROUP PG, PSPNLFIELD PF
+        WHERE PG.PNLGRPNAME = '{component}'
+        AND PF.PNLNAME = PG.PNLNAME
+        AND PF.RECNAME <> ' '
+        AND PF.FIELDNAME <> ' '
+        AND EXISTS (
+            SELECT 1
+            FROM PSRECFIELD
+            WHERE RECNAME = PF.RECNAME
+            AND FIELDNAME = 'OPRID'
+            AND FIELDNUM = 1
+        )
+        ORDER BY PF.RECNAME, PF.FIELDNUM
+    """).collect()
+
+    # Process the result
+    for row in result:
+        record_name = 'PS_' + row['RECNAME']
+        session.sql(f"CALL Get_Runcntl_Page_Value('{record_name}')").collect()
+
+    return "Procedure executed successfully"
+
+$$;
+
+-- Call the procedure
+CALL Get_Runcntl_Defn(12345);
+```

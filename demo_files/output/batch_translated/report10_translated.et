@@ -1,0 +1,46 @@
+```sql
+CREATE OR REPLACE PROCEDURE update_employee_salaries()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col
+
+def main(session: snowpark.Session) -> str:
+    # Load the PERSNL table
+    persnl_df = session.table("PERSNL")
+    
+    # Load the PERSUPD table
+    persupd_df = session.table("PERSUPD")
+    
+    # Perform the join operation
+    joined_df = persnl_df.join(persupd_df, persnl_df["OLD-EMP#"] == persupd_df["EMP#"], "left")
+    
+    # Calculate the new salary
+    updated_df = joined_df.with_column("NEWSAL", col("PAY-GROSS") * (1 + col("RAISE-PERCENT") / 100))
+    
+    # Update the PAY-GROSS with the new salary
+    updated_df = updated_df.with_column("PAY-GROSS", col("NEWSAL"))
+    
+    # Write the updated records to NEWPERS table
+    updated_df.write.save_as_table("NEWPERS", mode="overwrite")
+    
+    # Identify unmatched records and log errors
+    unmatched_df = persupd_df.join(persnl_df, persupd_df["EMP#"] == persnl_df["OLD-EMP#"], "left_anti")
+    unmatched_df.select("EMP#").write.save_as_table("ERRPRINT", mode="overwrite")
+    
+    # Generate the report
+    report_df = updated_df.select("UPD-EMP#", "NAME", "PAY-GROSS", "NEWSAL", "RAISE-PERCENT")
+    report_df.write.save_as_table("NEW_RPT", mode="overwrite")
+    
+    return "Employee salaries updated and report generated."
+
+$$;
+
+-- Call the procedure
+CALL update_employee_salaries();
+```

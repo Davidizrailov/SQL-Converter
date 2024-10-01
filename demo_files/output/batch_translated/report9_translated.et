@@ -1,0 +1,114 @@
+```python
+CREATE OR REPLACE PROCEDURE process_lms_loans()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col
+
+def main(session: snowpark.Session) -> str:
+    # Define the input tables
+    m8104d = session.table("M8104D")
+    m8124d = session.table("M8124D")
+    m8134d = session.table("M8134D")
+    ach = session.table("ACH")
+    me7231 = session.table("ME7231")
+    me7232 = session.table("ME7232")
+    smyfil = session.table("SMYFIL")
+    smyfil2 = session.table("SMYFIL2")
+    
+    # Work Area Definitions
+    ns_occrs = 0
+    rk_occrs = 0
+    vi_occrs = 0
+    tvi_occrs = 0
+    itr_occrs = 0
+    
+    # Get Process Date
+    process_date = m8124d.select(col("M-DATE")).first()[0]
+    
+    # ACH Processing
+    ach_records = ach.collect()
+    for record in ach_records:
+        t_bank = record["T-BANK"]
+        t_obligor = record["T-OBLIGOR"]
+        t_seq = record["T-SEQ"]
+        t_invoice = record["T-INVOICE"]
+        t_obligation = record["T-OBLIGATION"]
+        t_tran_code = record["T-TRAN-CODE"]
+        
+        if not (t_bank.isnumeric() and t_obligor.isnumeric() and t_seq.isnumeric()):
+            continue
+        
+        # Read M8104D
+        m8104d_record = m8104d.filter((col("C$H008-BANK-NUMBER") == t_bank) & 
+                                      (col("C$H009-APPLICATION-CODE") == 1) & 
+                                      (col("C$H014-SEQUENCE-NUMBER") == 1)).first()
+        if not m8104d_record:
+            raise Exception(f"Unsuccessful point for this control record {t_bank}")
+        
+        date_in = m8104d_record["C$H030-CURRENT-DATE"]
+        date_inc = m8104d_record["C$H030-CURRENT-DATE"]
+        w_bank = m8104d_record["C$H008-BANK-NUMBER"]
+        w_bank_name = m8104d_record["C$H050-BANK-NAME"]
+        w_accrual_date = m8104d_record["C$H036-LAST-ACCRUAL-DATE"]
+        
+        # Transaction Processing
+        if 4000 <= t_tran_code <= 4009:
+            m8134d_record = m8134d.filter((col("V-005-BANK-NUMBER") == t_bank) & 
+                                          (col("V-010-OBLIGOR-NUMBER") == t_obligor) & 
+                                          (col("V-013-INVOICE-NUMBER") == t_invoice)).first()
+            if not m8134d_record:
+                raise Exception(f"Unsuccessful point for this invoice record {t_invoice}")
+            
+            t_obligation = m8134d_record["VI055-OBLIGATION-NUMBER"]
+            # Perform Obligation Read
+            obligation_record = m8124d.filter((col("MC005-BANK-NUMBER") == t_bank) & 
+                                              (col("MC010-OBLIGOR-NUMBER") == t_obligor) & 
+                                              (col("MC015-OBLIGATION-NUMBER") == t_obligation)).first()
+            if not obligation_record:
+                raise Exception(f"End of file obligation obligor {t_obligor}")
+            
+            # Set various working storage fields
+            w_obligor = obligation_record["MC010-OBLIGOR-NUMBER"]
+            w_obligat = obligation_record["MC015-OBLIGATION-NUMBER"]
+            w_short_name = obligation_record["MC040-OBLIGATION-SHORT-NAME"]
+            w_service = obligation_record["MC080-SERVICE-UNIT"]
+            w_assignment = obligation_record["MC081-ASSIGNMENT-UNIT"]
+            w_gl_code = obligation_record["MC083-GENERAL-LEDGER-CODE"]
+            
+            # Generate Extract
+            extract_record = {
+                "EXT-CRITERIA2": 20001,
+                "EXT-BANK2": w_bank,
+                "EXT-BRANCH2": w_assignment,
+                "EXT-OBLIGOR2": w_obligor,
+                "EXT-OBLIGAT2": w_obligat,
+                "EXT-TYPE2": obligation_record["MC043-OBLIGATION-TYPE"],
+                "EXT-DATE2": date_inc,
+                "EXT-AMOUNT2": obligation_record["MC061-CURRENT-PRINCIPAL-BALANCE"],
+                "EXT-MAT-DT2": obligation_record["MC048-LEGAL-MATURITY-DATE"],
+                "EXT-ORIG-DT2": obligation_record["MC071-ORIGINAL-OBLIGATION-DATE"]
+            }
+            session.write_pandas([extract_record], "ME7232")
+    
+    return "Processing Completed"
+
+# Call the procedure
+session = snowpark.Session.builder.configs({
+    "account": "<account>",
+    "user": "<user>",
+    "password": "<password>",
+    "role": "<role>",
+    "warehouse": "<warehouse>",
+    "database": "<database>",
+    "schema": "<schema>"
+}).create()
+
+session.sql("CALL process_lms_loans()").show()
+$$;
+```
