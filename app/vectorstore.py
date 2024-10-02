@@ -10,7 +10,7 @@ client = OpenAI(api_key=api_key)
 
 
 vector_store = client.beta.vector_stores.create(
-  name="SQL_VS",
+  name="_VS",
 )
 
 files=[os.path.join("Documents", "ET.txt"), os.path.join("Documents", "Snowflake_Procedures.txt"), os.path.join("Documents", "SQR.txt")]

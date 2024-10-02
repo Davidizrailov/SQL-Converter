@@ -1,10 +1,11 @@
 from openai import OpenAI
 import os
-import dotenv
+from dotenv import load_dotenv
 from model_classes import *
 
 # vector_store_ids = VectorStoreIDs(language="plsql").get()
 # print(vector_store_ids.get())
+load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY_EPS")
 client = OpenAI(api_key=api_key)
@@ -33,17 +34,17 @@ client = OpenAI(api_key=api_key)
 
 
 file = client.files.create(
-  file = open("Documents/SQR.txt", "rb"),
+  file = open("Documents\java2.txt", "rb"),
   purpose='assistants'
 )
 print("*********************","File created. ID:",file.id)
 
-SNOWFLAKE_FILE_ID  = "file-WedBVmjgCUwsYNLbpJom7zot"
+# SNOWFLAKE_FILE_ID  = "file-WedBVmjgCUwsYNLbpJom7zot"
 # EASYTRIEVE_FILE_ID = "file-eZGIXz9DRhE7W4rgE17Md3nP"
 
 vector_store = client.beta.vector_stores.create(
-  name="SQR Documentation",
-  file_ids=[SNOWFLAKE_FILE_ID, file.id]
+  name="Java Documentation",
+  file_ids=[file.id]
 )
 print("*********************","Vector store created. ID:", vector_store.id)
 

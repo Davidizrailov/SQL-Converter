@@ -53,6 +53,8 @@ class VectorStoreManager:
                 self.vector_store_id = os.getenv("SQR_VS_ID")            
             elif language == "ET":
                 self.vector_store_id = os.getenv("EASYTRIEVE_VS_ID")
+            elif language == "java":
+                self.vector_store_id = os.getenv("JAVA_VS_ID")
         else:
             self.vector_store_id = None  # Do not use vector store for other languages
 
