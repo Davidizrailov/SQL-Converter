@@ -5,10 +5,11 @@ import time
 from dotenv import load_dotenv
 
 class ConfigLoader:
-    def __init__(self, language):
+    def __init__(self, language, target):
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY_EPS")
         self.language = language
+        self.target = target
 
 class OpenAIClient:
     def __init__(self, api_key):
@@ -23,25 +24,15 @@ class CodeReader:
             return file.read()
 
 class PromptGenerator:
-    def __init__(self, language, code):
+    def __init__(self, language, target, code):
         self.language = language
         self.code = code
+        self.target = target
 
     def generate_prompt(self):
-        if self.language == "PLSQL":
-            return prompts.system_message_PLSQL, prompts.generate_prompt_PLSQL(self.code)
-        elif self.language == "ET":
-            return prompts.system_message_ET, prompts.generate_prompt_ET(self.code)
-        elif self.language == "SQR":
-            return prompts.system_message_SQR, prompts.generate_prompt_SQR(self.code)
-        elif self.language == "C#":
-            return "", prompts.generate_prompt_C(self.code)
-        elif self.language == "Kornshell":
-            return "", prompts.generate_prompt_Kornshell(self.code)
-        elif self.language == "Java":
-            return "", prompts.generate_prompt_java(self.code)
-        elif self.language == "Cobol":
-            return "", prompts.generate_prompt_cobol(self.code)
+        system_prompt = prompts.get_system_prompt(self.language, self.target)
+        first_prompt = prompts.generate_prompt(self.language, self.target, self.code)
+        return system_prompt, first_prompt
 
 class VectorStoreManager:
     def __init__(self, language):

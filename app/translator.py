@@ -20,7 +20,7 @@ class Translator:
             # code_reader = CodeReader("code.txt")
             # code = code_reader.read_code()
 
-            prompt_generator = PromptGenerator(self.config.language, self.code)
+            prompt_generator = PromptGenerator(self.config.language, self.config.target, self.code)
             system_message, prompt = prompt_generator.generate_prompt()
 
 
@@ -40,7 +40,7 @@ class Translator:
             else:
                 response_message = 'error'
 
-            prompt2 = prompts.generate_prompt2(response_message, self.config.language)
+            prompt2 = prompts.generate_prompt2(response_message, self.config.language, self.config.target)
 
 
             self.assistant_manager.send_message(self.thread.id, prompt2)

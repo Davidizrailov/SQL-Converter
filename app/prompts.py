@@ -1,4 +1,5 @@
 
+
 system_message_PLSQL = f"""
 You are an expert in converting code between different languages. Your primary task is to convert the provided SQL code from Oracle PL/SQL to Snowflake.
 
@@ -13,7 +14,6 @@ Only use python 3.8 and SQL in translated code. Make sure to properly deal with 
 I have provided examples and documentation about scripting python in Snowflake can be found in the vector store.
 
 """
-
 system_message_ET = f"""
 You are an expert in all forms of SQL, with a focus on converting SQL code between different dialects. Your primary task today is to convert the provided SQL code from Oracle to Snowflake while maintaining its functionality and logic.
 
@@ -37,7 +37,6 @@ Follow the specified steps for conversion.
 I have provided documentation in the vector store. DO NOT USE JAVASCRIPT USE PYTHON 3.11.
 
 """
-
 system_message_SQR = f"""
 System Role: You are an expert in all forms of SQL, specializing in converting SQL code between different dialects. Your task is to first read and fully understand the provided SQR code written in Oracle, without immediately generating any output. Once you comprehend the code, proceed to convert it into Snowflake SQL while preserving its functionality and logic.
 
@@ -70,19 +69,14 @@ Use Python for processing; avoid JavaScript.
 """
 
 #Update in the future to give 5 codes which we test elsehwere
-
-def generate_prompt_PLSQL(code):
-    prompt = f"""
+prompt1_PLSQL = """
 
         Below is some Oracle PL/SQL Code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
     """
-    return prompt
-
-def generate_prompt2_PLSQL(code_description):
-    prompt=f"""
+prompt2_PLSQL = """
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
         There should be no text other than the code. Use python 3.10 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
@@ -93,21 +87,15 @@ def generate_prompt2_PLSQL(code_description):
         Utilize the snowflake documentation file is needed. 
         code description: {code_description} 
     """
-    return prompt
-
-
-def generate_prompt_ET(code):
-    prompt = f"""
+prompt1_ET = """
 
         Below is some Easytrieve code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
     """
-    return prompt
 
-def generate_prompt2_ET(code_description):
-    prompt=f"""
+prompt2_ET = """
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
         There should be no text other than the code. If you are using a stored procedure, Use python 3.10 rather than javascript. Make sure to add a handler. 
@@ -115,20 +103,16 @@ def generate_prompt2_ET(code_description):
         Utilize the SQR Documentation file is needed.
         code description: {code_description} 
     """
-    return prompt
 
-def generate_prompt_SQR(code):
-    prompt = f"""
+prompt1_SQR = """
 
         Below is some Structured Query Report (SQR) Code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
     """
-    return prompt
 
-def generate_prompt2_SQR(code_description):
-    prompt=f"""
+prompt2_SQR = """
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
         There should be no text other than the code. If you are using a stored procedure, Use python 3.10 rather than javascript. Make sure to add a handler. 
@@ -136,20 +120,15 @@ def generate_prompt2_SQR(code_description):
         Utilize the SQR Documentation file is needed.
         code description: {code_description} 
     """
-    return prompt
-    
-def generate_prompt_C(code):
-    prompt = f"""
+
+prompt1_CSharp = """
 
         Below is some C# Code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
     """
-    return prompt
-
-def generate_prompt2_C(code_description):
-    prompt=f"""
+prompt2_CSharp = """
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
         There should be no text other than the code. Use python 3.10 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
@@ -160,20 +139,15 @@ def generate_prompt2_C(code_description):
         Utilize the snowflake documentation file is needed. 
         code description: {code_description} 
     """
-    return prompt
-
-def generate_prompt_Kornshell(code):
-    prompt = f"""
+prompt1_Kornshell = """
 
         Below is some Kornshell Code. Right now, only explain what the code is doing, step by step.
        
         Here is the code:
         {code}
     """
-    return prompt
 
-def generate_prompt2_Kornshell(code_description):
-    prompt=f"""
+prompt2_Kornshell = """
         Using the code description, write me a snowflake procedure which matches this description. 
         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
         There should be no text other than the code. Use python 3.10 rather than javascript. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
@@ -184,41 +158,22 @@ def generate_prompt2_Kornshell(code_description):
         Utilize the snowflake documentation file is needed. 
         code description: {code_description} 
     """
-    return prompt
-
-def generate_prompt_java(code):
-    prompt = f"""
+prompt1_java = """
 
         Below is some legacy java Code. Convert it to Java 17. Return ONLY the translated code
        
         Here is the code:
         {code}
     """
-    return prompt
 
-# def generate_prompt2_java(code_description):
-#     prompt=f"""
-#         Using the code description, write me a snowflake procedure which matches this description. 
-#         Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
-#         There should be no text other than the code. Use Java as the language. Make sure to add a handler. Call the procedure as well. Include PACKAGES = ('snowflake-snowpark-python') as this avoids a common error.
-
-#         Utilize the snowflake documentation file is needed.
-
-#         If any packages are being used, do not forget to import them.
-#         Utilize the snowflake documentation file is needed. 
-#         code description: {code_description} 
-#     """
-#     return prompt
-
-def generate_prompt_cobol(code):
-    prompt = f"""
+prompt1_cobol = """
 
         Below is some legacy cobol Code. Convert it to cobol 6.1. Return ONLY the translated code
        
         Here is the code:
         {code}
     """
-    return prompt
+
 
 # def generate_prompt2_cobol(code_description):
 #     prompt=f"""
@@ -234,17 +189,34 @@ def generate_prompt_cobol(code):
 #     """
 #     return prompt
 
-def generate_prompt2(response_message, language):
+def generate_prompt(language, target, code):
     if language == "PLSQL":
-        prompt2 = generate_prompt2_PLSQL(response_message)
-    elif language == "SQR":
-        prompt2 = generate_prompt2_SQR(response_message)
+        return prompt1_PLSQL.format(code=code)
     elif language == "ET":
-        prompt2 = generate_prompt2_ET(response_message)
+        return prompt1_ET.format(code=code)
+    elif language == "SQR":
+        return prompt1_SQR.format(code=code)
     elif language == "C#":
-        prompt2 = generate_prompt2_C(response_message)
+        return prompt1_CSharp.format(code=code)
     elif language == "Kornshell":
-        prompt2 = generate_prompt2_Kornshell(response_message)
+        return prompt1_Kornshell.format(code=code)
+    elif language == "Legacy Java":
+        return prompt1_java.format(code=code)
+    elif language == "Cobol":
+        return prompt1_cobol.format(code=code)
+    raise "Input language not defined"
+    
+def generate_prompt2(response_message, language, target):
+    if language == "PLSQL":
+        prompt2 = prompt2_PLSQL.format(code_description=response_message)
+    elif language == "SQR":
+        prompt2 = prompt2_SQR.format(code_description=response_message)
+    elif language == "ET":
+        prompt2 = prompt2_ET.format(code_description=response_message)
+    elif language == "C#":
+        prompt2 = prompt2_CSharp.format(code_description=response_message)
+    elif language == "Kornshell":
+        prompt2 = prompt2_Kornshell.format(code_description=response_message)
     # elif language == "Java":
     #     prompt2 = generate_prompt2_java(response_message)
     # elif language == "Cobol":
@@ -293,3 +265,14 @@ def content_assessment_outputs(code,lang):
     """
 
     return prompt
+
+target_dict = {
+    "PLSQL" : ['Snowflake'], 
+    "SQR" : ['Snowflake'], 
+    "Easytrieve" : ['Snowflake'], 
+    "Legacy Java" : ['Java 21'], 
+    "Kornshell" : ['Snowflake'], 
+    "C#" : ['Snowflake'], 
+    "Cobol": ['Cobol 6.1']
+}
+
