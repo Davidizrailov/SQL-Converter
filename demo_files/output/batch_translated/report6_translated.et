@@ -1,0 +1,35 @@
+```sql
+CREATE OR REPLACE PROCEDURE display_16th_alphabet()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+def main(session):
+    # Initialize the alphabet string
+    ws_alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    
+    # Convert the string to a list (array)
+    ws_alp_arr = list(ws_alpha)
+    
+    # Set the index to 15 (16th element in 1-based index)
+    alpha_ndx = 15
+    
+    # Get the 16th alphabet
+    sixteenth_alphabet = ws_alp_arr[alpha_ndx]
+    
+    # Display the result
+    result = f'16TH ALPHABET IS {sixteenth_alphabet}'
+    return result
+
+# Call the procedure
+display_16th_alphabet()
+$$;
+```
+
+```sql
+-- Call the procedure
+CALL display_16th_alphabet();
+```
