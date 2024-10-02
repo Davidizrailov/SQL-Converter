@@ -95,7 +95,7 @@ def main():
     config = ConfigLoader(language="Java") 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader("Java\TimSort.java")
+    code_reader = CodeReader("demo_files\Java\Main.java")
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
