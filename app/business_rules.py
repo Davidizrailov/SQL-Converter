@@ -3,6 +3,9 @@ import prompts as prompts
 from openai import OpenAI
 import time
 from dotenv import load_dotenv
+import re
+import pandas as pd
+import ast
 
 class ConfigLoader:
     def __init__(self, language = "Java"):
@@ -88,7 +91,24 @@ class AssistantManager:
         response_message = self.client.beta.threads.messages.list(thread_id=thread_id)
         return response_message.data[0].content[0].text.value
 
+
+def convert_to_excel(text):
+    pattern = re.compile(r"\[(.*)]", re.DOTALL)
+    match = pattern.search(text)
     
+    if match:
+        data_str = match.group(0)
+        business_rules = ast.literal_eval(data_str)
+
+    else:
+        print("No data found within brackets.")
+        return None
+    
+    df = pd.DataFrame(business_rules, columns=['Object', 'Code', 'Business Rule'])
+    
+    
+    df.to_excel(r"demo_files\output\business_rules.xlsx", index=False)
+
 
 # Main 
 def main():
@@ -115,6 +135,7 @@ def main():
     
     #show analysis
     print(response_message)
+    convert_to_excel(response_message)
 
 
 if __name__ == "__main__":

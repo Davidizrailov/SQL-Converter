@@ -253,10 +253,12 @@ def generate_prompt2(response_message, language):
 
 def business_rules(code):
     prompt = f"""
-    Analyze the following Java code and extract the business rules it contains. A business rule can be a single logical statement or a combination of conditions that drive decisions or outcomes within the code. Please provide the output as a dictionary, where each key is a segment of the original code, and the corresponding value is the interpreted business rule in natural language. The format should be:
+    Analyze the following Java code and extract the business rules it contains. A business rule can be a single logical statement or a combination of conditions that drive decisions or outcomes within the code. 
+    Please provide the output as a nested list, where each list contains the object the rule applies to, the original code, and the corresponding interpreted business rule in natural language. The format should be:
 
-    {{ 'original code segment': 'interpreted business rule' }}
+    [['object', 'original code segment', 'interpreted business rule'],['object', 'original code segment', 'interpreted business rule']]
 
+    If there are multiple cases, do not group them as one, seperate them. Dont truncate code either.
     For example, in a car insurance context, a business rule might be something like:
 
     'If the car is a convertible, then its potential theft rating is high.'
