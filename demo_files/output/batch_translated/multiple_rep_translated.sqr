@@ -1,0 +1,78 @@
+```sql
+CREATE OR REPLACE PROCEDURE generate_multiple_reports()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import snowflake.snowpark as snowpark
+from datetime import datetime
+
+def run(session: snowpark.Session) -> str:
+    # Define the paper size
+    PAGE_PAPER_SIZE = 'A4'
+
+    # Define report layouts
+    layouts = {
+        'RPT_LAYOUT_A': {'paper_size': PAGE_PAPER_SIZE, 'orientation': 'LANDSCAPE', 'line_height': 9, 'char_width': 2},
+        'RPT_LAYOUT_B': {'paper_size': PAGE_PAPER_SIZE, 'orientation': 'LANDSCAPE', 'line_height': 9, 'char_width': 2},
+        'RPT_LAYOUT_C': {'paper_size': PAGE_PAPER_SIZE, 'orientation': 'LANDSCAPE', 'line_height': 9, 'char_width': 2},
+        'RPT_LAYOUT_D': {'paper_size': PAGE_PAPER_SIZE, 'orientation': 'LANDSCAPE', 'line_height': 9, 'char_width': 2},
+        'RPT_LAYOUT_E': {'paper_size': PAGE_PAPER_SIZE, 'orientation': 'LANDSCAPE', 'line_height': 9, 'char_width': 2}
+    }
+
+    # Define reports
+    reports = {
+        'RPT_A': 'RPT_LAYOUT_A',
+        'RPT_B': 'RPT_LAYOUT_B',
+        'RPT_C': 'RPT_LAYOUT_C',
+        'RPT_D': 'RPT_LAYOUT_D',
+        'RPT_E': 'RPT_LAYOUT_E'
+    }
+
+    # Define headers
+    headers = {
+        'RPT_A': 'This is Report A',
+        'RPT_B': 'This is Report B',
+        'RPT_C': 'This is Report C',
+        'RPT_D': 'This is Report D',
+        'RPT_E': 'This is Report E'
+    }
+
+    # Define footer
+    footer = 'Page - '
+
+    # Initialize reports
+    def init_report():
+        # Placeholder for initialization logic
+        pass
+
+    # Main report generation logic
+    def main_report():
+        # Get process output directory
+        prcsoutputdir = '/path/to/output/dir'  # Replace with actual logic to get the directory
+
+        if prcsoutputdir.strip():
+            NewFileFileSuffixValue = datetime.now().strftime('%d%B%Y')
+
+            for report, layout in reports.items():
+                GenNewFile = f"{prcsoutputdir}/Report_{report[-1]}_{NewFileFileSuffixValue}.pdf"
+                # Use the report and generate the file
+                with open(GenNewFile, 'w') as file:
+                    file.write(f"This is the {report[-1]} Multiple Report\n")
+                    file.write(headers[report] + '\n')
+                    file.write(footer + '1\n')  # Example page number
+
+    # Execute the procedures
+    init_report()
+    main_report()
+
+    return "Reports generated successfully."
+
+$$;
+
+-- Call the procedure
+CALL generate_multiple_reports();
+```

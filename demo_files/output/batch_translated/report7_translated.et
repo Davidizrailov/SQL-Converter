@@ -1,0 +1,57 @@
+```python
+CREATE OR REPLACE PROCEDURE DEMODB2A()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col
+
+def main(session: snowpark.Session) -> str:
+    # Initialize variables
+    WCUST_DISP_CTR = 0
+    WCUST_ID = ''
+    WCUST_ACCT_PRDCT_CD = ''
+    WCUST_ACCT_ID = ''
+    WCUST_ACCT_ID_NULL = 0
+
+    # Open cursor
+    cursor = session.sql("SELECT CUST_ID, CUST_ACCT_PRDCT_CD, CUST_ACCT_ID FROM CUST_TB").collect()
+
+    if not cursor:
+        return 'No records found'
+
+    # Main loop
+    while WCUST_DISP_CTR < 100:
+        WCUST_DISP_CTR += 1
+        if WCUST_DISP_CTR > len(cursor):
+            break
+
+        row = cursor[WCUST_DISP_CTR - 1]
+        WCUST_ID = row['CUST_ID']
+        WCUST_ACCT_PRDCT_CD = row['CUST_ACCT_PRDCT_CD']
+        WCUST_ACCT_ID = row['CUST_ACCT_ID']
+
+        # Print report (simulated by returning the values as a string)
+        print(f"CUSTOMER PRODUCT CODE LISTING: {WCUST_ID}, {WCUST_ACCT_PRDCT_CD}, {WCUST_ACCT_ID}")
+
+    return 'Procedure completed successfully'
+
+# Call the procedure
+session = snowpark.Session.builder.configs({
+    "account": "<account>",
+    "user": "<user>",
+    "password": "<password>",
+    "role": "<role>",
+    "warehouse": "<warehouse>",
+    "database": "<database>",
+    "schema": "<schema>"
+}).create()
+
+result = main(session)
+print(result)
+$$;
+```

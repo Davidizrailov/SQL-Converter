@@ -1,0 +1,77 @@
+```python
+CREATE OR REPLACE PROCEDURE process_employee_data()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark.functions as F
+from snowflake.snowpark.session import Session
+from snowflake.snowpark.types import StructType, StructField, StringType, IntegerType, DecimalType, DateType
+
+def main(session: Session) -> str:
+    # Define schemas for the input files
+    persfile_schema = StructType([
+        StructField("EMPNO", StringType(), nullable=False),
+        StructField("NAME", StringType(), nullable=False),
+        StructField("DEPT", StringType(), nullable=False),
+        StructField("SALARY", DecimalType(10, 2), nullable=False),
+        StructField("DOJ", DateType(), nullable=False)
+    ])
+    
+    deptfile_schema = StructType([
+        StructField("DEPTNO", StringType(), nullable=False),
+        StructField("DEPTNAME", StringType(), nullable=False)
+    ])
+    
+    # Load data into DataFrames
+    persfile_df = session.read.schema(persfile_schema).csv('@my_stage/persfile.csv')
+    deptfile_df = session.read.schema(deptfile_schema).csv('@my_stage/deptfile.csv')
+    
+    # Extract year from DOJ
+    persfile_df = persfile_df.withColumn("DOJ_YEAR", F.year(persfile_df["DOJ"]))
+    
+    # Initialize flags
+    persfile_df = persfile_df.withColumn("HIGH_SAL", F.lit(0))
+    persfile_df = persfile_df.withColumn("LOW_SAL", F.lit(0))
+    
+    # Set HIGH_SAL flag
+    persfile_df = persfile_df.withColumn("HIGH_SAL", F.when((persfile_df["DEPT"] == 'FIN') | (persfile_df["DEPT"] == 'HR'), 1).otherwise(persfile_df["HIGH_SAL"]))
+    
+    # Set LOW_SAL flag
+    persfile_df = persfile_df.withColumn("LOW_SAL", F.when(persfile_df["DEPT"] == 'IT', 1).otherwise(persfile_df["LOW_SAL"]))
+    
+    # Calculate total salary
+    total_salary = persfile_df.agg(F.sum(persfile_df["SALARY"]).alias("TOTAL_SALARY")).collect()[0]["TOTAL_SALARY"]
+    
+    # Group by department
+    grouped_df = persfile_df.groupBy("DEPT").agg(F.sum("SALARY").alias("TOTAL_SALARY"))
+    
+    # Join with department file
+    joined_df = persfile_df.join(deptfile_df, persfile_df["DEPT"] == deptfile_df["DEPTNO"])
+    
+    # Generate Report 1: Employee Report
+    report1_df = persfile_df.select("EMPNO", "NAME", "DEPT", "SALARY", "DOJ")
+    report1_df.write.mode("overwrite").csv('@my_stage/report1.csv')
+    
+    # Generate Report 2: Department Employee Report
+    report2_df = joined_df.select("DEPTNO", "DEPTNAME", "EMPNO", "NAME", "SALARY")
+    report2_df.write.mode("overwrite").csv('@my_stage/report2.csv')
+    
+    # Generate Report 3: High Salary Employees Report
+    report_high_df = persfile_df.filter(persfile_df["HIGH_SAL"] == 1).select("EMPNO", "NAME", "DEPT", "SALARY")
+    report_high_df.write.mode("overwrite").csv('@my_stage/report_high.csv')
+    
+    # Generate Report 4: Low Salary Employees Report
+    report_low_df = persfile_df.filter(persfile_df["LOW_SAL"] == 1).select("EMPNO", "NAME", "DEPT", "SALARY")
+    report_low_df.write.mode("overwrite").csv('@my_stage/report_low.csv')
+    
+    return "Reports generated successfully."
+
+# Call the procedure
+call_result = session.call("process_employee_data")
+print(call_result)
+$$;
+```

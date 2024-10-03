@@ -1,0 +1,69 @@
+```sql
+CREATE OR REPLACE PROCEDURE generate_employee_report()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col, lit
+import datetime
+
+def main(session: snowpark.Session) -> str:
+    # Initialize variables
+    quote = "'"
+    worksheet_name = 'Employee Report'
+    
+    # Initialize Excel file
+    prcs_output_dir = session.sql("SELECT GET_PRCOUTPUTDIR()").collect()[0][0]
+    if prcs_output_dir.strip():
+        generate_new_file = f"{prcs_output_dir}ExcelReport_{session.sql('SELECT CURRENT_PROCESS_ID()').collect()[0][0]}.xls"
+    
+    # Open file for writing
+    with open(generate_new_file, 'w') as file:
+        # Write Excel header
+        file.write('<html xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/tr/REC-html40">')
+        file.write('<body>')
+        file.write('<table border="1">')
+        file.write('<tr><td class=tablehead colspan=6 align=center>Oracle PeopleSoft Enterprise</td></tr>')
+        file.write('<tr><td colspan=6 align=center>Employee Info Sheet</td></tr>')
+        file.write('<tr><td colspan=6 align=center>No INPUT PARAMETERS</td></tr>')
+        file.write('<tr><th bgcolor="#98AFC7">Emplid</th><th bgcolor="#98AFC7">Name</th><th bgcolor="#98AFC7">Business Unit</th><th bgcolor="#98AFC7">Department</th><th bgcolor="#98AFC7">Job Title</th><th bgcolor="#98AFC7">Location</th></tr>')
+        
+        # Fetch data
+        query = """
+        SELECT DISTINCT
+            JOB.EMPLID,
+            NAMES.NAME_DISPLAY,
+            JOB.DEPTID,
+            JOB.BUSINESS_UNIT,
+            JOB.JOBCODE,
+            JOB.SETID_JOBCODE,
+            JOB.LOCATION,
+            JOB.SETID_LOCATION
+        FROM PS_JOB JOB
+        JOIN PS_PERSON_NAME NAMES ON JOB.EMPLID = NAMES.EMPLID
+        WHERE JOB.EFFDT = (SELECT MAX(A_ED.EFFDT) FROM PS_JOB A_ED WHERE JOB.EMPLID = A_ED.EMPLID AND JOB.EMPL_RCD = A_ED.EMPL_RCD AND A_ED.EFFDT <= CURRENT_DATE)
+        AND JOB.EFFSEQ = (SELECT MAX(A_ES.EFFSEQ) FROM PS_JOB A_ES WHERE JOB.EMPLID = A_ES.EMPLID AND JOB.EMPL_RCD = A_ES.EMPL_RCD AND JOB.EFFDT = A_ES.EFFDT)
+        AND JOB.EMPL_STATUS IN ('A','L','P','S')
+        ORDER BY JOB.EMPLID
+        """
+        data = session.sql(query).collect()
+        
+        # Write data to Excel
+        for row in data:
+            file.write(f"<tr><td align='left'>{row['EMPLID']}</td><td>{row['NAME_DISPLAY']}</td><td>{row['BUSINESS_UNIT']}</td><td>{row['DEPTID']}</td><td>{row['JOBCODE']}</td><td>{row['LOCATION']}</td></tr>")
+        
+        # Close HTML tags
+        file.write('</table>')
+        file.write('</body>')
+        file.write('</html>')
+    
+    return f"Report generated: {generate_new_file}"
+
+# Call the procedure
+call generate_employee_report();
+$$;
+```

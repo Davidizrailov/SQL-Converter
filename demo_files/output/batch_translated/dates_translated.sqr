@@ -1,0 +1,88 @@
+```sql
+CREATE OR REPLACE PROCEDURE DATECALC_SNOWFLAKE()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+import snowflake.snowpark.functions as F
+from snowflake.snowpark.session import Session
+from datetime import datetime, timedelta
+
+def run(session: Session) -> str:
+    # Initialize variables
+    BackDay = '2013-01-01'
+    BackDayYear = '2012-01-01'
+    Today = datetime.now().strftime('%Y-%m-%d')
+    
+    # Date Difference Calculations
+    diffDays = (datetime.strptime(Today, '%Y-%m-%d') - datetime.strptime(BackDay, '%Y-%m-%d')).days
+    diffMonths = (datetime.strptime(Today, '%Y-%m-%d').year - datetime.strptime(BackDay, '%Y-%m-%d').year) * 12 + (datetime.strptime(Today, '%Y-%m-%d').month - datetime.strptime(BackDay, '%Y-%m-%d').month)
+    diffYears = datetime.strptime(Today, '%Y-%m-%d').year - datetime.strptime(BackDayYear, '%Y-%m-%d').year
+    diffWeeks = diffDays // 7
+    
+    # Parse Date
+    yyyy = datetime.strptime(Today, '%Y-%m-%d').year
+    mm = datetime.strptime(Today, '%Y-%m-%d').month
+    dd = datetime.strptime(Today, '%Y-%m-%d').day
+    BuildingStringDateV1 = f"{yyyy}/{mm:02d}/{dd:02d}"
+    BuildingStringDateV2 = f"{yyyy}-{mm:02d}-{dd:02d}"
+    
+    # Year Begin and End Dates
+    YearBegin = f"{yyyy}-01-01"
+    YearEnd = f"{yyyy}-12-31"
+    
+    # Add Weeks
+    WorkDate = (datetime.strptime(Today, '%Y-%m-%d') + timedelta(weeks=7)).strftime('%Y-%m-%d')
+    
+    # Month Start and End Dates
+    BgDt = datetime.strptime(Today, '%Y-%m-%d').replace(day=1).strftime('%Y-%m-%d')
+    EdDt = (datetime.strptime(Today, '%Y-%m-%d').replace(day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    EdDt = EdDt.strftime('%Y-%m-%d')
+    
+    # Day of the Week
+    StartDay = datetime.strptime(Today, '%Y-%m-%d').isoweekday()
+    
+    # Add Months and Years
+    AfterAddingtNewMonth = (datetime.strptime(Today, '%Y-%m-%d') + timedelta(days=-3*30)).strftime('%Y-%m-%d')
+    AfterAddingtNewYear = (datetime.strptime(Today, '%Y-%m-%d') + timedelta(days=-2*365)).strftime('%Y-%m-%d')
+    
+    # Age Calculation
+    Dob = '1988-01-01'
+    Age_Yrs = datetime.strptime(Today, '%Y-%m-%d').year - datetime.strptime(Dob, '%Y-%m-%d').year
+    
+    # Return results
+    return f"""
+    Diff Days: {diffDays}
+    Diff Months: {diffMonths}
+    Diff Years: {diffYears}
+    Diff Weeks: {diffWeeks}
+    String Building Date V1: {BuildingStringDateV1}
+    String Building Date V2: {BuildingStringDateV2}
+    Year Begin: {YearBegin}
+    Year End: {YearEnd}
+    New Date After Adding 7 Weeks: {WorkDate}
+    Month Begin Date: {BgDt}
+    Month End Date: {EdDt}
+    Days Of Week: {StartDay}
+    New Date After Adding Month: {AfterAddingtNewMonth}
+    New Date After Adding Year: {AfterAddingtNewYear}
+    Age in Years: {Age_Yrs}
+    """
+
+# Call the procedure
+call_result = run(Session.builder.configs({
+    "account": "<account>",
+    "user": "<user>",
+    "password": "<password>",
+    "role": "<role>",
+    "warehouse": "<warehouse>",
+    "database": "<database>",
+    "schema": "<schema>"
+}).create())
+
+print(call_result)
+$$;
+```

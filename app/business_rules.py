@@ -5,7 +5,7 @@ import time
 from dotenv import load_dotenv
 
 class ConfigLoader:
-    def __init__(self, language):
+    def __init__(self, language = "Java"):
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY_EPS")
         self.language = language
@@ -28,20 +28,7 @@ class PromptGenerator:
         self.code = code
 
     def generate_prompt(self):
-        if self.language == "PLSQL":
-            return prompts.system_message_PLSQL, prompts.generate_prompt_PLSQL(self.code)
-        elif self.language == "ET":
-            return prompts.system_message_ET, prompts.generate_prompt_ET(self.code)
-        elif self.language == "SQR":
-            return prompts.system_message_SQR, prompts.generate_prompt_SQR(self.code)
-        elif self.language == "C#":
-            return "", prompts.generate_prompt_C(self.code)
-        elif self.language == "Kornshell":
-            return "", prompts.generate_prompt_Kornshell(self.code)
-        elif self.language == "Java":
-            return "", prompts.generate_prompt_java(self.code)
-        elif self.language == "Cobol":
-            return "", prompts.generate_prompt_cobol(self.code)
+        return prompts.business_rules(self.code)
 
 class VectorStoreManager:
     def __init__(self, language):
@@ -52,8 +39,6 @@ class VectorStoreManager:
                 self.vector_store_id = os.getenv("SQR_VS_ID")            
             elif language == "ET":
                 self.vector_store_id = os.getenv("EASYTRIEVE_VS_ID")
-            elif language == "java":
-                self.vector_store_id = os.getenv("JAVA_VS_ID")
         else:
             self.vector_store_id = None  # Do not use vector store for other languages
 
@@ -61,10 +46,10 @@ class AssistantManager:
     def __init__(self, client, vector_store_id):
         self.client = client
         self.assistant = self.client.beta.assistants.create(
-            name="LanguageConverter",
+            name="BusinessRulesAnalyzer",
             tools=[{"type": "file_search"}],
             model="gpt-4o",
-            temperature=0.1,
+            temperature=0.4,
             tool_resources={
                 "file_search": {
                     "vector_store_ids": [vector_store_id] if vector_store_id else []
@@ -96,44 +81,25 @@ class AssistantManager:
                 run_id=run.id
             )
         print(run.status)
-        print(run.usage["total_tokens"])
+        
         return run
 
     def get_response_message(self, thread_id):
         response_message = self.client.beta.threads.messages.list(thread_id=thread_id)
         return response_message.data[0].content[0].text.value
 
-class ErrorHandler:
-    def __init__(self, assistant_manager, thread_id):
-        self.assistant_manager = assistant_manager
-        self.thread_id = thread_id
-
-    def get_follow_up_response(self, follow_up):
-        self.assistant_manager.send_message(self.thread_id, follow_up)
-        self.assistant_manager.run_thread(self.thread_id)
-        follow_up_response = self.assistant_manager.get_response_message(self.thread_id)
-        return follow_up_response
-
-    def handle_errors(self):
-        follow_up = input("Insert Error message here or 'success' if no errors: ")
-        while follow_up != "success":
-            follow_up_response = self.get_follow_up_response(follow_up)
-            print("Follow-Up Response:", follow_up_response)
-            follow_up = input("Insert Error message here or 'success' if no errors: ")
-        return None if follow_up == "success" else follow_up_response
     
 
 # Main 
 def main():
-    code_reader = CodeReader(r"C:\Users\NW538RY\OneDrive - EY\Desktop\Work\git\SQL-Converter\Java\LegacyJavaCode.java")
     config = ConfigLoader(language="Java") 
 
     client = OpenAIClient(config.api_key)
-
+    code_reader = CodeReader("demo_files\Java\Main.java")
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
-    system_message, prompt = prompt_generator.generate_prompt()
+    prompt = prompt_generator.generate_prompt()
 
     vector_store_manager = VectorStoreManager(language=config.language)
     vector_store_id = vector_store_manager.vector_store_id
@@ -143,25 +109,13 @@ def main():
     assistant_manager.send_message(thread.id, prompt)
     assistant_manager.run_thread(thread.id)
     
-    print("analysis complete!")
+
     
     response_message = assistant_manager.get_response_message(thread.id)
     
     #show analysis
     print(response_message)
-    
-    if config.language != "Java" and config.language !="Cobol":
-        prompt2 = prompts.generate_prompt2(response_message, config.language)
 
-        assistant_manager.send_message(thread.id, prompt2)
-        assistant_manager.run_thread(thread.id)
-        print("compilation complete!")
-
-        response_message = assistant_manager.get_response_message(thread.id)
-        print(response_message)
-
-    error_handler = ErrorHandler(assistant_manager, thread.id)
-    error_handler.handle_errors()
 
 if __name__ == "__main__":
     main()

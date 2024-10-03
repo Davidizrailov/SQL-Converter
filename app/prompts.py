@@ -189,7 +189,7 @@ def generate_prompt2_Kornshell(code_description):
 def generate_prompt_java(code):
     prompt = f"""
 
-        Below is some legacy java Code. Convert it to Java 17. Return ONLY the translated code
+        Below is some legacy java Code. Convert it to Java 17. Make sure to rename the code. Return ONLY the translated code
        
         Here is the code:
         {code}
@@ -251,6 +251,22 @@ def generate_prompt2(response_message, language):
     #     prompt2 = generate_prompt2_cobol(response_message)
     return prompt2 
 
+def business_rules(code):
+    prompt = f"""
+    Analyze the following Java code and extract the business rules it contains. A business rule can be a single logical statement or a combination of conditions that drive decisions or outcomes within the code. Please provide the output as a dictionary, where each key is a segment of the original code, and the corresponding value is the interpreted business rule in natural language. The format should be:
+
+    {{ 'original code segment': 'interpreted business rule' }}
+
+    For example, in a car insurance context, a business rule might be something like:
+
+    'If the car is a convertible, then its potential theft rating is high.'
+    'If the price is greater than $45,000, then its potential theft rating is high.'
+    'If multiple conditions (e.g., price range and model type) are true, then apply a specific rating.'
+    Please aim to capture all the key logical statements or combinations that indicate how decisions are made or conditions are evaluated in the code.
+
+    Here is the code: {code}
+    """
+    return prompt
 
 def content_assessment(code):
     prompt = f"""
