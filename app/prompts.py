@@ -254,18 +254,26 @@ def generate_prompt2(response_message, language):
 def business_rules(code):
     prompt = f"""
     Analyze the following Java code and extract the business rules it contains. A business rule can be a single logical statement or a combination of conditions that drive decisions or outcomes within the code. 
-    Please provide the output as a nested list, where each list contains the object the rule applies to, the original code, and the corresponding interpreted business rule in natural language. The format should be:
+    Please provide the output as a nested list, where each list contains the class the rule applies to, , the method if applicable (if not put none), the original code, and the corresponding interpreted business rule in natural language. The format should be:
 
-    [['object', 'original code segment', 'interpreted business rule'],['object', 'original code segment', 'interpreted business rule']]
+    [['class', 'method', 'original code segment', 'interpreted business rule'],['class', 'method', 'original code segment', 'interpreted business rule']]
 
-    If there are multiple cases, do not group them as one, seperate them. Dont truncate code either.
-    For example, in a car insurance context, a business rule might be something like:
+    If there are multiple cases, do not group them as one, seperate them. For example: 
+    [
+    ['classA', 'methodA', 'case 1: code here;', 'Business rule explained'],
+    ['classA', 'methodA', 'case 2: code here;', 'Business rule explained'],
+    ['classA', 'methodA', 'case 3: code here;', 'Business rule explained']]
+    
+    Dont truncate code either.
+    
+    In terms of how to describe a business rule, here are some examples:
 
     'If the car is a convertible, then its potential theft rating is high.'
     'If the price is greater than $45,000, then its potential theft rating is high.'
     'If multiple conditions (e.g., price range and model type) are true, then apply a specific rating.'
     Please aim to capture all the key logical statements or combinations that indicate how decisions are made or conditions are evaluated in the code.
 
+    Please provide no more than the requested list.
     Here is the code: {code}
     """
     return prompt

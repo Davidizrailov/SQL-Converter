@@ -52,7 +52,7 @@ class AssistantManager:
             name="BusinessRulesAnalyzer",
             tools=[{"type": "file_search"}],
             model="gpt-4o",
-            temperature=0.4,
+            temperature=0.2,
             tool_resources={
                 "file_search": {
                     "vector_store_ids": [vector_store_id] if vector_store_id else []
@@ -104,7 +104,7 @@ def convert_to_excel(text):
         print("No data found within brackets.")
         return None
     
-    df = pd.DataFrame(business_rules, columns=['Object', 'Code', 'Business Rule'])
+    df = pd.DataFrame(business_rules, columns=['class','Object', 'Code', 'Business Rule'])
     
     
     df.to_excel(r"demo_files\output\business_rules.xlsx", index=False)
