@@ -42,6 +42,7 @@ if 'translator' not in st.session_state:
 #############################################################################################            
 
 language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve", "Java", "Kornshell", "C#", "Cobol"])
+language = st.selectbox("Output Language", ["Snowflake", "PLSQL", "SQR", "Easytrieve", "Java", "Cobol"])
 
 if language=="Easytrieve": 
     language="ET"
@@ -63,7 +64,7 @@ if os.path.isfile(explanation_file):
 # Input Code
 #############################################################################################            
 
-uploaded_file = st.file_uploader("Document to translate", type=["txt", "sql", "sqr", "et", "ksh", "jav", "cs", "col", "cbl"])
+uploaded_file = st.file_uploader("Document to translate", type=["txt", "sql", "sqr", "et", "ksh", "java", "cs", "col", "cbl"])
 
 if uploaded_file is not None:
     file_content = uploaded_file.read().decode("utf-8")

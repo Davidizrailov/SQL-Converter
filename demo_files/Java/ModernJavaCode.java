@@ -3,8 +3,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModernJavaCode {
-    public static void main(String[] args) {
+public class LegacyJavaCode {
+    public static void main(String[] args) {      
         // Modern try-with-resources
         try (Resource resource = new Resource()) {
             resource.process();
@@ -13,7 +13,7 @@ public class ModernJavaCode {
         }
 
         // Enhanced for loop and type inference with var
-        var names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         names.add("John");
         names.add("Jane");
         names.add("Doe");
@@ -22,12 +22,13 @@ public class ModernJavaCode {
             System.out.println(name);
         }
 
-        // Simplified map initialization with diamond operator and lambda expressions
-        var legacyMap = new HashMap<Integer, String>();
-        legacyMap.put(1, "one");
-        legacyMap.put(2, "two");
+        // Modern map initialization and concise lambda expressions
+        Map<Integer, String> modernMap = Map.of(
+            1, "one",
+            2, "two"
+        );
 
-        legacyMap.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
+        modernMap.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
 
         // Enhanced switch expression
         int day = 2;
@@ -47,6 +48,7 @@ class Resource implements AutoCloseable {
         System.out.println("Processing resource...");
     }
 
+    @Override
     public void close() throws Exception {
         System.out.println("Closing resource...");
     }
