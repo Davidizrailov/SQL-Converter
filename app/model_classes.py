@@ -125,10 +125,11 @@ class ErrorHandler:
 
 # Main 
 def main():
+    code_reader = CodeReader(r"C:\Users\NW538RY\OneDrive - EY\Desktop\Work\git\SQL-Converter\Java\LegacyJavaCode.java")
     config = ConfigLoader(language="Java") 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader("LegacyJavaCode.java")
+
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)

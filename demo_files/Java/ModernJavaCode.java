@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LegacyJavaCode {
-    public static void main(String[] args) {
+    public static void main(String[] args) {      
         // Modern try-with-resources
         try (Resource resource = new Resource()) {
             resource.process();
@@ -12,7 +12,7 @@ public class LegacyJavaCode {
             e.printStackTrace();
         }
 
-        // Enhanced for-loop and type inference with var
+        // Enhanced for loop and type inference with var
         List<String> names = new ArrayList<>();
         names.add("John");
         names.add("Jane");
@@ -22,13 +22,13 @@ public class LegacyJavaCode {
             System.out.println(name);
         }
 
-        // Modern map initialization and lambda expressions
-        Map<Integer, String> legacyMap = Map.of(
+        // Modern map initialization and concise lambda expressions
+        Map<Integer, String> modernMap = Map.of(
             1, "one",
             2, "two"
         );
 
-        legacyMap.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
+        modernMap.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value));
 
         // Enhanced switch expression
         int day = 2;
