@@ -1,14 +1,62 @@
-import os
-import prompts as prompts
-from openai import OpenAI
-import time
+import anthropic
 from dotenv import load_dotenv
-import re
-import pandas as pd
-import ast
+import os 
+import claude_prompts
+import time
+from openai import OpenAI
+import prompts
+import json
+
+load_dotenv()
+
+lang = "PLSQL"
+path = r"demo_files\DEMO_DB\PLSQL\avg_sal.sql"
+
+with open(path, "r") as file:
+    code = file.read()
+
+if lang =="PLSQL":
+    prompt = claude_prompts.plsql_prompt(code)
+if lang =="SQR":
+    prompt = claude_prompts.sqr_prompt(code)
+if lang =="ET":
+    prompt = claude_prompts.easytrieve_prompt(code)
+
+client = anthropic.Anthropic(
+    
+    api_key=os.getenv("Claude_API_KEY"),
+)
+
+message = client.messages.create(
+    model="claude-3-5-sonnet-20240620",
+    max_tokens=5000,
+    temperature=0.9,
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": prompt
+                }
+            ]
+        }
+    ]
+)
+
+response_claude = message.content[0]
+
+response_claude = response_claude.text
+
+
+
+print(response_claude)
+
+
+
 
 class ConfigLoader:
-    def __init__(self, language = "Java"):
+    def __init__(self, language = lang):
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY_EPS")
         self.language = language
@@ -18,7 +66,7 @@ class OpenAIClient:
         self.client = OpenAI(api_key=api_key)
 
 class CodeReader:
-    def __init__(self, file_path):
+    def __init__(self, file_path= path):
         self.file_path = file_path
 
     def read_code(self):
@@ -31,7 +79,7 @@ class PromptGenerator:
         self.code = code
 
     def generate_prompt(self):
-        return prompts.business_rules(self.code)
+        return prompts.business_rules_general(self.code, self.language)
 
 class VectorStoreManager:
     def __init__(self, language):
@@ -90,32 +138,12 @@ class AssistantManager:
     def get_response_message(self, thread_id):
         response_message = self.client.beta.threads.messages.list(thread_id=thread_id)
         return response_message.data[0].content[0].text.value
-
-
-def convert_to_excel(text):
-    pattern = re.compile(r"\[(.*)]", re.DOTALL)
-    match = pattern.search(text)
     
-    if match:
-        data_str = match.group(0)
-        business_rules = ast.literal_eval(data_str)
-
-    else:
-        print("No data found within brackets.")
-        return None
-    
-    df = pd.DataFrame(business_rules, columns=['Class','Object', 'Code', 'Business Rule'])
-    
-    
-    df.to_excel(r"demo_files\output\business_rules.xlsx", index=False)
-
-
-# Main 
 def main(lang, path):
-    config = ConfigLoader(language=lang) 
+    config = ConfigLoader() 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader(path)
+    code_reader = CodeReader()
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
@@ -132,12 +160,16 @@ def main(lang, path):
 
     
     response_message = assistant_manager.get_response_message(thread.id)
-    
-    #show analysis
-    
-    convert_to_excel(response_message)
     print(response_message)
-    return response_message
+
+    prompt_next = f"""
+    Here is the code translated to Snowflake: {response_claude}. Using the business rules generated: {response_message}, confirm if the translated code maintains all the business logic.
+    If not, add the neccessary components. If it's all good, return the original code. Ensure proper snowflake syntax, use the documentation. In either case, please do not add any comments, simply return the code.
+    """
+    assistant_manager.send_message(thread.id, prompt_next)
+    assistant_manager.run_thread(thread.id)
+    response_message = assistant_manager.get_response_message(thread.id)
+    print(response_message)
 
 if __name__ == "__main__":
-    main("Java",r"demo_files\Java\Main.java")
+    main(lang,path)

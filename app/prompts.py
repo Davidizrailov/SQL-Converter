@@ -259,6 +259,11 @@ def business_rules(code):
     [['class', 'method', 'original code segment', 'interpreted business rule'],['class', 'method', 'original code segment', 'interpreted business rule']]
 
     IF THERE ARE MULTIPLE CASES DO NOT COMBINE THEM AS ONE, seperate them, with each case having it's own business rule. Aim to break down the logic as much as you can and have as many business rules as possible. For example: 
+    
+    case 1: if a>b, return option 1
+    case 2: if a<b, return option 2
+
+    
     [
     ['classA', 'methodA', 'case 1: code here;', 'Business rule explained'],
     ['classA', 'methodA', 'case 2: code here;', 'Business rule explained'],
@@ -278,6 +283,27 @@ def business_rules(code):
     Please provide no more than the requested list.
     Here is the code: {code}
     """
+    return prompt
+
+def business_rules_general(code, lang):
+
+    prompt = f"""
+Analyze the following {lang} code and extract the business rules it contains. A business rule can be a single logical statement or a combination of conditions that drive decisions or outcomes within the code.
+
+List out the business rules
+
+In terms of how to describe a business rule, here are some examples:
+    
+'If the car is a convertible, then its potential theft rating is high.'
+'If the price is greater than $45,000, then its potential theft rating is high.'
+'If multiple conditions (e.g., price range and model type) are true, then apply a specific rating.'
+    
+Please aim to capture all the key logical statements or combinations that indicate how decisions are made or conditions are evaluated in the code.
+
+Please provide no more than the requested list.
+Here is the code: {code}
+
+"""
     return prompt
 
 def content_assessment(code):
