@@ -24,7 +24,7 @@ Code: {code}
 
 def sqr_prompt(code):
     prompt=f"""
-Given the following PLSQL code, write me a snowflake procedure which matches this description. 
+Given the following SQR code, write me a snowflake procedure which matches this description. 
         
 Return only the the converted code, ensuring it is compatible with Snowflake syntax. 
 There should be no text other than the code. If you are using a stored procedure, Use python 3.10 rather than javascript. Make sure to add a handler. 
