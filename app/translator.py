@@ -129,7 +129,7 @@ class Translator:
     
 
 if __name__ ==  "__main__":
-    config = ConfigLoader(language="PLSQL")
+    config = ConfigLoader(language="PLSQL", target="Snowflake")
     # code = CodeReader(file_path="files/code_SQR.txt")
     # translator = Translator(code=code, config=config)
     # translator.translate(demo=False)

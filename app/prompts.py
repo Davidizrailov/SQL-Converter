@@ -189,6 +189,16 @@ prompt1_cobol = """
 #     """
 #     return prompt
 
+def get_system_prompt(language, target):
+    if language == "PLSQL":
+        return system_message_PLSQL
+    elif language == "ET":
+        return system_message_ET
+    elif language == "SQR":
+        return system_message_SQR
+    else:
+        ""
+
 def generate_prompt(language, target, code):
     if language == "PLSQL":
         return prompt1_PLSQL.format(code=code)

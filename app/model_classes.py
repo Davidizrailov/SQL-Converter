@@ -116,14 +116,16 @@ class ErrorHandler:
 
 # Main 
 def main():
+    config = ConfigLoader(language="Legacy Java", target="Java 21") 
     code_reader = CodeReader(r"C:\Users\NW538RY\OneDrive - EY\Desktop\Work\git\SQL-Converter\Java\LegacyJavaCode.java")
-    config = ConfigLoader(language="Java") 
 
     client = OpenAIClient(config.api_key)
 
     code = code_reader.read_code()
-
-    prompt_generator = PromptGenerator(config.language, code)
+    prompt_generator = PromptGenerator(config.language, config.target, code)
+    system_message, prompt = prompt_generator.generate_prompt()
+    
+    prompt_generator = PromptGenerator(config.language, config.target, code)
     system_message, prompt = prompt_generator.generate_prompt()
 
     vector_store_manager = VectorStoreManager(language=config.language)
@@ -141,8 +143,8 @@ def main():
     #show analysis
     print(response_message)
     
-    if config.language != "Java" and config.language !="Cobol":
-        prompt2 = prompts.generate_prompt2(response_message, config.language)
+    if config.language != "Legacy Java" and config.language !="Cobol":
+        prompt2 = prompts.generate_prompt2(response_message, config.language, config.target)
 
         assistant_manager.send_message(thread.id, prompt2)
         assistant_manager.run_thread(thread.id)
