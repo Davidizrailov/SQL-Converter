@@ -10,17 +10,17 @@ import json
 load_dotenv()
 
 lang = "PLSQL"
-path = r"demo_files\DEMO_DB\PLSQL\avg_sal.sql"
+path = r"demo_files\DEMO_DB\PLSQL\JTA\triggers.sql"
 
 with open(path, "r") as file:
     code = file.read()
 
 if lang =="PLSQL":
-    prompt = claude_prompts.plsql_prompt(code)
+    prompt = prompts.generate_prompt_PLSQL(code)
 if lang =="SQR":
-    prompt = claude_prompts.sqr_prompt(code)
+    prompt = prompts.generate_prompt_SQR(code)
 if lang =="ET":
-    prompt = claude_prompts.easytrieve_prompt(code)
+    prompt = prompts.generate_prompt_ET(code)
 
 client = anthropic.Anthropic(
     
@@ -30,7 +30,7 @@ client = anthropic.Anthropic(
 message = client.messages.create(
     model="claude-3-5-sonnet-20240620",
     max_tokens=5000,
-    temperature=0.9,
+    temperature=0.2,
     messages=[
         {
             "role": "user",
@@ -44,13 +44,49 @@ message = client.messages.create(
     ]
 )
 
-response_claude = message.content[0]
+response_claude1 = message.content[0]
 
-response_claude = response_claude.text
+response_claude1 = response_claude1.text
+
+prompt2 = prompts.generate_prompt2(response_claude1, lang)
+
+message = client.messages.create(
+    model="claude-3-5-sonnet-20240620",
+    max_tokens=5000,
+    temperature=0.2,
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": prompt2
+                }
+            ]
+        }
+    ]
+)
+
+response_claude2 = message.content[0]
+
+response_claude2 = response_claude2.text
 
 
 
-print(response_claude)
+base_filename = os.path.basename(path)
+        
+        
+output_directory = os.path.join("demo_files", "output", "claude_2_step")
+new_path = os.path.join(output_directory, f"{os.path.splitext(base_filename)[0]}_translated{os.path.splitext(base_filename)[1]}")
+        
+        
+os.makedirs(output_directory, exist_ok=True)
+        
+        
+with open(new_path, 'w', encoding='utf-8') as file:
+    file.write(response_claude2)
+
+print(response_claude2)
 
 
 

@@ -11,8 +11,8 @@ client = OpenAI(
     api_key=os.getenv("CROSSHATCH_API_KEY")
 )
 
-lang = "SQR"
-path = r"demo_files\DEMO_DB\SQR\dates.sqr"
+lang = "PLSQL"
+path = r"demo_files\DEMO_DB\PLSQL\JTA\triggers.sql"
 
 with open(path, "r") as file:
     code = file.read()
@@ -33,5 +33,20 @@ completion = client.chat.completions.create(
 )
 
 response = completion.choices[0].message.content
+
+
+base_filename = os.path.basename(path)
+        
+        
+output_directory = os.path.join("demo_files", "output", "mixed_model")
+new_path = os.path.join(output_directory, f"{os.path.splitext(base_filename)[0]}_translated{os.path.splitext(base_filename)[1]}")
+        
+        
+os.makedirs(output_directory, exist_ok=True)
+        
+        
+with open(new_path, 'w', encoding='utf-8') as file:
+    file.write(response)
+
 print(response)
 
