@@ -4,6 +4,7 @@ import streamlit as st
 from translator import Translator
 from model_classes import ConfigLoader
 import os
+import prompts
 
 #############################################################################################            
 # Layout
@@ -41,13 +42,12 @@ if 'translator' not in st.session_state:
 # Configuration & initialization
 #############################################################################################            
 
-language = st.selectbox("Input Language", ["PLSQL", "SQR", "Easytrieve", "Java", "Kornshell", "C#", "Cobol"])
-language = st.selectbox("Output Language", ["Snowflake", "PLSQL", "SQR", "Easytrieve", "Java", "Cobol"])
-
+language = st.selectbox("Input Language", list(prompts.target_dict.keys()))
+target = st.selectbox("Target Language", prompts.target_dict[language])
 if language=="Easytrieve": 
     language="ET"
 
-config = ConfigLoader(language=language)
+config = ConfigLoader(language=language, target=target)
 explanation_file = os.path.join("files", "explanation")
 if os.path.isfile(explanation_file):
     os.remove(explanation_file)

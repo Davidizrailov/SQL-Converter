@@ -5,10 +5,11 @@ import time
 from dotenv import load_dotenv
 
 class ConfigLoader:
-    def __init__(self, language):
+    def __init__(self, language, target):
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY_EPS")
         self.language = language
+        self.target = target
 
 class OpenAIClient:
     def __init__(self, api_key):
@@ -23,25 +24,15 @@ class CodeReader:
             return file.read()
 
 class PromptGenerator:
-    def __init__(self, language, code):
+    def __init__(self, language, target, code):
         self.language = language
         self.code = code
+        self.target = target
 
     def generate_prompt(self):
-        if self.language == "PLSQL":
-            return prompts.system_message_PLSQL, prompts.generate_prompt_PLSQL(self.code)
-        elif self.language == "ET":
-            return prompts.system_message_ET, prompts.generate_prompt_ET(self.code)
-        elif self.language == "SQR":
-            return prompts.system_message_SQR, prompts.generate_prompt_SQR(self.code)
-        elif self.language == "C#":
-            return "", prompts.generate_prompt_C(self.code)
-        elif self.language == "Kornshell":
-            return "", prompts.generate_prompt_Kornshell(self.code)
-        elif self.language == "Java":
-            return "", prompts.generate_prompt_java(self.code)
-        elif self.language == "Cobol":
-            return "", prompts.generate_prompt_cobol(self.code)
+        system_prompt = prompts.get_system_prompt(self.language, self.target)
+        first_prompt = prompts.generate_prompt(self.language, self.target, self.code)
+        return system_prompt, first_prompt
 
 class VectorStoreManager:
     def __init__(self, language):
@@ -125,14 +116,16 @@ class ErrorHandler:
 
 # Main 
 def main():
+    config = ConfigLoader(language="Legacy Java", target="Java 21") 
     code_reader = CodeReader(r"C:\Users\NW538RY\OneDrive - EY\Desktop\Work\git\SQL-Converter\Java\LegacyJavaCode.java")
-    config = ConfigLoader(language="Java") 
 
     client = OpenAIClient(config.api_key)
 
     code = code_reader.read_code()
-
-    prompt_generator = PromptGenerator(config.language, code)
+    prompt_generator = PromptGenerator(config.language, config.target, code)
+    system_message, prompt = prompt_generator.generate_prompt()
+    
+    prompt_generator = PromptGenerator(config.language, config.target, code)
     system_message, prompt = prompt_generator.generate_prompt()
 
     vector_store_manager = VectorStoreManager(language=config.language)
@@ -150,8 +143,8 @@ def main():
     #show analysis
     print(response_message)
     
-    if config.language != "Java" and config.language !="Cobol":
-        prompt2 = prompts.generate_prompt2(response_message, config.language)
+    if config.language != "Legacy Java" and config.language !="Cobol":
+        prompt2 = prompts.generate_prompt2(response_message, config.language, config.target)
 
         assistant_manager.send_message(thread.id, prompt2)
         assistant_manager.run_thread(thread.id)
