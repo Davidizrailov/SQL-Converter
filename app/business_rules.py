@@ -3,6 +3,9 @@ import prompts as prompts
 from openai import OpenAI
 import time
 from dotenv import load_dotenv
+import re
+import pandas as pd
+import ast
 
 class ConfigLoader:
     def __init__(self, language = "Java"):
@@ -49,7 +52,7 @@ class AssistantManager:
             name="BusinessRulesAnalyzer",
             tools=[{"type": "file_search"}],
             model="gpt-4o",
-            temperature=0.4,
+            temperature=0.1,
             tool_resources={
                 "file_search": {
                     "vector_store_ids": [vector_store_id] if vector_store_id else []
@@ -88,14 +91,31 @@ class AssistantManager:
         response_message = self.client.beta.threads.messages.list(thread_id=thread_id)
         return response_message.data[0].content[0].text.value
 
+
+def convert_to_excel(text):
+    pattern = re.compile(r"\[(.*)]", re.DOTALL)
+    match = pattern.search(text)
     
+    if match:
+        data_str = match.group(0)
+        business_rules = ast.literal_eval(data_str)
+
+    else:
+        print("No data found within brackets.")
+        return None
+    
+    df = pd.DataFrame(business_rules, columns=['Class','Object', 'Code', 'Business Rule'])
+    
+    
+    df.to_excel(r"demo_files\output\business_rules.xlsx", index=False)
+
 
 # Main 
-def main():
-    config = ConfigLoader(language="Java") 
+def main(lang, path):
+    config = ConfigLoader(language=lang) 
 
     client = OpenAIClient(config.api_key)
-    code_reader = CodeReader("Java\TimSort.java")
+    code_reader = CodeReader(path)
     code = code_reader.read_code()
 
     prompt_generator = PromptGenerator(config.language, code)
@@ -114,8 +134,10 @@ def main():
     response_message = assistant_manager.get_response_message(thread.id)
     
     #show analysis
+    
+    convert_to_excel(response_message)
     print(response_message)
-
+    return response_message
 
 if __name__ == "__main__":
-    main()
+    main("Java",r"demo_files\Java\Main.java")

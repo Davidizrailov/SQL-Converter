@@ -1,15 +1,10 @@
-# import networkx as nx
-# from ontology import Ontology
+
 import pandas as pd
 from generate_yed_graph import *
 import os
 
 def get_functions():
-    # def get_name(x):
-    #     if "*" in x:
-    #         return 'Unnamed Function'
-    #     else:
-    #         return x
+
     def split_cell(x):
         if type(x)==str:
             return [string.strip() for string in x.split(",")]
@@ -28,16 +23,6 @@ def get_functions():
 functions = get_functions()
 
 
-# Define function names, inputs, and outputs (based on the table you provided)
-# functions = [
-#     {"name": "get_customer_info", "inputs": ["customer_id"], "outputs": ["customer_name", "customer_address", "customer_email"]},
-#     {"name": "get_inventory_status", "inputs": ["product_id"], "outputs": ["product_name", "stock_quantity", "product_price"]},
-#     {"name": "create_order", "inputs": ["customer_id", "product_id", "quantity", "order_date"], "outputs": ["order_id", "total_order_value"]},
-#     {"name": "generate_invoice", "inputs": ["order_id", "customer_info", "total_order_value"], "outputs": ["invoice_id", "invoice_date", "payment_due_date"]},
-#     {"name": "process_payment", "inputs": ["invoice_id", "payment_method", "payment_amount"], "outputs": ["payment_confirmation", "balance_due"]},
-#     {"name": "update_inventory", "inputs": ["product_id", "quantity_sold"], "outputs": ["updated_stock_quantity"]},
-#     {"name": "send_order_confirmation", "inputs": ["customer_email", "order_id", "invoice_id", "total_order_value"], "outputs": ["confirmation_status"]}
-# ]
 
 # Create a directed graph
 G = nx.DiGraph()
@@ -62,6 +47,4 @@ folder = r"C:\Users\NW538RY\OneDrive - EY\Desktop\Work\git\SQL-Converter\demo_fi
 path = folder+r"\functions_dependencies.graphml"
 to_graphml(G, path = path)
 os.startfile(path)
-# nx.write_graphml_xml(G, folder+"output.xml")
-# o = Ontology(G)
-# o.create_visualization(folder+"function_dependencies_graph.html", show=True)
+

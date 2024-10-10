@@ -63,11 +63,11 @@ def split_sas_code(input_file_path):
 
 # Execute the global splitting function
 os.startfile(input_file_path)
+os.makedirs(output_dir, exist_ok=True)
+delete_files_in_folder(output_dir)
+os.startfile(output_dir)
 start = input("Start Analysis (y/n):  ")
 if start:
     # Ensure the output directory exists
-    os.makedirs(output_dir, exist_ok=True)
-    delete_files_in_folder(output_dir)
-    os.startfile(output_dir)
     time.sleep(2)
     split_sas_code(input_file_path)
